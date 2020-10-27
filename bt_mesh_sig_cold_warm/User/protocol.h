@@ -32,7 +32,7 @@
 /******************************************************************************
                             1:修改产品信息                
 ******************************************************************************/
-#define PRODUCT_KEY "6gsjn6vs"    //开发平台创建产品后生成的16位字符产品唯一标识
+#define PRODUCT_KEY "8lmxnlgg"    //开发平台创建产品后生成的16位字符产品唯一标识
 
 
 #define MCU_VER "1.0.0"                                 //用户的软件版本,用于MCU固件升级,MCU升级版本需修改
@@ -53,8 +53,8 @@ MCU可调用mcu_api.c文件内的mcu_firm_update_query()函数获取当前MCU固
 #define BT_UART_QUEUE_LMT             16              //数据接收队列大小,如MCU的RAM不够,可缩小
 #define BT_UART_RECV_BUF_LMT          24              //根据用户DP数据大小量定,必须大于24
 #else
-#define BT_UART_QUEUE_LMT             24             //数据接收队列大小,如MCU的RAM不够,可缩小
-#define BT_UART_RECV_BUF_LMT          24             //固件升级缓冲区,需大缓存,必须大于260
+#define BT_UART_QUEUE_LMT             128             //数据接收队列大小,如MCU的RAM不够,可缩小
+#define BT_UART_RECV_BUF_LMT          300             //固件升级缓冲区,需大缓存,必须大于260
 #endif
 
 #define BT_UART_SEND_BUF_LMT         24              //根据用户DP数据大小量定,必须大于24
@@ -87,52 +87,34 @@ mcu在bt模块正确联网后可调用mcu_get_system_time()函数发起校时功
           **此为自动生成代码,如在开发平台有相关修改请重新下载MCU_SDK**         
 ******************************************************************************/
 //开关(可下发可上报)
-//备注:上电/掉电
+//备注:
 #define DPID_SWITCH_LED 1
 //亮度值(可下发可上报)
-//备注:灯的亮度值
+//备注:
 #define DPID_BRIGHT_VALUE 3
+//冷暖值(可下发可上报)
+//备注:
+#define DPID_TEMP_VALUE 4
 //光敏参数(可下发可上报)
-//备注:红外对光的敏感度
+//备注:
 #define DPID_CDS 101
 //感应延时(可下发可上报)
-//备注:如果雷达感应到人体，灯点亮延长时间
+//备注:
 #define DPID_PIR_DELAY 102
 //感应开关(可下发可上报)
-//备注:雷达感应开关
+//备注:
 #define DPID_SWITCH_XBR 103
 //伴亮延时(可下发可上报)
-//备注:到完全关闭的时间
+//备注:
 #define DPID_STANDBY_TIME 104
 //感应强度(可下发可上报)
-//备注:雷达模组感应强度值
+//备注:
 #define DPID_SENSE_STRESS 105
-//设备地址(可下发可上报)
-//备注:mesh设备地址
-#define DPID_ADDR 106
-//设备地址结束值(可下发可上报)
-//备注:设备地址结束值
-#define DPID_ADDREND 107
-//设备群组(可下发可上报)
-//备注:mesh群组
-#define DPID_GROUP 108
-//调试字串(只上报)
-//备注:调试用字串
-#define DPID_DEBUG 109
-//测试开关0(可下发可上报)
-//备注:
-//#define DPID_TEST_BN0 110
-//测试开关1(可下发可上报)
-//备注:
-//#define DPID_TEST_BN1 111
-//测试开关2(可下发可上报)
-//备注:
-//#define DPID_TEST_BN2 112
 //灯开关(可下发可上报)
-//备注:灯开关，默认的为模块复位触发开关
+//备注:
 #define DPID_SWITCH_LED2 113
-//联动 (可下发可上报)
-//备注:mesh联动开关
+//联动(可下发可上报)
+//备注:
 #define DPID_SWITCH_LINKAGE 114
 
 

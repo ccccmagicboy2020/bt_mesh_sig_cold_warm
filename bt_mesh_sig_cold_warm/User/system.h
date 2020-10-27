@@ -1,18 +1,18 @@
 /****************************************Copyright (c)*************************
-**                               °æÈ¨ËùÓĞ (C), 2015-2017, Í¿Ñ»¿Æ¼¼
+**                               ç‰ˆæƒæ‰€æœ‰ (C), 2015-2017, æ¶‚é¸¦ç§‘æŠ€
 **
 **                                 http://www.tuya.com
 **
-**--------------ÎÄ¼şĞÅÏ¢-------------------------------------------------------
-**ÎÄ   ¼ş   Ãû: system.c
-**Ãè        Êö: bluetoothÊı¾İ´¦Àíº¯Êı
-**Ê¹ ÓÃ Ëµ Ã÷ : ÓÃ»§ÎŞĞè¹ØĞÄ¸ÃÎÄ¼şÊµÏÖÄÚÈİ
+**--------------æ–‡ä»¶ä¿¡æ¯-------------------------------------------------------
+**æ–‡   ä»¶   å: system.c
+**æ        è¿°: bluetoothæ•°æ®å¤„ç†å‡½æ•°
+**ä½¿ ç”¨ è¯´ æ˜ : ç”¨æˆ·æ— éœ€å…³å¿ƒè¯¥æ–‡ä»¶å®ç°å†…å®¹
 **
 **
-**--------------µ±Ç°°æ±¾ĞŞ¶©---------------------------------------------------
-** °æ  ±¾: v1.0
-** ÈÕ¡¡ÆÚ: 2017Äê5ÔÂ3ÈÕ
-** Ãè¡¡Êö: 1:´´½¨Í¿Ñ»bluetooth¶Ô½ÓMCU_SDK
+**--------------å½“å‰ç‰ˆæœ¬ä¿®è®¢---------------------------------------------------
+** ç‰ˆ  æœ¬: v1.0
+** æ—¥ã€€æœŸ: 2017å¹´5æœˆ3æ—¥
+** æã€€è¿°: 1:åˆ›å»ºæ¶‚é¸¦bluetoothå¯¹æ¥MCU_SDK
 **
 **-----------------------------------------------------------------------------
 ******************************************************************************/
@@ -26,7 +26,7 @@
 #endif
 
 //=============================================================================
-//Ö¡µÄ×Ö½ÚË³Ğò
+//å¸§çš„å­—èŠ‚é¡ºåº
 //=============================================================================
 #define         HEAD_FIRST                      0
 #define         HEAD_SECOND                     1        
@@ -37,30 +37,30 @@
 #define         DATA_START                      6
 
 //=============================================================================
-//Êı¾İÖ¡ÀàĞÍ
+//æ•°æ®å¸§ç±»å‹
 //=============================================================================
-#define         HEAT_BEAT_CMD                   0                               //ĞÄÌø°ü
-#define         PRODUCT_INFO_CMD                1                               //²úÆ·ĞÅÏ¢
-#define         WORK_MODE_CMD                   2                               //²éÑ¯MCU Éè¶¨µÄÄ£¿é¹¤×÷Ä£Ê½	
-#define         BT_STATE_CMD                    3                               //bluetooth¹¤×÷×´Ì¬	
-#define         BT_RESET_CMD                    4                               //ÖØÖÃbluetooth
-#define         DATA_QUERT_CMD                  6                               //ÃüÁîÏÂ·¢
-#define         STATE_UPLOAD_CMD                7                               //×´Ì¬ÉÏ±¨	 
-#define         STATE_QUERY_CMD                 8                               //×´Ì¬²éÑ¯   
-//#define         UPDATE_START_CMD                0x0a                            //Éı¼¶¿ªÊ¼
-//#define         UPDATE_TRANS_CMD                0x0b                            //Éı¼¶´«Êä
-#define         BT_MESH_CMD                0xB2                            //MESH´«Êä
-#define         BT_Check_meshgroup         0xB4                            //²éÑ¯Èº×éµØÖ·
+#define         HEAT_BEAT_CMD                   0                               //å¿ƒè·³åŒ…
+#define         PRODUCT_INFO_CMD                1                               //äº§å“ä¿¡æ¯
+#define         WORK_MODE_CMD                   2                               //æŸ¥è¯¢MCU è®¾å®šçš„æ¨¡å—å·¥ä½œæ¨¡å¼	
+#define         BT_STATE_CMD                    3                               //bluetoothå·¥ä½œçŠ¶æ€	
+#define         BT_RESET_CMD                    4                               //é‡ç½®bluetooth
+#define         DATA_QUERT_CMD                  6                               //å‘½ä»¤ä¸‹å‘
+#define         STATE_UPLOAD_CMD                7                               //çŠ¶æ€ä¸ŠæŠ¥	 
+#define         STATE_QUERY_CMD                 8                               //çŠ¶æ€æŸ¥è¯¢   
+//#define         UPDATE_START_CMD                0x0a                            //å‡çº§å¼€å§‹
+//#define         UPDATE_TRANS_CMD                0x0b                            //å‡çº§ä¼ è¾“
+#define         BT_MESH_CMD                0xB2                            //MESHä¼ è¾“
+#define         BT_Check_meshgroup         0xB4                            //æŸ¥è¯¢ç¾¤ç»„åœ°å€
 //=============================================================================
-#define         VERSION                 0x00                                            //Ğ­Òé°æ±¾ºÅ
-#define         PROTOCOL_HEAD           0x07                                            //¹Ì¶¨Ğ­ÒéÍ·³¤¶È
-//#define         FIRM_UPDATA_SIZE        256                                            //Éı¼¶°ü´óĞ¡
+#define         VERSION                 0x00                                            //åè®®ç‰ˆæœ¬å·
+#define         PROTOCOL_HEAD           0x07                                            //å›ºå®šåè®®å¤´é•¿åº¦
+//#define         FIRM_UPDATA_SIZE        256                                            //å‡çº§åŒ…å¤§å°
 #define         FRAME_FIRST             0x55
 #define         FRAME_SECOND            0xaa
 //============================================================================= 
-SYSTEM_EXTERN unsigned char  volatile  xdata bt_queue_buf[PROTOCOL_HEAD + BT_UART_QUEUE_LMT];  //´®¿Ú¶ÓÁĞ»º´æ
-SYSTEM_EXTERN unsigned char xdata  bt_uart_rx_buf[PROTOCOL_HEAD + BT_UART_RECV_BUF_LMT];         //´®¿Ú½ÓÊÕ»º´æ
-SYSTEM_EXTERN unsigned char  xdata bt_uart_tx_buf[PROTOCOL_HEAD + BT_UART_SEND_BUF_LMT];        //´®¿Ú·¢ËÍ»º´æ
+SYSTEM_EXTERN unsigned char  volatile  xdata bt_queue_buf[PROTOCOL_HEAD + BT_UART_QUEUE_LMT];  //ä¸²å£é˜Ÿåˆ—ç¼“å­˜
+SYSTEM_EXTERN unsigned char xdata  bt_uart_rx_buf[PROTOCOL_HEAD + BT_UART_RECV_BUF_LMT];         //ä¸²å£æ¥æ”¶ç¼“å­˜
+SYSTEM_EXTERN unsigned char  xdata bt_uart_tx_buf[PROTOCOL_HEAD + BT_UART_SEND_BUF_LMT];        //ä¸²å£å‘é€ç¼“å­˜
 //
 SYSTEM_EXTERN volatile unsigned char *queue_in;
 SYSTEM_EXTERN volatile unsigned char *queue_out;
@@ -68,71 +68,71 @@ SYSTEM_EXTERN volatile unsigned char *queue_out;
 SYSTEM_EXTERN unsigned char  xdata stop_update_flag;
 
 #ifndef BT_CONTROL_SELF_MODE
-SYSTEM_EXTERN unsigned char xdata reset_bt_flag;                                                  //ÖØÖÃbt±êÖ¾(TRUE:³É¹¦/FALSE:Ê§°Ü)
-SYSTEM_EXTERN unsigned char xdata set_btmode_flag;                                                //ÉèÖÃbluetooth¹¤×÷Ä£Ê½±êÖ¾(TRUE:³É¹¦/FALSE:Ê§°Ü)
-SYSTEM_EXTERN unsigned char xdata bt_work_state;                                                  //btÄ£¿éµ±Ç°¹¤×÷×´Ì¬
+SYSTEM_EXTERN unsigned char xdata reset_bt_flag;                                                  //é‡ç½®btæ ‡å¿—(TRUE:æˆåŠŸ/FALSE:å¤±è´¥)
+SYSTEM_EXTERN unsigned char xdata set_btmode_flag;                                                //è®¾ç½®bluetoothå·¥ä½œæ¨¡å¼æ ‡å¿—(TRUE:æˆåŠŸ/FALSE:å¤±è´¥)
+SYSTEM_EXTERN unsigned char xdata bt_work_state;                                                  //btæ¨¡å—å½“å‰å·¥ä½œçŠ¶æ€
 #endif
 
 
 /*****************************************************************************
-º¯ÊıÃû³Æ : set_bt_uart_byte
-¹¦ÄÜÃèÊö : Ğ´bt_uart×Ö½Ú
-ÊäÈë²ÎÊı : dest:»º´æÇøÆäÊµµØÖ·;
-           byte:Ğ´Èë×Ö½ÚÖµ
-·µ»Ø²ÎÊı : Ğ´ÈëÍê³ÉºóµÄ×Ü³¤¶È
+å‡½æ•°åç§° : set_bt_uart_byte
+åŠŸèƒ½æè¿° : å†™bt_uartå­—èŠ‚
+è¾“å…¥å‚æ•° : dest:ç¼“å­˜åŒºå…¶å®åœ°å€;
+           byte:å†™å…¥å­—èŠ‚å€¼
+è¿”å›å‚æ•° : å†™å…¥å®Œæˆåçš„æ€»é•¿åº¦
 *****************************************************************************/
 unsigned short set_bt_uart_byte(unsigned short dest, unsigned char byte);
 
 /*****************************************************************************
-º¯ÊıÃû³Æ : set_bt_uart_buffer
-¹¦ÄÜÃèÊö : Ğ´bt_uart_buffer
-ÊäÈë²ÎÊı : dest:Ä¿±êµØÖ·
-           src:Ô´µØÖ·
-           len:Êı¾İ³¤¶È
-·µ»Ø²ÎÊı : ÎŞ
+å‡½æ•°åç§° : set_bt_uart_buffer
+åŠŸèƒ½æè¿° : å†™bt_uart_buffer
+è¾“å…¥å‚æ•° : dest:ç›®æ ‡åœ°å€
+           src:æºåœ°å€
+           len:æ•°æ®é•¿åº¦
+è¿”å›å‚æ•° : æ— 
 *****************************************************************************/
 unsigned short set_bt_uart_buffer(unsigned short dest, unsigned char *src, unsigned short len);
 
 /*****************************************************************************
-º¯ÊıÃû³Æ : bt_uart_write_frame
-¹¦ÄÜÃèÊö : Ïòbt´®¿Ú·¢ËÍÒ»Ö¡Êı¾İ
-ÊäÈë²ÎÊı : fr_type:Ö¡ÀàĞÍ
-           len:Êı¾İ³¤¶È
-·µ»Ø²ÎÊı : ÎŞ
+å‡½æ•°åç§° : bt_uart_write_frame
+åŠŸèƒ½æè¿° : å‘btä¸²å£å‘é€ä¸€å¸§æ•°æ®
+è¾“å…¥å‚æ•° : fr_type:å¸§ç±»å‹
+           len:æ•°æ®é•¿åº¦
+è¿”å›å‚æ•° : æ— 
 *****************************************************************************/
 void bt_uart_write_frame(unsigned char fr_type, unsigned short len);
 void bt_uart_mesh_write_frame(unsigned char fr_type, unsigned short len);
 
 /*****************************************************************************
-º¯ÊıÃû³Æ : get_check_sum
-¹¦ÄÜÃèÊö : ¼ÆËãĞ£ÑéºÍ
-ÊäÈë²ÎÊı : pack:Êı¾İÔ´Ö¸Õë
-           pack_len:¼ÆËãĞ£ÑéºÍ³¤¶È
-·µ»Ø²ÎÊı : Ğ£ÑéºÍ
+å‡½æ•°åç§° : get_check_sum
+åŠŸèƒ½æè¿° : è®¡ç®—æ ¡éªŒå’Œ
+è¾“å…¥å‚æ•° : pack:æ•°æ®æºæŒ‡é’ˆ
+           pack_len:è®¡ç®—æ ¡éªŒå’Œé•¿åº¦
+è¿”å›å‚æ•° : æ ¡éªŒå’Œ
 *****************************************************************************/
 unsigned char get_check_sum(unsigned char *pack, unsigned short pack_len);
 
 /*****************************************************************************
-º¯ÊıÃû³Æ : data_handle
-¹¦ÄÜÃèÊö : Êı¾İÖ¡´¦Àí
-ÊäÈë²ÎÊı : offset:Êı¾İÆğÊ¼Î»
-·µ»Ø²ÎÊı : ÎŞ
+å‡½æ•°åç§° : data_handle
+åŠŸèƒ½æè¿° : æ•°æ®å¸§å¤„ç†
+è¾“å…¥å‚æ•° : offset:æ•°æ®èµ·å§‹ä½
+è¿”å›å‚æ•° : æ— 
 *****************************************************************************/
 void data_handle(unsigned short offset);
 
 /*****************************************************************************
-º¯ÊıÃû³Æ : get_queue_total_data
-¹¦ÄÜÃèÊö : ¶ÁÈ¡¶ÓÁĞÄÚÊı¾İ
-ÊäÈë²ÎÊı : ÎŞ
-·µ»Ø²ÎÊı : ÎŞ
+å‡½æ•°åç§° : get_queue_total_data
+åŠŸèƒ½æè¿° : è¯»å–é˜Ÿåˆ—å†…æ•°æ®
+è¾“å…¥å‚æ•° : æ— 
+è¿”å›å‚æ•° : æ— 
 *****************************************************************************/
 unsigned char get_queue_total_data(void);
 
 /*****************************************************************************
-º¯ÊıÃû³Æ : Queue_Read_Byte
-¹¦ÄÜÃèÊö : ¶ÁÈ¡¶ÓÁĞ1×Ö½ÚÊı¾İ
-ÊäÈë²ÎÊı : ÎŞ
-·µ»Ø²ÎÊı : ÎŞ
+å‡½æ•°åç§° : Queue_Read_Byte
+åŠŸèƒ½æè¿° : è¯»å–é˜Ÿåˆ—1å­—èŠ‚æ•°æ®
+è¾“å…¥å‚æ•° : æ— 
+è¿”å›å‚æ•° : æ— 
 *****************************************************************************/
 unsigned char Queue_Read_Byte(void);
 

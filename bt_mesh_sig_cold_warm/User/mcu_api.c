@@ -1,18 +1,18 @@
 /****************************************Copyright (c)*************************
-**                               °æÈ¨ËùÓĞ (C), 2015-2017, Í¿Ñ»¿Æ¼¼
+**                               ç‰ˆæƒæ‰€æœ‰ (C), 2015-2017, æ¶‚é¸¦ç§‘æŠ€
 **
 **                                 http://www.tuya.com
 **
-**--------------ÎÄ¼şĞÅÏ¢-------------------------------------------------------
-**ÎÄ   ¼ş   Ãû: mcu_api.c
-**Ãè        Êö: ÏÂ·¢/ÉÏ±¨Êı¾İ´¦Àíº¯Êı
-**Ê¹ ÓÃ Ëµ Ã÷ : ´ËÎÄ¼şÏÂº¯ÊıÎŞĞëÓÃ»§ĞŞ¸Ä,ÓÃ»§ĞèÒªµ÷ÓÃµÄÎÄ¼ş¶¼ÔÚ¸ÃÎÄ¼şÄÚ
+**--------------æ–‡ä»¶ä¿¡æ¯-------------------------------------------------------
+**æ–‡   ä»¶   å: mcu_api.c
+**æ        è¿°: ä¸‹å‘/ä¸ŠæŠ¥æ•°æ®å¤„ç†å‡½æ•°
+**ä½¿ ç”¨ è¯´ æ˜ : æ­¤æ–‡ä»¶ä¸‹å‡½æ•°æ— é¡»ç”¨æˆ·ä¿®æ”¹,ç”¨æˆ·éœ€è¦è°ƒç”¨çš„æ–‡ä»¶éƒ½åœ¨è¯¥æ–‡ä»¶å†…
 **
 **
-**--------------µ±Ç°°æ±¾ĞŞ¶©---------------------------------------------------
-** °æ  ±¾: v1.0
-** ÈÕ¡¡ÆÚ: 2017Äê5ÔÂ3ÈÕ
-** Ãè¡¡Êö: 1:´´½¨Í¿Ñ»bluetooth¶Ô½ÓMCU_SDK
+**--------------å½“å‰ç‰ˆæœ¬ä¿®è®¢---------------------------------------------------
+** ç‰ˆ  æœ¬: v1.0
+** æ—¥ã€€æœŸ: 2017å¹´5æœˆ3æ—¥
+** æã€€è¿°: 1:åˆ›å»ºæ¶‚é¸¦bluetoothå¯¹æ¥MCU_SDK
 **
 **-----------------------------------------------------------------------------
 ******************************************************************************/
@@ -21,10 +21,10 @@
 #include "bluetooth.h"
 
 /*****************************************************************************
-º¯ÊıÃû³Æ : hex_to_bcd
-¹¦ÄÜÃèÊö : hex×ªbcd
-ÊäÈë²ÎÊı : Value_H:¸ß×Ö½Ú/Value_L:µÍ×Ö½Ú
-·µ»Ø²ÎÊı : bcd_value:×ª»»Íê³ÉºóÊı¾İ
+å‡½æ•°åç§° : hex_to_bcd
+åŠŸèƒ½æè¿° : hexè½¬bcd
+è¾“å…¥å‚æ•° : Value_H:é«˜å­—èŠ‚/Value_L:ä½å­—èŠ‚
+è¿”å›å‚æ•° : bcd_value:è½¬æ¢å®Œæˆåæ•°æ®
 *****************************************************************************/
 unsigned char hex_to_bcd(unsigned char Value_H,unsigned char Value_L)
 {
@@ -52,10 +52,10 @@ unsigned char hex_to_bcd(unsigned char Value_H,unsigned char Value_L)
   return bcd_value;
 }
 /*****************************************************************************
-º¯ÊıÃû³Æ : my_strlen
-¹¦ÄÜÃèÊö : Çó×Ö·û´®³¤¶È
-ÊäÈë²ÎÊı : src:Ô´µØÖ·
-·µ»Ø²ÎÊı : len:Êı¾İ³¤¶È
+å‡½æ•°åç§° : my_strlen
+åŠŸèƒ½æè¿° : æ±‚å­—ç¬¦ä¸²é•¿åº¦
+è¾“å…¥å‚æ•° : src:æºåœ°å€
+è¿”å›å‚æ•° : len:æ•°æ®é•¿åº¦
 *****************************************************************************/
 unsigned long my_strlen(unsigned char *str)  
 {
@@ -73,12 +73,12 @@ unsigned long my_strlen(unsigned char *str)
   return len;
 }
 /*****************************************************************************
-º¯ÊıÃû³Æ : my_memset
-¹¦ÄÜÃèÊö : °ÑsrcËùÖ¸ÄÚ´æÇøÓòµÄÇ°count¸ö×Ö½ÚÉèÖÃ³É×Ö·ûc
-ÊäÈë²ÎÊı : src:Ô´µØÖ·
-           ch:ÉèÖÃ×Ö·û
-           count:ÉèÖÃÊı¾İ³¤¶È
-·µ»Ø²ÎÊı : src:Êı¾İ´¦ÀíÍêºóµÄÔ´µØÖ·
+å‡½æ•°åç§° : my_memset
+åŠŸèƒ½æè¿° : æŠŠsrcæ‰€æŒ‡å†…å­˜åŒºåŸŸçš„å‰countä¸ªå­—èŠ‚è®¾ç½®æˆå­—ç¬¦c
+è¾“å…¥å‚æ•° : src:æºåœ°å€
+           ch:è®¾ç½®å­—ç¬¦
+           count:è®¾ç½®æ•°æ®é•¿åº¦
+è¿”å›å‚æ•° : src:æ•°æ®å¤„ç†å®Œåçš„æºåœ°å€
 *****************************************************************************/
 void *my_memset(void *src,unsigned char ch,unsigned short count)
 {
@@ -97,12 +97,12 @@ void *my_memset(void *src,unsigned char ch,unsigned short count)
   return src;
 }
 /*****************************************************************************
-º¯ÊıÃû³Æ : mymemcpy
-¹¦ÄÜÃèÊö : ÄÚ´æ¿½±´
-ÊäÈë²ÎÊı : dest:Ä¿±êµØÖ·
-           src:Ô´µØÖ·
-           count:Êı¾İ¿½±´ÊıÁ¿
-·µ»Ø²ÎÊı : src:Êı¾İ´¦ÀíÍêºóµÄÔ´µØÖ·
+å‡½æ•°åç§° : mymemcpy
+åŠŸèƒ½æè¿° : å†…å­˜æ‹·è´
+è¾“å…¥å‚æ•° : dest:ç›®æ ‡åœ°å€
+           src:æºåœ°å€
+           count:æ•°æ®æ‹·è´æ•°é‡
+è¿”å›å‚æ•° : src:æ•°æ®å¤„ç†å®Œåçš„æºåœ°å€
 *****************************************************************************/
 void *my_memcpy(void *dest, const void *src, unsigned short count)  
 {  
@@ -133,10 +133,10 @@ void *my_memcpy(void *dest, const void *src, unsigned short count)
   return dest;  
 }
 /*****************************************************************************
-º¯ÊıÃû³Æ : int_to_byte
-¹¦ÄÜÃèÊö : ½«intÀàĞÍ²ğ·ÖËÄ¸ö×Ö½Ú
-ÊäÈë²ÎÊı : number:4×Ö½ÚÔ­Êı¾İ;value:´¦ÀíÍê³Éºó4×Ö½ÚÊı¾İ
-·µ»Ø²ÎÊı :ÎŞ
+å‡½æ•°åç§° : int_to_byte
+åŠŸèƒ½æè¿° : å°†intç±»å‹æ‹†åˆ†å››ä¸ªå­—èŠ‚
+è¾“å…¥å‚æ•° : number:4å­—èŠ‚åŸæ•°æ®;value:å¤„ç†å®Œæˆå4å­—èŠ‚æ•°æ®
+è¿”å›å‚æ•° :æ— 
 ****************************************************************************/
 void int_to_byte(unsigned long number,unsigned char value[4])
 {
@@ -146,10 +146,10 @@ void int_to_byte(unsigned long number,unsigned char value[4])
   value[3] = number & 0xff;
 }
 /*****************************************************************************
-º¯ÊıÃû³Æ : byte_to_int
-¹¦ÄÜÃèÊö : ½«4×Ö½ÚºÏ²¢Îª1¸ö32bit±äÁ¿
-ÊäÈë²ÎÊı : value:4×Ö½ÚÊı×é
-·µ»Ø²ÎÊı : number:ºÏ²¢Íê³ÉºóµÄ32bit±äÁ¿
+å‡½æ•°åç§° : byte_to_int
+åŠŸèƒ½æè¿° : å°†4å­—èŠ‚åˆå¹¶ä¸º1ä¸ª32bitå˜é‡
+è¾“å…¥å‚æ•° : value:4å­—èŠ‚æ•°ç»„
+è¿”å›å‚æ•° : number:åˆå¹¶å®Œæˆåçš„32bitå˜é‡
 ****************************************************************************/
 unsigned long byte_to_int(const unsigned char value[4])
 {
@@ -167,24 +167,24 @@ unsigned long byte_to_int(const unsigned char value[4])
 }
 #ifndef BT_CONTROL_SELF_MODE
 /*****************************************************************************
-º¯ÊıÃû³Æ : mcu_get_reset_bt_flag
-¹¦ÄÜÃèÊö : MCU»ñÈ¡¸´Î»bt³É¹¦±êÖ¾
-ÊäÈë²ÎÊı : ÎŞ
-·µ»Ø²ÎÊı : ¸´Î»±êÖ¾:RESET_BT_ERROR:Ê§°Ü/RESET_BT_SUCCESS:³É¹¦
-Ê¹ÓÃËµÃ÷ : 1:MCUÖ÷¶¯µ÷ÓÃmcu_reset_bt()ºóµ÷ÓÃ¸Ãº¯Êı»ñÈ¡¸´Î»×´Ì¬
-           2:Èç¹ûÎªÄ£¿é×Ô´¦ÀíÄ£Ê½,MCUÎŞĞëµ÷ÓÃ¸Ãº¯Êı
+å‡½æ•°åç§° : mcu_get_reset_bt_flag
+åŠŸèƒ½æè¿° : MCUè·å–å¤ä½btæˆåŠŸæ ‡å¿—
+è¾“å…¥å‚æ•° : æ— 
+è¿”å›å‚æ•° : å¤ä½æ ‡å¿—:RESET_BT_ERROR:å¤±è´¥/RESET_BT_SUCCESS:æˆåŠŸ
+ä½¿ç”¨è¯´æ˜ : 1:MCUä¸»åŠ¨è°ƒç”¨mcu_reset_bt()åè°ƒç”¨è¯¥å‡½æ•°è·å–å¤ä½çŠ¶æ€
+           2:å¦‚æœä¸ºæ¨¡å—è‡ªå¤„ç†æ¨¡å¼,MCUæ— é¡»è°ƒç”¨è¯¥å‡½æ•°
 *****************************************************************************/
 unsigned char mcu_get_reset_bt_flag(void)
 {
   return reset_bt_flag;
 }
 /*****************************************************************************
-º¯ÊıÃû³Æ : mcu_reset_bt
-¹¦ÄÜÃèÊö : MCUÖ÷¶¯ÖØÖÃbt¹¤×÷Ä£Ê½
-ÊäÈë²ÎÊı : ÎŞ
-·µ»Ø²ÎÊı : ÎŞ
-Ê¹ÓÃËµÃ÷ : 1:MCUÖ÷¶¯µ÷ÓÃ,Í¨¹ımcu_get_reset_bt_flag()º¯Êı»ñÈ¡ÖØÖÃbtÊÇ·ñ³É¹¦
-           2:Èç¹ûÎªÄ£¿é×Ô´¦ÀíÄ£Ê½,MCUÎŞĞëµ÷ÓÃ¸Ãº¯Êı
+å‡½æ•°åç§° : mcu_reset_bt
+åŠŸèƒ½æè¿° : MCUä¸»åŠ¨é‡ç½®btå·¥ä½œæ¨¡å¼
+è¾“å…¥å‚æ•° : æ— 
+è¿”å›å‚æ•° : æ— 
+ä½¿ç”¨è¯´æ˜ : 1:MCUä¸»åŠ¨è°ƒç”¨,é€šè¿‡mcu_get_reset_bt_flag()å‡½æ•°è·å–é‡ç½®btæ˜¯å¦æˆåŠŸ
+           2:å¦‚æœä¸ºæ¨¡å—è‡ªå¤„ç†æ¨¡å¼,MCUæ— é¡»è°ƒç”¨è¯¥å‡½æ•°
 *****************************************************************************/
 void mcu_reset_bt(void)
 {
@@ -193,14 +193,14 @@ void mcu_reset_bt(void)
   bt_uart_write_frame(BT_RESET_CMD, 0);
 }
 /*****************************************************************************
-º¯ÊıÃû³Æ : mcu_get_bt_work_state
-¹¦ÄÜÃèÊö : MCUÖ÷¶¯»ñÈ¡µ±Ç°bt¹¤×÷×´Ì¬
-ÊäÈë²ÎÊı : ÎŞ
-·µ»Ø²ÎÊı : BT_WORK_SATE_E:
-            BT_UN_BIND:À¶ÑÀÎ´°ó¶¨
-            BT_UNCONNECT:À¶ÑÀÒÑ°ó¶¨Î´Á¬½Ó
-            BT_CONNECTED:À¶ÑÀÒÑ°ó¶¨²¢ÒÑÁ¬½Ó
-Ê¹ÓÃËµÃ÷ : ÎŞ
+å‡½æ•°åç§° : mcu_get_bt_work_state
+åŠŸèƒ½æè¿° : MCUä¸»åŠ¨è·å–å½“å‰btå·¥ä½œçŠ¶æ€
+è¾“å…¥å‚æ•° : æ— 
+è¿”å›å‚æ•° : BT_WORK_SATE_E:
+            BT_UN_BIND:è“ç‰™æœªç»‘å®š
+            BT_UNCONNECT:è“ç‰™å·²ç»‘å®šæœªè¿æ¥
+            BT_CONNECTED:è“ç‰™å·²ç»‘å®šå¹¶å·²è¿æ¥
+ä½¿ç”¨è¯´æ˜ : æ— 
 *****************************************************************************/
 unsigned char mcu_get_bt_work_state(void)
 {
@@ -209,12 +209,12 @@ unsigned char mcu_get_bt_work_state(void)
 #endif
 
 /*****************************************************************************
-º¯ÊıÃû³Æ : mcu_dp_raw_update
-¹¦ÄÜÃèÊö : rawĞÍdpÊı¾İÉÏ´«
-ÊäÈë²ÎÊı : dpid:idºÅ
-           value:µ±Ç°dpÖµÖ¸Õë
-           len:Êı¾İ³¤¶È
-·µ»Ø²ÎÊı : ÎŞ
+å‡½æ•°åç§° : mcu_dp_raw_update
+åŠŸèƒ½æè¿° : rawå‹dpæ•°æ®ä¸Šä¼ 
+è¾“å…¥å‚æ•° : dpid:idå·
+           value:å½“å‰dpå€¼æŒ‡é’ˆ
+           len:æ•°æ®é•¿åº¦
+è¿”å›å‚æ•° : æ— 
 *****************************************************************************/
 unsigned char mcu_dp_raw_update(unsigned char dpid,const unsigned char value[],unsigned short len)
 {
@@ -236,11 +236,11 @@ unsigned char mcu_dp_raw_update(unsigned char dpid,const unsigned char value[],u
   return SUCCESS;
 }
 /*****************************************************************************
-º¯ÊıÃû³Æ : mcu_dp_bool_update
-¹¦ÄÜÃèÊö : boolĞÍdpÊı¾İÉÏ´«
-ÊäÈë²ÎÊı : dpid:idºÅ
-           value:µ±Ç°dpÖµ
-·µ»Ø²ÎÊı : ÎŞ
+å‡½æ•°åç§° : mcu_dp_bool_update
+åŠŸèƒ½æè¿° : boolå‹dpæ•°æ®ä¸Šä¼ 
+è¾“å…¥å‚æ•° : dpid:idå·
+           value:å½“å‰dpå€¼
+è¿”å›å‚æ•° : æ— 
 *****************************************************************************/
 unsigned char mcu_dp_bool_update(unsigned char dpid,unsigned char value)
 {
@@ -399,11 +399,11 @@ unsigned char mcu_dp_enum_mesh_update(unsigned char dpid,unsigned char value,uns
 
 
 /*****************************************************************************
-º¯ÊıÃû³Æ : mcu_dp_value_update
-¹¦ÄÜÃèÊö : valueĞÍdpÊı¾İÉÏ´«
-ÊäÈë²ÎÊı : dpid:idºÅ
-           value:µ±Ç°dpÖµ
-·µ»Ø²ÎÊı : ÎŞ
+å‡½æ•°åç§° : mcu_dp_value_update
+åŠŸèƒ½æè¿° : valueå‹dpæ•°æ®ä¸Šä¼ 
+è¾“å…¥å‚æ•° : dpid:idå·
+           value:å½“å‰dpå€¼
+è¿”å›å‚æ•° : æ— 
 *****************************************************************************/
 unsigned char mcu_dp_value_update(unsigned char dpid,unsigned long value)
 {
@@ -481,12 +481,12 @@ unsigned char mcu_dp_value_mesh_update(unsigned char dpid,unsigned long value,un
 
 
 /*****************************************************************************
-º¯ÊıÃû³Æ : mcu_dp_string_update
-¹¦ÄÜÃèÊö : rstringĞÍdpÊı¾İÉÏ´«
-ÊäÈë²ÎÊı : dpid:idºÅ
-           value:µ±Ç°dpÖµÖ¸Õë
-           len:Êı¾İ³¤¶È
-·µ»Ø²ÎÊı : ÎŞ
+å‡½æ•°åç§° : mcu_dp_string_update
+åŠŸèƒ½æè¿° : rstringå‹dpæ•°æ®ä¸Šä¼ 
+è¾“å…¥å‚æ•° : dpid:idå·
+           value:å½“å‰dpå€¼æŒ‡é’ˆ
+           len:æ•°æ®é•¿åº¦
+è¿”å›å‚æ•° : æ— 
 *****************************************************************************/
 unsigned char mcu_dp_string_update(unsigned char dpid,const unsigned char value[],unsigned short len)
 {
@@ -508,11 +508,11 @@ unsigned char mcu_dp_string_update(unsigned char dpid,const unsigned char value[
   return SUCCESS;
 }
 /*****************************************************************************
-º¯ÊıÃû³Æ : mcu_dp_enum_update
-¹¦ÄÜÃèÊö : enumĞÍdpÊı¾İÉÏ´«
-ÊäÈë²ÎÊı : dpid:idºÅ
-           value:µ±Ç°dpÖµ
-·µ»Ø²ÎÊı : ÎŞ
+å‡½æ•°åç§° : mcu_dp_enum_update
+åŠŸèƒ½æè¿° : enumå‹dpæ•°æ®ä¸Šä¼ 
+è¾“å…¥å‚æ•° : dpid:idå·
+           value:å½“å‰dpå€¼
+è¿”å›å‚æ•° : æ— 
 *****************************************************************************/
 unsigned char mcu_dp_enum_update(unsigned char dpid,unsigned char value)
 {
@@ -534,11 +534,11 @@ unsigned char mcu_dp_enum_update(unsigned char dpid,unsigned char value)
   return SUCCESS;
 }
 /*****************************************************************************
-º¯ÊıÃû³Æ : mcu_dp_fault_update
-¹¦ÄÜÃèÊö : faultĞÍdpÊı¾İÉÏ´«
-ÊäÈë²ÎÊı : dpid:idºÅ
-           value:µ±Ç°dpÖµ
-·µ»Ø²ÎÊı : ÎŞ
+å‡½æ•°åç§° : mcu_dp_fault_update
+åŠŸèƒ½æè¿° : faultå‹dpæ•°æ®ä¸Šä¼ 
+è¾“å…¥å‚æ•° : dpid:idå·
+           value:å½“å‰dpå€¼
+è¿”å›å‚æ•° : æ— 
 *****************************************************************************/
 unsigned char mcu_dp_fault_update(unsigned char dpid,unsigned long value)
 {
@@ -577,11 +577,11 @@ unsigned char mcu_dp_fault_update(unsigned char dpid,unsigned long value)
   return SUCCESS;
 }
 /*****************************************************************************
-º¯ÊıÃû³Æ : mcu_get_dp_download_bool
-¹¦ÄÜÃèÊö : mcu»ñÈ¡boolĞÍÏÂ·¢dpÖµ
-ÊäÈë²ÎÊı : value:dpÊı¾İ»º³åÇøµØÖ·
-           length:dpÊı¾İ³¤¶È
-·µ»Ø²ÎÊı : bool:µ±Ç°dpÖµ
+å‡½æ•°åç§° : mcu_get_dp_download_bool
+åŠŸèƒ½æè¿° : mcuè·å–boolå‹ä¸‹å‘dpå€¼
+è¾“å…¥å‚æ•° : value:dpæ•°æ®ç¼“å†²åŒºåœ°å€
+           length:dpæ•°æ®é•¿åº¦
+è¿”å›å‚æ•° : bool:å½“å‰dpå€¼
 *****************************************************************************/
 unsigned char mcu_get_dp_download_bool(const unsigned char value[],unsigned short len)
 {
@@ -590,11 +590,11 @@ unsigned char mcu_get_dp_download_bool(const unsigned char value[],unsigned shor
   return(value[0]);
 }
 /*****************************************************************************
-º¯ÊıÃû³Æ : mcu_get_dp_download_enum
-¹¦ÄÜÃèÊö : mcu»ñÈ¡enumĞÍÏÂ·¢dpÖµ
-ÊäÈë²ÎÊı : value:dpÊı¾İ»º³åÇøµØÖ·
-           length:dpÊı¾İ³¤¶È
-·µ»Ø²ÎÊı : enum:µ±Ç°dpÖµ
+å‡½æ•°åç§° : mcu_get_dp_download_enum
+åŠŸèƒ½æè¿° : mcuè·å–enumå‹ä¸‹å‘dpå€¼
+è¾“å…¥å‚æ•° : value:dpæ•°æ®ç¼“å†²åŒºåœ°å€
+           length:dpæ•°æ®é•¿åº¦
+è¿”å›å‚æ•° : enum:å½“å‰dpå€¼
 *****************************************************************************/
 unsigned char mcu_get_dp_download_enum(const unsigned char value[],unsigned short len)
 {
@@ -603,11 +603,11 @@ unsigned char mcu_get_dp_download_enum(const unsigned char value[],unsigned shor
   return(value[0]);
 }
 /*****************************************************************************
-º¯ÊıÃû³Æ : mcu_get_dp_download_value
-¹¦ÄÜÃèÊö : mcu»ñÈ¡valueĞÍÏÂ·¢dpÖµ
-ÊäÈë²ÎÊı : value:dpÊı¾İ»º³åÇøµØÖ·
-           length:dpÊı¾İ³¤¶È
-·µ»Ø²ÎÊı : value:µ±Ç°dpÖµ
+å‡½æ•°åç§° : mcu_get_dp_download_value
+åŠŸèƒ½æè¿° : mcuè·å–valueå‹ä¸‹å‘dpå€¼
+è¾“å…¥å‚æ•° : value:dpæ•°æ®ç¼“å†²åŒºåœ°å€
+           length:dpæ•°æ®é•¿åº¦
+è¿”å›å‚æ•° : value:å½“å‰dpå€¼
 *****************************************************************************/
 unsigned long mcu_get_dp_download_value(const unsigned char value[],unsigned short len)
 {
@@ -616,25 +616,25 @@ unsigned long mcu_get_dp_download_value(const unsigned char value[],unsigned sho
   return(byte_to_int(value));
 }
 /*****************************************************************************
-º¯ÊıÃû³Æ : uart_receive_input
-¹¦ÄÜÃèÊö : ÊÕÊı¾İ´¦Àí
-ÊäÈë²ÎÊı : value:´®¿ÚÊÕµ½×Ö½ÚÊı¾İ
-·µ»Ø²ÎÊı : ÎŞ
-Ê¹ÓÃËµÃ÷ : ÔÚMCU´®¿Ú½ÓÊÕº¯ÊıÖĞµ÷ÓÃ¸Ãº¯Êı,²¢½«½ÓÊÕµ½µÄÊı¾İ×÷Îª²ÎÊı´«Èë
+å‡½æ•°åç§° : uart_receive_input
+åŠŸèƒ½æè¿° : æ”¶æ•°æ®å¤„ç†
+è¾“å…¥å‚æ•° : value:ä¸²å£æ”¶åˆ°å­—èŠ‚æ•°æ®
+è¿”å›å‚æ•° : æ— 
+ä½¿ç”¨è¯´æ˜ : åœ¨MCUä¸²å£æ¥æ”¶å‡½æ•°ä¸­è°ƒç”¨è¯¥å‡½æ•°,å¹¶å°†æ¥æ”¶åˆ°çš„æ•°æ®ä½œä¸ºå‚æ•°ä¼ å…¥
 *****************************************************************************/
 void uart_receive_input(unsigned char value)
 {
   if((queue_in > queue_out) && ((queue_in - queue_out) >= sizeof(bt_queue_buf)))
   {
-    //Êı¾İ¶ÓÁĞÂú
+    //æ•°æ®é˜Ÿåˆ—æ»¡
   }
   else if((queue_in < queue_out) && ((queue_out  - queue_in) == 0))
   {
-    //Êı¾İ¶ÓÁĞÂú
+    //æ•°æ®é˜Ÿåˆ—æ»¡
   }
   else
   {
-    //¶ÓÁĞ²»Âú
+    //é˜Ÿåˆ—ä¸æ»¡
     if(queue_in >= (unsigned char *)(bt_queue_buf + sizeof(bt_queue_buf)))
     {
       queue_in = (unsigned char *)(bt_queue_buf);
@@ -644,17 +644,17 @@ void uart_receive_input(unsigned char value)
   }
 }
 /*****************************************************************************
-º¯ÊıÃû³Æ  : bt_uart_service
-¹¦ÄÜÃèÊö  : bt´®¿Ú´¦Àí·şÎñ
-ÊäÈë²ÎÊı : ÎŞ
-·µ»Ø²ÎÊı : ÎŞ
-Ê¹ÓÃËµÃ÷ : ÔÚMCUÖ÷º¯ÊıwhileÑ­»·ÖĞµ÷ÓÃ¸Ãº¯Êı
+å‡½æ•°åç§°  : bt_uart_service
+åŠŸèƒ½æè¿°  : btä¸²å£å¤„ç†æœåŠ¡
+è¾“å…¥å‚æ•° : æ— 
+è¿”å›å‚æ•° : æ— 
+ä½¿ç”¨è¯´æ˜ : åœ¨MCUä¸»å‡½æ•°whileå¾ªç¯ä¸­è°ƒç”¨è¯¥å‡½æ•°
 *****************************************************************************/
 void bt_uart_service(void)
 {
   static unsigned short rx_in = 0;
   unsigned short offset = 0;
-  unsigned short rx_value_len = 0;             //Êı¾İÖ¡³¤¶È
+  unsigned short rx_value_len = 0;             //æ•°æ®å¸§é•¿åº¦
   
   while((rx_in < sizeof(bt_uart_rx_buf)) && get_queue_total_data() > 0)
   {
@@ -696,10 +696,10 @@ void bt_uart_service(void)
       break;
     }
     
-    //Êı¾İ½ÓÊÕÍê³É
+    //æ•°æ®æ¥æ”¶å®Œæˆ
     if(get_check_sum((unsigned char *)bt_uart_rx_buf + offset,rx_value_len - 1) != bt_uart_rx_buf[offset + rx_value_len - 1])
     {
-      //Ğ£Ñé³ö´í
+      //æ ¡éªŒå‡ºé”™
       offset += 3;
       continue;
     }
@@ -715,11 +715,11 @@ void bt_uart_service(void)
   }
 }
 /*****************************************************************************
-º¯ÊıÃû³Æ :  bt_protocol_init
-¹¦ÄÜÃèÊö : Ğ­Òé´®¿Ú³õÊ¼»¯º¯Êı
-ÊäÈë²ÎÊı : ÎŞ
-·µ»Ø²ÎÊı : ÎŞ
-Ê¹ÓÃËµÃ÷ : ±ØĞëÔÚMCU³õÊ¼»¯´úÂëÖĞµ÷ÓÃ¸Ãº¯Êı
+å‡½æ•°åç§° :  bt_protocol_init
+åŠŸèƒ½æè¿° : åè®®ä¸²å£åˆå§‹åŒ–å‡½æ•°
+è¾“å…¥å‚æ•° : æ— 
+è¿”å›å‚æ•° : æ— 
+ä½¿ç”¨è¯´æ˜ : å¿…é¡»åœ¨MCUåˆå§‹åŒ–ä»£ç ä¸­è°ƒç”¨è¯¥å‡½æ•°
 *****************************************************************************/
 void bt_protocol_init(void)
 {

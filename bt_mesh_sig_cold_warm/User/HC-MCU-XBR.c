@@ -108,16 +108,8 @@ u8 idata check_group_count = 0; //检查群组计数器
 u8 idata Linkage_flag = 0;
 u8 idata Light_on_flag = 0;
 u8 idata Light_on_flagpre = 0;
+u8 xdata temper_value = 0;			//冷暖值
 
-/*
-	 u8 idata groupaddr2 = 0;
-	 u8 idata groupaddr3 = 0;
-	 u8 idata groupaddr4 = 0;
-	 u8 idata groupaddr5 = 0;
-	 u8 idata groupaddr6 = 0;
-	 u8 idata groupaddr7 = 0;
-	 u8 idata groupaddr8 = 0;
-	 */
 unsigned char PWM3init(unsigned char ab);
 void Flash_EraseBlock(unsigned int fui_Address); //扇区擦除
 //void FLASH_WriteData(unsigned char fui_Address, unsigned int fuc_SaveData);//写入一个数据
@@ -333,7 +325,8 @@ void GPIO_Init()
 
 #ifdef V12
 
-	P1M0 = P1M0 & 0xF0 | 0x08; //P10设置为推挽输出
+	P1M0 = P1M0 & 0xFF | 0x88; //P10设置为推挽输出
+							   //P11设置为推挽输出
 
 	P0M0 = P0M0 & 0x0F | 0x30; //P01设置为模拟输入
 
