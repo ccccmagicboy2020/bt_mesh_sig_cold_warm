@@ -1,3 +1,8 @@
+# keil
+*.lst
+*.lock
+*.m51
+
 # Prerequisites
 *.d
 
@@ -34,7 +39,6 @@
 *.app
 *.i*86
 *.x86_64
-*.hex
 
 # Debug files
 *.dSYM/
