@@ -1017,6 +1017,7 @@ void XBRHandle(void)
 	}
 }
 
+//积累一定的值
 void wait1(void)
 {
 	u8 i, j;
@@ -1086,6 +1087,8 @@ void wait1(void)
 			break; //??35????????????1.1V???????
 	}
 }
+
+//积累一个2^16次的平均值
 void wait2(void)
 {
 	u8 i;
@@ -1155,15 +1158,15 @@ unsigned char PWM3init(unsigned char ab)
 	// 			= 255 /4000000
 	//			= 63.75us		即15.69KHZ
 
-	PWM3P = 0xFF; //PWM周期为0xFF
+	PWM3P = 0xFF; //周期寄存器//PWM周期为0xFF
 	//有效电平时间计算（即占空比）
 	//			= 0x55 / (Fosc / PWM分频系数)		（Fosc见系统时钟配置的部分）
 	//			= 0x55 /(16000000 / 4)
 	// 			= 85 /4000000
 	//			= 21.25us		占空比为 21.25 / 63.75 = 34%
 
-	PWM3D = j11;  //PWM占空比设置
-	PWM3C = 0x94; //使能PWM3，关闭中断，允许输出，时钟16分频
+	PWM3D = j11;  //PWM占空比设置，占空比寄存器p90
+	PWM3C = 0x94; //PWM控制寄存器，使能PWM3，关闭中断，允许输出，时钟16分频
 
 	return 0;
 }
