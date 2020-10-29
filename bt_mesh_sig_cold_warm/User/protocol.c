@@ -810,14 +810,11 @@ static unsigned char dp_download_all_day_micro_light_handle(const unsigned char 
     unsigned char all_day_micro_light;
     
     all_day_micro_light = mcu_get_dp_download_bool(value,length);
-    if(all_day_micro_light == 0) {
-        //开关关
-    }else {
-        //开关开
-    }
+
+	all_day_micro_light_enable = all_day_micro_light;
   
     //处理完DP数据后应有反馈
-    ret = mcu_dp_bool_update(DPID_ALL_DAY_MICRO_LIGHT,all_day_micro_light);
+    ret = mcu_dp_bool_update(DPID_ALL_DAY_MICRO_LIGHT,all_day_micro_light_enable);
     if(ret == SUCCESS)
         return SUCCESS;
     else
@@ -960,7 +957,11 @@ unsigned char dp_download_handle(unsigned char dpid,const unsigned char value[],
             ret = dp_download_switch_linkage_handle(value,length);
             switchcnt = 0;
         break;
-
+        case DPID_ALL_DAY_MICRO_LIGHT:
+            //全天伴亮处理函数
+            ret = dp_download_all_day_micro_light_handle(value,length);
+			switchcnt = 0;
+        break;
   default:
         switchcnt = 0;
     break;
