@@ -112,6 +112,7 @@ u8 xdata temper_value = 0;			//冷暖值
 u8 xdata all_day_micro_light_enable = 0;
 u16 xdata radar_trig_times = 0;
 
+unsigned char PWM0init(unsigned char ab);
 unsigned char PWM3init(unsigned char ab);
 void Flash_EraseBlock(unsigned int fui_Address); //扇区擦除
 //void FLASH_WriteData(unsigned char fui_Address, unsigned int fuc_SaveData);//写入一个数据
@@ -1122,6 +1123,40 @@ void wait2(void)
 	// 	light_ad0=light_ad;
 
 	// 	Delay_ms(4);	//4ms
+}
+
+unsigned char PWM0init(unsigned char ab)
+{
+	float i11;
+	unsigned char j11;
+	i11 = ab * 127 / 100;
+	j11 = i11;
+	
+	PWM0_MAP = 0x11;					//PWM0通道映射P11口
+	PWM0C = 0x01;					  	//PWM0高有效，PWM01高有效，时钟8分频 
+	
+	//独立模式下，PWM0和PWM01共用一个周期寄存器
+	//PWM0的占空比调节使用			PWM0组的占空比寄存器
+	//PWM01的占空比调节使用			PWM0组的死区寄存器
+
+	//周期计算 	= 0x03ff / (Fosc / PWM分频系数)		（Fosc见系统时钟配置的部分）
+	//			= 0x03ff / (16000000 / 8)			
+	// 			= 1023   /2000000
+	//			= 511.5us		   		约1.955kHz
+
+	PWM0PH = 0x00;						//周期高4位设置为0x03
+	PWM0PL = 0x7F;						//周期低8位设置为0xFF
+
+	//占空比计算= 0x0155 / (Fosc / PWM分频系数)		（Fosc见系统时钟配置的部分）
+	//			= 0x0155 / (16000000 / 8)			
+	// 			= 341 	 / 2000000
+	//			= 170.5us		   占空比为 170.5/511.5 = 33.3%
+
+	PWM0DH = 0x00;						//PWM0高4位占空比0x01
+	PWM0DL = j11;						//PWM0低8位占空比0x55
+
+	PWM0EN = 0x0F;						//使能PWM0，工作于独立模式	
+	return 0;
 }
 
 unsigned char PWM3init(unsigned char ab)

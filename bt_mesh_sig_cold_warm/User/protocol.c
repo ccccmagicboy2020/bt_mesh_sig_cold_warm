@@ -74,6 +74,7 @@ void savevar(void);
 void Flash_EraseBlock(unsigned int fui_Address);//flash扇区擦除
 void FLASH_WriteData(unsigned char fuc_SaveData, unsigned int fui_Address);//flash写入
 void Delay_us_1(uint q1);
+unsigned char PWM0init(unsigned char ab);
 
 void reset_bt_module(void)
 {
@@ -343,6 +344,7 @@ static unsigned char dp_download_temp_value_handle(const unsigned char value[], 
 		temper_value = temp_value;
 		
 		//do some pwm control
+		PWM0init(temper_value);
 	
 		savevar();
     
