@@ -45,6 +45,12 @@ extern  u8 idata Linkage_flag;	//联动的开关的全局
 extern  u8 idata Light_on_flag;	//
 extern u8 xdata temper_value;		//冷暖值
 
+extern uint xdata average;		  //an1的raw平均值
+extern u8 xdata all_day_micro_light_enable;
+extern u16 xdata radar_trig_times;
+extern ulong xdata SUM0;	   //SUM10的平均值
+extern ulong xdata SUM1;	   //平均绝对离差的累加合的瞬时值
+
 //const char xdata led_bn_on[]={"led on"};
 //const char xdata led_bn_off[]={"led off"};
 //const char xdata radar_bn_on[]={"radar on"};
@@ -113,6 +119,12 @@ const DOWNLOAD_CMD_S xdata download_cmd[] =
   {DPID_SENSE_STRESS, DP_TYPE_VALUE},
   {DPID_SWITCH_LED2, DP_TYPE_BOOL},
   {DPID_SWITCH_LINKAGE, DP_TYPE_BOOL},
+  {DPID_ALL_DAY_MICRO_LIGHT, DP_TYPE_BOOL},
+  {DPID_RADAR_TRIGGER_TIMES, DP_TYPE_VALUE},
+  {DPID_AVERAGE, DP_TYPE_VALUE},
+  {DPID_LIGHT_ADC_VALUE, DP_TYPE_VALUE},
+  {DPID_SUM0_VALUE, DP_TYPE_VALUE},
+  {DPID_SUM1_VALUE, DP_TYPE_VALUE},
 };
 
 
@@ -202,6 +214,14 @@ void all_data_update(void)
 	mcu_dp_bool_update(DPID_SWITCH_LINKAGE,Linkage_flag); //BOOL型数据上报;
 
 	mcu_dp_value_update(DPID_TEMP_VALUE,temper_value); //VALUE型数据上报;
+	
+    mcu_dp_bool_update(DPID_ALL_DAY_MICRO_LIGHT,all_day_micro_light_enable); //BOOL型数据上报;
+    mcu_dp_value_update(DPID_RADAR_TRIGGER_TIMES,radar_trig_times); //VALUE型数据上报;
+	
+	mcu_dp_value_update(DPID_AVERAGE,average); //VALUE型数据上报;
+	mcu_dp_value_update(DPID_LIGHT_ADC_VALUE,light_ad); //VALUE型数据上报;
+	mcu_dp_value_update(DPID_SUM0_VALUE,SUM0); //VALUE型数据上报;
+	mcu_dp_value_update(DPID_SUM1_VALUE,SUM1); //VALUE型数据上报;
 
 }
 
@@ -321,6 +341,8 @@ static unsigned char dp_download_temp_value_handle(const unsigned char value[], 
     
     */
 		temper_value = temp_value;
+		
+		//do some pwm control
 	
 		savevar();
     
@@ -770,7 +792,38 @@ static unsigned char dp_download_switch_linkage_handle(const unsigned char value
         return SUCCESS;
     else
         return ERROR;
+
 }
+/*****************************************************************************
+函数名称 : dp_download_all_day_micro_light_handle
+功能描述 : 针对DPID_ALL_DAY_MICRO_LIGHT的处理函数
+输入参数 : value:数据源数据
+        : length:数据长度
+返回参数 : 成功返回:SUCCESS/失败返回:ERROR
+使用说明 : 可下发可上报类型,需要在处理完数据后上报处理结果至app
+*****************************************************************************/
+static unsigned char dp_download_all_day_micro_light_handle(const unsigned char value[], unsigned short length)
+{
+    //示例:当前DP类型为BOOL
+    unsigned char ret;
+    //0:关/1:开
+    unsigned char all_day_micro_light;
+    
+    all_day_micro_light = mcu_get_dp_download_bool(value,length);
+    if(all_day_micro_light == 0) {
+        //开关关
+    }else {
+        //开关开
+    }
+  
+    //处理完DP数据后应有反馈
+    ret = mcu_dp_bool_update(DPID_ALL_DAY_MICRO_LIGHT,all_day_micro_light);
+    if(ret == SUCCESS)
+        return SUCCESS;
+    else
+        return ERROR;
+}
+
 
 /******************************************************************************
                                 WARNING!!!                     
@@ -898,7 +951,7 @@ unsigned char dp_download_handle(unsigned char dpid,const unsigned char value[],
             switchcnt = 0;
         break;
         case DPID_SWITCH_LED2:
-            //灯开关处理函数
+            //开关灯处理函数
             ret = dp_download_switch_led2_handle(value,length);
             switchcnt = 0;
         break;

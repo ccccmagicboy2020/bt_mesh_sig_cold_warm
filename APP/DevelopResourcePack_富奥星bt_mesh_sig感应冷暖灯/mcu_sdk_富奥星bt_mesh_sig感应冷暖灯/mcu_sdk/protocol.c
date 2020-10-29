@@ -61,6 +61,12 @@ const DOWNLOAD_CMD_S download_cmd[] =
   {DPID_SENSE_STRESS, DP_TYPE_VALUE},
   {DPID_SWITCH_LED2, DP_TYPE_BOOL},
   {DPID_SWITCH_LINKAGE, DP_TYPE_BOOL},
+  {DPID_ALL_DAY_MICRO_LIGHT, DP_TYPE_BOOL},
+  {DPID_RADAR_TRIGGER_TIMES, DP_TYPE_VALUE},
+  {DPID_AVERAGE, DP_TYPE_VALUE},
+  {DPID_LIGHT_ADC_VALUE, DP_TYPE_VALUE},
+  {DPID_SUM0_VALUE, DP_TYPE_VALUE},
+  {DPID_SUM1_VALUE, DP_TYPE_VALUE},
 };
 
 
@@ -122,11 +128,17 @@ void all_data_update(void)
     mcu_dp_value_update(DPID_TEMP_VALUE,当前冷暖值); //VALUE型数据上报;
     mcu_dp_enum_update(DPID_CDS,当前光敏参数); //枚举型数据上报;
     mcu_dp_value_update(DPID_PIR_DELAY,当前感应延时); //VALUE型数据上报;
-    mcu_dp_bool_update(DPID_SWITCH_XBR,当前感应开关); //BOOL型数据上报;
+    mcu_dp_bool_update(DPID_SWITCH_XBR,当前雷达开关); //BOOL型数据上报;
     mcu_dp_value_update(DPID_STANDBY_TIME,当前伴亮延时); //VALUE型数据上报;
     mcu_dp_value_update(DPID_SENSE_STRESS,当前感应强度); //VALUE型数据上报;
-    mcu_dp_bool_update(DPID_SWITCH_LED2,当前灯开关); //BOOL型数据上报;
+    mcu_dp_bool_update(DPID_SWITCH_LED2,当前开关灯); //BOOL型数据上报;
     mcu_dp_bool_update(DPID_SWITCH_LINKAGE,当前联动); //BOOL型数据上报;
+    mcu_dp_bool_update(DPID_ALL_DAY_MICRO_LIGHT,当前全天伴亮); //BOOL型数据上报;
+    mcu_dp_value_update(DPID_RADAR_TRIGGER_TIMES,当前雷达触发计数); //VALUE型数据上报;
+    mcu_dp_value_update(DPID_AVERAGE,当前雷达IF平均值); //VALUE型数据上报;
+    mcu_dp_value_update(DPID_LIGHT_ADC_VALUE,当前光敏AD值); //VALUE型数据上报;
+    mcu_dp_value_update(DPID_SUM0_VALUE,当前雷达IF SUM0); //VALUE型数据上报;
+    mcu_dp_value_update(DPID_SUM1_VALUE,当前雷达IF SUM1); //VALUE型数据上报;
 
 
 
@@ -436,6 +448,35 @@ static unsigned char dp_download_switch_linkage_handle(const unsigned char value
     else
         return ERROR;
 }
+/*****************************************************************************
+函数名称 : dp_download_all_day_micro_light_handle
+功能描述 : 针对DPID_ALL_DAY_MICRO_LIGHT的处理函数
+输入参数 : value:数据源数据
+        : length:数据长度
+返回参数 : 成功返回:SUCCESS/失败返回:ERROR
+使用说明 : 可下发可上报类型,需要在处理完数据后上报处理结果至app
+*****************************************************************************/
+static unsigned char dp_download_all_day_micro_light_handle(const unsigned char value[], unsigned short length)
+{
+    //示例:当前DP类型为BOOL
+    unsigned char ret;
+    //0:关/1:开
+    unsigned char all_day_micro_light;
+    
+    all_day_micro_light = mcu_get_dp_download_bool(value,length);
+    if(all_day_micro_light == 0) {
+        //开关关
+    }else {
+        //开关开
+    }
+  
+    //处理完DP数据后应有反馈
+    ret = mcu_dp_bool_update(DPID_ALL_DAY_MICRO_LIGHT,all_day_micro_light);
+    if(ret == SUCCESS)
+        return SUCCESS;
+    else
+        return ERROR;
+}
 
 
 /******************************************************************************
@@ -536,7 +577,7 @@ unsigned char dp_download_handle(unsigned char dpid,const unsigned char value[],
             ret = dp_download_pir_delay_handle(value,length);
         break;
         case DPID_SWITCH_XBR:
-            //感应开关处理函数
+            //雷达开关处理函数
             ret = dp_download_switch_xbr_handle(value,length);
         break;
         case DPID_STANDBY_TIME:
@@ -548,12 +589,16 @@ unsigned char dp_download_handle(unsigned char dpid,const unsigned char value[],
             ret = dp_download_sense_stress_handle(value,length);
         break;
         case DPID_SWITCH_LED2:
-            //灯开关处理函数
+            //开关灯处理函数
             ret = dp_download_switch_led2_handle(value,length);
         break;
         case DPID_SWITCH_LINKAGE:
             //联动处理函数
             ret = dp_download_switch_linkage_handle(value,length);
+        break;
+        case DPID_ALL_DAY_MICRO_LIGHT:
+            //全天伴亮处理函数
+            ret = dp_download_all_day_micro_light_handle(value,length);
         break;
 
 

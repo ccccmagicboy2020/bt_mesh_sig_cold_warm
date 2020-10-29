@@ -34,6 +34,7 @@ extern u8 idata groupaddr8 ;
 
 extern u16 idata groupaddr[8];
 
+void reset_bt_module(void);
 void savevar(void);
 extern const DOWNLOAD_CMD_S xdata download_cmd[];
 
@@ -309,6 +310,10 @@ void data_handle(unsigned short offset)
 #ifndef BT_CONTROL_SELF_MODE
   case BT_STATE_CMD:                                  //bt工作状态	
     bt_work_state = bt_uart_rx_buf[offset + DATA_START];
+	// if (BT_NOT_CONNECTED != bt_work_state)
+	// {
+		// mcu_reset_bt();
+	// }
     bt_uart_write_frame(BT_STATE_CMD,0);
     break;
 

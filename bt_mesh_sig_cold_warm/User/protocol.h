@@ -50,7 +50,7 @@ MCU可调用mcu_api.c文件内的mcu_firm_update_query()函数获取当前MCU固
                     如当前使用MCU的RAM不够,可修改为24
 ******************************************************************************/
 #ifndef SUPPORT_MCU_FIRM_UPDATE
-#define BT_UART_QUEUE_LMT             16              //数据接收队列大小,如MCU的RAM不够,可缩小
+#define BT_UART_QUEUE_LMT             24              //数据接收队列大小,如MCU的RAM不够,可缩小
 #define BT_UART_RECV_BUF_LMT          24              //根据用户DP数据大小量定,必须大于24
 #else
 #define BT_UART_QUEUE_LMT             128             //数据接收队列大小,如MCU的RAM不够,可缩小
@@ -101,7 +101,7 @@ mcu在bt模块正确联网后可调用mcu_get_system_time()函数发起校时功
 //感应延时(可下发可上报)
 //备注:
 #define DPID_PIR_DELAY 102
-//感应开关(可下发可上报)
+//雷达开关(可下发可上报)
 //备注:
 #define DPID_SWITCH_XBR 103
 //伴亮延时(可下发可上报)
@@ -110,12 +110,30 @@ mcu在bt模块正确联网后可调用mcu_get_system_time()函数发起校时功
 //感应强度(可下发可上报)
 //备注:
 #define DPID_SENSE_STRESS 105
-//灯开关(可下发可上报)
+//开关灯(可下发可上报)
 //备注:
 #define DPID_SWITCH_LED2 113
 //联动(可下发可上报)
 //备注:
 #define DPID_SWITCH_LINKAGE 114
+//全天伴亮(可下发可上报)
+//备注:
+#define DPID_ALL_DAY_MICRO_LIGHT 115
+//雷达触发计数(只上报)
+//备注:
+#define DPID_RADAR_TRIGGER_TIMES 116
+//雷达IF平均值(只上报)
+//备注:
+#define DPID_AVERAGE 117
+//光敏AD值(只上报)
+//备注:
+#define DPID_LIGHT_ADC_VALUE 118
+//雷达IF SUM0(只上报)
+//备注:
+#define DPID_SUM0_VALUE 119
+//雷达IF SUM1(只上报)
+//备注:
+#define DPID_SUM1_VALUE 120
 
 
 

@@ -53,13 +53,13 @@ volatile ulong Timer_Counter = 0;
 // u16 AN7_Data = 0;
 // u8 Uart_Cnt = 0;
 
-u8 xdata SUM1_counter = 0; //???
-u8 xdata SUM0_num = 12;	   //???
-u8 xdata SUM1_num = 64;	   //???
-ulong xdata SUM01;
+u8 xdata SUM1_counter = 0; //偏差平均值的计算计数器
+u8 xdata SUM0_num = 12;	   //SUM0迭代次数
+u8 xdata SUM1_num = 64;	   //SUM1迭代次数
+ulong xdata SUM01;		   //上一把的SUM0的值
 //ulong xdata SUM2;		   //调试用
 ulong xdata SUM10 = 0;	   //SUM1值的几次平均值，时间上的滞后值
-ulong xdata SUM0 = 0;	   //
+ulong xdata SUM0 = 0;	   //SUM10的平均值
 ulong xdata SUM1 = 0;	   //平均绝对离差的累加合的瞬时值
 ulong xdata ALL_SUM1 = 0;  //SUM1的累加值
 ulong xdata SUM16 = 0;	   //2^16次的累计值变量
@@ -85,16 +85,16 @@ u8 xdata LIGHT_TH;
 u16 xdata DELAY_NUM;
 u8 xdata lowlightDELAY_NUM;
 u8 xdata RXnum = 0;
-u8 while_1flag = 0;		  //伴亮完成标志
+u8 while_1flag = 0;		  //伴亮标志 1==伴亮状态 0==侦测状态
 u8 while_2flag = 0;		  //???
 u8 xdata SWITCHflag = 0;  //暂时没有使用
 u8 xdata SWITCHflag2 = 0; //灯开关的变量，可由APP设置
 u8 xdata SWITCHfXBR = 1;  //雷达感应开关的变量，可由APP设置
 u8 xdata lightvalue = 10; //亮度值，可由APP设置
 u8 xdata switchcnt = 0;
-u8 xdata slowchcnt = 10;				  //亮度渐量值
+u8 xdata slowchcnt = 10;				  //亮度渐变目标值
 u8 xdata resetbtcnt = 0;				  //为重置蓝牙模块设置的计数器
-u8 xdata XRBoffbrightvalue = 0;			  //当关闭雷达时，APP设置的亮度值
+u8 xdata XRBoffbrightvalue = 0;			  //当关闭雷达时，APP设置的亮度值(微亮值)
 volatile u16 xdata lowlight1mincount = 0; //timer的计数器1ms自加
 volatile u8 xdata lowlight1minflag = 0;	  //timer的分钟标志
 volatile u16 idata light1scount = 0;	  //timer的计数器1ms自加
@@ -105,10 +105,12 @@ u8 xdata addrend = 0;
 u16 idata groupaddr[8] = {0};
 u8 idata check_group_flag = 0;	//检查群组标志
 u8 idata check_group_count = 0; //检查群组计数器
-u8 idata Linkage_flag = 0;
+u8 idata Linkage_flag = 0;		//联动标志
 u8 idata Light_on_flag = 0;
 u8 idata Light_on_flagpre = 0;
 u8 xdata temper_value = 0;			//冷暖值
+u8 xdata all_day_micro_light_enable = 0;
+u16 xdata radar_trig_times = 0;
 
 unsigned char PWM3init(unsigned char ab);
 void Flash_EraseBlock(unsigned int fui_Address); //扇区擦除
@@ -628,19 +630,8 @@ void XBRHandle(void)
 {
 	u16 k;
 
-	if (while_1flag == 0)
+	if (while_1flag == 0)//侦测状态
 	{
-		//send_data(0x66);
-		// 				ADC_TG;
-		// 				while(ADC_IF==0){};
-		// 				//adc_data = ADC_DATA_RD();
-		//
-		// 				k = ADC_DH<<8;
-		// 				//adc_data =adc_data <<8;
-		// 				k+= ADC_DL;
-		//
-		// 				ADC_INT_IF_CLR; //清中断标志位
-
 		ADCC0 |= 0x40; //启动ADC转换
 		while (!(ADCC0 & 0x20))
 			;			//等待ADC转换结束
@@ -662,16 +653,13 @@ void XBRHandle(void)
 		}
 		SUM1 += k;
 
-		if ((times & 0x1ff) == 0) //每256次循环检查一次光敏
+		if ((times & 0x1ff) == 0) //每256次循环检查一次状态
 		{
-			if (LIGHT > 0) //正在伴亮的过程中
+			if (LIGHT > 0) //正在伴亮的过程中时变亮
 			{
-
-				//LIGHT++;
-
 				if (slowchcnt < 100)
 				{
-					slowchcnt = slowchcnt + 2; //
+					slowchcnt = slowchcnt + 2;
 					if (slowchcnt > 100)
 					{
 						slowchcnt = 100;
@@ -679,7 +667,7 @@ void XBRHandle(void)
 				}
 				PWM3init(slowchcnt);
 			}
-			else if (LIGHT_off == 1) //else if((SWITCHflag2==0)&&(LIGHT_off ==1))
+			else if (LIGHT_off == 1)//灭灯计时开始时变暗
 			{
 				if (slowchcnt > lightvalue)
 				{
@@ -710,7 +698,7 @@ void XBRHandle(void)
 				SUM16 >>= 16;
 				//SUM16/=96000;//102400;
 				average += SUM16;
-				average /= 2;
+				average /= 2;	//得出平均值
 				SUM16 = 0;
 			}
 
@@ -720,9 +708,8 @@ void XBRHandle(void)
 			}
 			else
 			{
-				if (LIGHT == 0)
+				if (LIGHT == 0)	//伴亮未开始，也就是未检测到雷达目标
 				{
-					//light_ad=READ_LIGHT();
 					light_ad = read_ad(10); //切换到an10
 
 					if ((light_ad <= (light_ad0 + 2)) && (light_ad0 <= (light_ad + 2)))
@@ -892,13 +879,13 @@ void XBRHandle(void)
 					}
 				}
 
-				if (SUM1 > (SUM0 + TH))
+				if (SUM1 > (SUM0 + TH))	//正式判断
 				{
 					//SUM=SUM1-SUM0;
 
 					//	if(SUM>TH)
 					//	{
-					if ((light_ad <= LIGHT_TH) || (start_times > 0))
+					if ((light_ad <= LIGHT_TH) || (start_times > 0))	//在一定亮度之下才运行
 					{
 						//								send_data(0xaa);
 
@@ -929,7 +916,9 @@ void XBRHandle(void)
 							//									send_data(DELAY_NUM>>2);		//测试用
 							//									send_data(slowchcnt);
 							//									send_data(0xaa);
-							send_data(0xdd);
+							//send_data(0xdd);
+							radar_trig_times++;
+							mcu_dp_value_update(DPID_RADAR_TRIGGER_TIMES,radar_trig_times);
 
 							SUM1_num = 8;
 							LIGHT_off = 0;
@@ -949,6 +938,11 @@ void XBRHandle(void)
 			//send_data(SUM0 >> 8);
 			//send_data(SUM2 >> 16);
 			//send_data(SUM2 >> 8); //20200927	测试用
+			mcu_dp_value_update(DPID_AVERAGE,average); //VALUE型数据上报;
+			mcu_dp_value_update(DPID_LIGHT_ADC_VALUE,light_ad); //VALUE型数据上报;
+			mcu_dp_value_update(DPID_SUM0_VALUE,SUM0); //VALUE型数据上报;
+			mcu_dp_value_update(DPID_SUM1_VALUE,SUM1); //VALUE型数据上报;
+			
 
 			SUM = 0;
 			SUM1 = 0;
@@ -1249,7 +1243,7 @@ void main()
 	SUM = 0;
 	while (1)
 	{
-		if (resetbtcnt >= 3)	//行为是每三次上电会复位一次蓝牙模块
+		if (resetbtcnt >= 3)	//行为是每三次上电会复位一次蓝牙模块(无任何APP操作)
 		{
 			resetbtcnt = 0;
 			reset_bt_module();
@@ -1264,22 +1258,22 @@ void main()
 
 				send_data(0x55);
 				send_data(0xAA);
-				send_data(0X00);
-				send_data(0XB4); //新的命令字，功能不明
-				send_data(0X00);
-				send_data(0X00);
-				send_data(0Xb3);
+				send_data(0x00);
+				send_data(0xB4); //新的命令字，查询群组地址
+				send_data(0x00);
+				send_data(0x00);
+				send_data(0xB3);
 			}
 		}
 		WDTC |= 0x10; //清看门狗
 
-		if (while_1flag == 0)
+		if (while_1flag == 0)//侦测状态
 		{
 			if ((times & 0x1f) == 0)
-				bt_uart_service();
+				bt_uart_service();	//串口解包异步处理
 		}
 
-		if (SWITCHfXBR == 1) //雷达开, app控制
+		if (SWITCHfXBR == 1) //雷达开控制
 		{
 			if (while_2flag == 0)
 			{
@@ -1302,7 +1296,7 @@ void main()
 
 			XBRHandle();
 
-			if (LIGHT_off > 0) //关灯延时
+			if (LIGHT_off > 0) //灭灯延时，单位分钟
 			{
 				if (lowlight1minflag == 1)
 				{
@@ -1311,22 +1305,24 @@ void main()
 					if (LIGHT_off >= lowlightDELAY_NUM)
 					{
 						LIGHT_off = 0;
-						PWM3init(0);
+						if (1 == all_day_micro_light_enable)
+						{
+							//
+						}
+						else
+						{
+							PWM3init(0);
+						}
 					}
 				}
 			}
+			
 			if (LIGHT > 0) //亮灯延时
 			{
 				if (light1sflag == 1)
 				{
 					light1sflag = 0;
 					LIGHT++;
-					//slowchcnt = slowchcnt+20;//
-					//					if(slowchcnt>100)
-					//					{
-					//						slowchcnt = 100;
-					//					}
-					//					PWM3init(slowchcnt);
 				}
 			}
 
@@ -1341,7 +1337,7 @@ void main()
 					for (i = 0; i < 8; i++)
 					{
 						if (groupaddr[i] != 0)
-						{
+						{	//灯开关
 							mcu_dp_bool_mesh_update(DPID_SWITCH_LED2, SWITCHflag2, groupaddr[i]);
 						}
 					}
@@ -1349,7 +1345,7 @@ void main()
 			}
 		}
 		else
-		{ //雷达关
+		{ //雷达天关关控制
 			while_2flag = 0;
 			if (SWITCHflag2 == 0) //关灯
 			{
@@ -1362,14 +1358,13 @@ void main()
 				while_1flag = 0;
 
 				slowchcnt = lightvalue;
-				//PWM3init(lightvalue);
 
 				SUM16 = 0;
 				calc_average_times = 0;
 				SUM1_num = 64;
 
 				stop_times = 2;
-				//if(start_times==0)TH=TH_LOW;
+
 				check_light_times = 6;
 
 				SUM1_counter = 0;
@@ -1377,13 +1372,6 @@ void main()
 			}
 		}
 	}
-
-	// 	while(1)
-	// 	{
-	// 		System_Time_Cnt();
-	// 		System_Task();
-	// 		WDTC |= 0x10;              //清狗
-	// 	}
 }
 
 /***************************************************************************************
