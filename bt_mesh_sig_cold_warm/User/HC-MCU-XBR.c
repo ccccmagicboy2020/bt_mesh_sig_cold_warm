@@ -1128,9 +1128,17 @@ void wait2(void)
 unsigned char PWM0init(unsigned char ab)
 {
 	float i11;
-	unsigned char j11;
-	i11 = ab * 127 / 100;
-	j11 = i11;
+	u16 j11;
+	
+	if (1 == ab)
+	{
+		j11 = 0;
+	}
+	else
+	{
+		i11 = ab * 511 / 100;
+		j11 = (u16)(i11 + 0.5);
+	}
 	
 	PWM0_MAP = 0x11;					//PWM0通道映射P11口
 	PWM0C = 0x01;					  	//PWM0高有效，PWM01高有效，时钟8分频 
@@ -1144,16 +1152,16 @@ unsigned char PWM0init(unsigned char ab)
 	// 			= 1023   /2000000
 	//			= 511.5us		   		约1.955kHz
 
-	PWM0PH = 0x00;						//周期高4位设置为0x03
-	PWM0PL = 0x7F;						//周期低8位设置为0xFF
+	PWM0PH = 0x01;						//周期高4位设置为0x03
+	PWM0PL = 0xFF;						//周期低8位设置为0xFF
 
 	//占空比计算= 0x0155 / (Fosc / PWM分频系数)		（Fosc见系统时钟配置的部分）
 	//			= 0x0155 / (16000000 / 8)			
 	// 			= 341 	 / 2000000
 	//			= 170.5us		   占空比为 170.5/511.5 = 33.3%
 
-	PWM0DH = 0x00;						//PWM0高4位占空比0x01
-	PWM0DL = j11;						//PWM0低8位占空比0x55
+	PWM0DH = (u8)(j11>>8);				//PWM0高4位占空比0x01
+	PWM0DL = (u8)j11;					//PWM0低8位占空比0x55
 
 	PWM0EN = 0x0F;						//使能PWM0，工作于独立模式	
 	return 0;
@@ -1163,8 +1171,17 @@ unsigned char PWM3init(unsigned char ab)
 {
 	float i11;
 	unsigned char j11;
-	i11 = ab * 255 / 100;
-	j11 = i11;
+	
+	if (1 == ab)
+	{
+		j11 = 0;
+	}
+	else
+	{
+		i11 = ab * 255 / 100;
+		j11 = (unsigned char )(i11 + 0.5);
+	}
+	
 #ifdef V11
 	/************************************PWM3初始化****************************************/
 	//P0M3 = P0M3&0xF0|0x08;		//P06设置为推挽输出
