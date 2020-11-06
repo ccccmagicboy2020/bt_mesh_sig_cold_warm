@@ -616,7 +616,7 @@ void set_var(void)
 	if (lowlightDELAY_NUM == 0 || lowlightDELAY_NUM > 255)
 		lowlightDELAY_NUM = 1;
 
-	SWITCHfXBR = (guc_Read_a[7]) & 0x01;
+	SWITCHfXBR = (~guc_Read_a[7]) & 0x01;
 	//	addr = guc_Read_a[7];
 	//
 	//	devgroup = guc_Read_a[8];

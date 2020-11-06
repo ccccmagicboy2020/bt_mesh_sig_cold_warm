@@ -1015,7 +1015,7 @@ void savevar(void)
 	FLASH_WriteData(i,0x2F00+6);
 	Delay_us_1(100);
 	
-	i=SWITCHfXBR;//&0xff;
+	i=~SWITCHfXBR;//&0xff;
 	FLASH_WriteData(i,0x2F00+7);
 	Delay_us_1(100);
 	
