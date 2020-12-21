@@ -39,52 +39,34 @@ extern u8 xdata LIGHT_TH;       //感光阈值
 extern u16 xdata DELAY_NUM;     //感应延时，单位为秒
 extern u8 xdata lowlightDELAY_NUM;      //关灯延时，单位为分钟
 extern u8 xdata light_ad;               //采到的光感的瞬时值
-u8 xdata cdsvalue = 0;              //感光选择值
-ulong xdata sensing_th = 0;     //雷达感应阈值，数值越大越灵敏
+u8 idata cdsvalue = 0;              //感光选择值
+ulong idata sensing_th = 0;     //雷达感应阈值，数值越大越灵敏
 extern  u8 idata Linkage_flag;	//联动的开关的全局
 extern  u8 idata Light_on_flag;	//
 extern u8 xdata temper_value;		//冷暖值
 
-extern uint xdata average;		  //an1的raw平均值
+
 extern u8 xdata all_day_micro_light_enable;
 extern u16 xdata radar_trig_times;
-extern ulong xdata SUM0;	   //SUM10的平均值
-extern ulong xdata SUM1;	   //平均绝对离差的累加合的瞬时值
-
-//const char xdata led_bn_on[]={"led on"};
-//const char xdata led_bn_off[]={"led off"};
-//const char xdata radar_bn_on[]={"radar on"};
-//const char xdata radar_bn_off[]={"radar off"};
-
-unsigned char DPID_SWITCH_LED2count = 0;
-unsigned char DPID_SWITCH_XBRcount = 0;
-unsigned char DPID_BRIGHT_VALUEcount = 0;
-unsigned char DPID_CDScount = 0;
-unsigned char DPID_PIR_DELAYcount = 0;
-unsigned char DPID_STANDBY_TIMEcount = 0;
-unsigned char DPID_SENSE_STRESScount = 0;
-
+extern u8 xdata light_status_xxx;
+extern u8 xdata person_in_range_flag;
+extern u8 idata Exit_network_controlflag;
 extern u16 idata groupaddr[8];
 
 //extern TYPE_BUFFER_S FlashBuffer;
 void send_data(u8 d);
 void reset_bt_module(void);
-unsigned char PWM3init(unsigned char ab);
+extern unsigned char PWM3init(unsigned char ab);
 void savevar(void);
 void Flash_EraseBlock(unsigned int fui_Address);//flash扇区擦除
 void FLASH_WriteData(unsigned char fuc_SaveData, unsigned int fui_Address);//flash写入
 void Delay_us_1(uint q1);
-unsigned char PWM0init(unsigned char ab);
+extern unsigned char PWM0init(unsigned char ab);
 
 void reset_bt_module(void)
 {
-	send_data(0x55);//p15，重置模块
-	send_data(0xAA);
-	send_data(0x00);
-	send_data(0x04);
-	send_data(0x00);
-	send_data(0x00);
-	send_data(0x03);
+	bt_uart_write_frame(BT_RESET_CMD, 0);
+	Exit_network_controlflag = 1;
 }
 
 /******************************************************************************
@@ -122,10 +104,17 @@ const DOWNLOAD_CMD_S xdata download_cmd[] =
   {DPID_SWITCH_LINKAGE, DP_TYPE_BOOL},
   {DPID_ALL_DAY_MICRO_LIGHT, DP_TYPE_BOOL},
   {DPID_RADAR_TRIGGER_TIMES, DP_TYPE_VALUE},
-  {DPID_AVERAGE, DP_TYPE_VALUE},
-  {DPID_LIGHT_ADC_VALUE, DP_TYPE_VALUE},
-  {DPID_SUM0_VALUE, DP_TYPE_VALUE},
-  {DPID_SUM1_VALUE, DP_TYPE_VALUE},
+  {DPID_CLEAR_TRIGGER_NUMBER, DP_TYPE_BOOL},
+  {DPID_LIGHT_STATUS, DP_TYPE_ENUM},
+  {DPID_PERSON_IN_RANGE, DP_TYPE_ENUM},
+  {DPID_ADDR0, DP_TYPE_VALUE},
+  {DPID_ADDR1, DP_TYPE_VALUE},
+  {DPID_ADDR2, DP_TYPE_VALUE},
+  {DPID_ADDR3, DP_TYPE_VALUE},
+  {DPID_ADDR4, DP_TYPE_VALUE},
+  {DPID_ADDR5, DP_TYPE_VALUE},
+  {DPID_ADDR6, DP_TYPE_VALUE},
+  {DPID_ADDR7, DP_TYPE_VALUE},
 };
 
 
@@ -218,11 +207,19 @@ void all_data_update(void)
 	
     mcu_dp_bool_update(DPID_ALL_DAY_MICRO_LIGHT,all_day_micro_light_enable); //BOOL型数据上报;
     mcu_dp_value_update(DPID_RADAR_TRIGGER_TIMES,radar_trig_times); //VALUE型数据上报;
-	
-	mcu_dp_value_update(DPID_AVERAGE,average); //VALUE型数据上报;
-	mcu_dp_value_update(DPID_LIGHT_ADC_VALUE,light_ad); //VALUE型数据上报;
-	mcu_dp_value_update(DPID_SUM0_VALUE,SUM0); //VALUE型数据上报;
-	mcu_dp_value_update(DPID_SUM1_VALUE,SUM1); //VALUE型数据上报;
+
+    mcu_dp_enum_update(DPID_LIGHT_STATUS,light_status_xxx); //枚举型数据上报;
+    mcu_dp_enum_update(DPID_PERSON_IN_RANGE,person_in_range_flag); //枚举型数据上报;
+    mcu_dp_value_update(DPID_ADDR0, groupaddr[0]); //VALUE型数据上报;
+    mcu_dp_value_update(DPID_ADDR1, groupaddr[1]); //VALUE型数据上报;
+    mcu_dp_value_update(DPID_ADDR2, groupaddr[2]); //VALUE型数据上报;
+    mcu_dp_value_update(DPID_ADDR3, groupaddr[3]); //VALUE型数据上报;
+    mcu_dp_value_update(DPID_ADDR4, groupaddr[4]); //VALUE型数据上报;
+    mcu_dp_value_update(DPID_ADDR5, groupaddr[5]); //VALUE型数据上报;
+    mcu_dp_value_update(DPID_ADDR6, groupaddr[6]); //VALUE型数据上报;
+    mcu_dp_value_update(DPID_ADDR7, groupaddr[7]); //VALUE型数据上报;
+
+
 
 }
 
@@ -277,25 +274,12 @@ static unsigned char dp_download_bright_value_handle(const unsigned char value[]
     
     bright_value = mcu_get_dp_download_value(value,length);
 	
-	DPID_BRIGHT_VALUEcount++;
 	if(bright_value==lightvalue)
 	{
-/* 		if(DPID_BRIGHT_VALUEcount<2)
-		{
-			//DPID_BRIGHT_VALUEcount = 0;
-			
-			for(i=0;i<8;i++)
-			{
-				if(groupaddr[i] != 0)
-				{
-					mcu_dp_value_mesh_update(DPID_BRIGHT_VALUE,bright_value,groupaddr[i]);
-				}
-			}
-		} */
+		return ERROR;
 	}
 	else
 	{
-		DPID_BRIGHT_VALUEcount=0;
 		for(i=0;i<8;i++)
 		{
 			if(groupaddr[i] != 0)
@@ -306,13 +290,7 @@ static unsigned char dp_download_bright_value_handle(const unsigned char value[]
 	}	
 	
     lightvalue = bright_value;
-
-	//if(SWITCHfXBR==0)
-	{
-		XRBoffbrightvalue = bright_value;
-	}
-	
-	savevar();
+	XRBoffbrightvalue = bright_value;
 		
     //处理完DP数据后应有反馈
     ret = mcu_dp_value_update(DPID_BRIGHT_VALUE, lightvalue);
@@ -334,19 +312,30 @@ static unsigned char dp_download_temp_value_handle(const unsigned char value[], 
 {
     //示例:当前DP类型为VALUE
     unsigned char ret;
-    unsigned long temp_value;
+    u8 temper_value_xxx;
+    unsigned char i;	
     
-    temp_value = mcu_get_dp_download_value(value,length);
-    /*
-    //VALUE类型数据处理
-    
-    */
-		temper_value = temp_value;
-		
-		//do some pwm control
-		PWM0init(temper_value);
+    temper_value_xxx = mcu_get_dp_download_value(value,length);
 	
-		savevar();
+		if(temper_value_xxx==temper_value)
+		{
+			return ERROR;
+		}
+		else
+		{
+			for(i=0;i<8;i++)
+			{
+				if(groupaddr[i] != 0)
+				{
+					mcu_dp_value_mesh_update(DPID_TEMP_VALUE,temper_value_xxx,groupaddr[i]);
+				}
+			}
+		}		
+		
+		temper_value = temper_value_xxx;
+		PWM3init(0);
+		PWM3init(XRBoffbrightvalue);
+		//PWM0init(temper_value);
     
     //处理完DP数据后应有反馈
     ret = mcu_dp_value_update(DPID_TEMP_VALUE,temper_value);
@@ -372,27 +361,12 @@ static unsigned char dp_download_cds_handle(const unsigned char value[], unsigne
     
     cds = mcu_get_dp_download_enum(value,length);
 	
-	DPID_CDScount++;
 	if(cds==cdsvalue)
 	{
-		if(DPID_CDScount<2)
-		{
-/* 			for(i=0;i<8;i++)
-			{
-				if(groupaddr[i] != 0)
-				{
-					mcu_dp_enum_mesh_update(DPID_CDS,cds,groupaddr[i]);
-				}
-			} */
-		}
-		if((cds==5)&&(light_ad!=LIGHT_TH))
-		{
-			DPID_CDScount=0;
-		}
+		return ERROR;
 	}
 	else
 	{
-		DPID_CDScount=0;
 		for(i=0;i<8;i++)
 		{
 			if(groupaddr[i] != 0)
@@ -434,9 +408,6 @@ static unsigned char dp_download_cds_handle(const unsigned char value[], unsigne
 
     cdsvalue = cds;
 
-    savevar();
-    //sprintf(temp_str, "%3d", LIGHT_TH);
-    //mcu_dp_string_update(DPID_DEBUG, temp_str, strlen(temp_str));
     //处理完DP数据后应有反馈
     ret = mcu_dp_enum_update(DPID_CDS, cdsvalue);
     if(ret == SUCCESS)
@@ -464,23 +435,12 @@ static unsigned char dp_download_pir_delay_handle(const unsigned char value[], u
     //VALUE类型数据处理
     */
 	
-	DPID_PIR_DELAYcount++;
 	if(pir_delay==DELAY_NUM)
 	{
-/* 		if(DPID_PIR_DELAYcount<2)
-		{
-			for(i=0;i<8;i++)
-			{
-				if(groupaddr[i] != 0)
-				{
-					mcu_dp_value_mesh_update(DPID_PIR_DELAY,pir_delay,groupaddr[i]);
-				}
-			}
-		} */
+		return ERROR;
 	}
 	else
 	{
-		DPID_PIR_DELAYcount=0;
 		for(i=0;i<8;i++)
 		{
 			if(groupaddr[i] != 0)
@@ -491,7 +451,6 @@ static unsigned char dp_download_pir_delay_handle(const unsigned char value[], u
 	}
 	
     DELAY_NUM = pir_delay;
-	savevar();
     
     //处理完DP数据后应有反馈
     ret = mcu_dp_value_update(DPID_PIR_DELAY, DELAY_NUM);
@@ -518,23 +477,12 @@ static unsigned char dp_download_switch_xbr_handle(const unsigned char value[], 
     
     switch_xbr = mcu_get_dp_download_bool(value,length);
 	
-	DPID_SWITCH_XBRcount++;
 	if(switch_xbr==SWITCHfXBR)
 	{
-/* 		if(DPID_SWITCH_XBRcount<2)
-		{
-			for(i=0;i<8;i++)
-			{
-				if(groupaddr[i] != 0)
-				{
-					mcu_dp_bool_mesh_update(DPID_SWITCH_XBR,switch_xbr,groupaddr[i]);
-				}
-			}
-		} */
+		return ERROR;
 	}
 	else
 	{
-		DPID_SWITCH_XBRcount=0;
 		for(i=0;i<8;i++)
 		{
 			if(groupaddr[i] != 0)
@@ -545,17 +493,8 @@ static unsigned char dp_download_switch_xbr_handle(const unsigned char value[], 
 	
 	}
 	
-    if(switch_xbr == 0) {
-        //开关关
-        SWITCHfXBR = 0;
-        //mcu_dp_string_update(DPID_DEBUG, radar_bn_off, strlen(radar_bn_off));
-    }else {
-        //开关开
-        SWITCHfXBR = 1;
-        //mcu_dp_string_update(DPID_DEBUG, radar_bn_on, strlen(radar_bn_on));
-    }
+	SWITCHfXBR = switch_xbr;
   
-    savevar();
     //处理完DP数据后应有反馈
     ret = mcu_dp_bool_update(DPID_SWITCH_XBR,SWITCHfXBR);
     if(ret == SUCCESS)
@@ -579,27 +518,13 @@ static unsigned char dp_download_standby_time_handle(const unsigned char value[]
     unsigned char i;
     
     standby_time = mcu_get_dp_download_value(value,length);
-    /*
-    //VALUE类型数据处理
-    
-    */
-	DPID_STANDBY_TIMEcount++;
+
 	if(standby_time==lowlightDELAY_NUM)
 	{
-/* 		if(DPID_STANDBY_TIMEcount<2)
-		{
-			for(i=0;i<8;i++)
-			{
-				if(groupaddr[i] != 0)
-				{
-					mcu_dp_value_mesh_update(DPID_STANDBY_TIME,standby_time,groupaddr[i]);
-				}
-			}
-		} */
+		return ERROR;
 	}
 	else
 	{
-		DPID_STANDBY_TIMEcount=0;
 		for(i=0;i<8;i++)
 			{
 				if(groupaddr[i] != 0)
@@ -612,7 +537,6 @@ static unsigned char dp_download_standby_time_handle(const unsigned char value[]
 	
     lowlightDELAY_NUM=standby_time;
     
-    savevar();
     //处理完DP数据后应有反馈
     ret = mcu_dp_value_update(DPID_STANDBY_TIME, lowlightDELAY_NUM);
     if(ret == SUCCESS)
@@ -636,27 +560,13 @@ static unsigned char dp_download_sense_stress_handle(const unsigned char value[]
     unsigned char i;
     
     sense_stress = mcu_get_dp_download_value(value,length);
-    /*
-    //VALUE类型数据处理
-    
-    */
-	DPID_SENSE_STRESScount++;
+
 	if(sense_stress==sensing_th)
 	{
-/* 		if(DPID_SENSE_STRESScount<2)
-		{
-			for(i=0;i<8;i++)
-			{
-				if(groupaddr[i] != 0)
-				{
-					mcu_dp_value_mesh_update(DPID_SENSE_STRESS,sense_stress,groupaddr[i]);
-				}
-			}
-		} */
+		return ERROR;
 	}
 	else
 	{
-		DPID_SENSE_STRESScount=0;
 		for(i=0;i<8;i++)
 		{
 			if(groupaddr[i] != 0)
@@ -668,11 +578,7 @@ static unsigned char dp_download_sense_stress_handle(const unsigned char value[]
 	
 	sensing_th = sense_stress;
 	TH=(50-sense_stress)*10000;
-		
-	savevar();
-    
-    //sprintf(temp_str, "%6d", TH);
-    //mcu_dp_string_update(DPID_DEBUG, temp_str, strlen(temp_str));    
+     
     //处理完DP数据后应有反馈
     ret = mcu_dp_value_update(DPID_SENSE_STRESS, sensing_th);
     if(ret == SUCCESS)
@@ -698,31 +604,19 @@ static unsigned char dp_download_switch_led2_handle(const unsigned char value[],
     
     switch_led2 = mcu_get_dp_download_bool(value,length);
 
-    DPID_SWITCH_LED2count++;
     if(switch_led2==SWITCHflag2)
     {
-/*     	if(DPID_SWITCH_LED2count<2)
-    	{
-    		for(i=0;i<8;i++)
-    		{
-    			if(groupaddr[i] != 0)
-    			{
-    				mcu_dp_bool_mesh_update(DPID_SWITCH_LED2,switch_led2,groupaddr[i]);
-    			}
-    		}
-    	} */
+		return ERROR;
     }
     else
     {
-    	DPID_SWITCH_LED2count=0;
     	for(i=0;i<8;i++)
     	{
     		if(groupaddr[i] != 0)
     		{
     			mcu_dp_bool_mesh_update(DPID_SWITCH_LED2,switch_led2,groupaddr[i]);
     		}
-    	}   
-
+    	}
     }
 
     if(switch_led2 == 0) {
@@ -730,7 +624,6 @@ static unsigned char dp_download_switch_led2_handle(const unsigned char value[],
         SWITCHflag2=0;
     }else {
         //灯开关开
-        //mcu_dp_string_update(DPID_DEBUG, led_bn_on, strlen(led_bn_on));
         if(SWITCHfXBR==1)
 		{
 			Light_on_flag=1;
@@ -764,7 +657,7 @@ static unsigned char dp_download_switch_linkage_handle(const unsigned char value
 		
 	if(switch_Linkage==Linkage_flag)
 	{
-		//
+		return ERROR;
 	}
 	else
 	{
@@ -776,25 +669,15 @@ static unsigned char dp_download_switch_linkage_handle(const unsigned char value
 			}
 		}
 	}
-    if(switch_Linkage == 0) {
-        //雷达开关关
-        //LIGHT_OFF;
-        //PWM3init(0);
-        Linkage_flag=0;
-    }else {
-        //雷达开关开
-        //LIGHT_ON;
-        //PWM3init(100);
-        Linkage_flag=1;
-    }
+	
+	Linkage_flag = switch_Linkage;
   	
     //处理完DP数据后应有反馈
-    ret = mcu_dp_bool_update(DPID_SWITCH_LINKAGE,switch_Linkage);
+    ret = mcu_dp_bool_update(DPID_SWITCH_LINKAGE,Linkage_flag);
     if(ret == SUCCESS)
         return SUCCESS;
     else
         return ERROR;
-
 }
 /*****************************************************************************
 函数名称 : dp_download_all_day_micro_light_handle
@@ -810,20 +693,71 @@ static unsigned char dp_download_all_day_micro_light_handle(const unsigned char 
     unsigned char ret;
     //0:关/1:开
     unsigned char all_day_micro_light;
+    unsigned char i;
     
     all_day_micro_light = mcu_get_dp_download_bool(value,length);
-
+	
+    if(all_day_micro_light_enable == all_day_micro_light)
+    {
+		return ERROR;
+    }
+    else
+    {
+		for(i=0;i<8;i++)
+		{
+			if(groupaddr[i] != 0)
+			{
+				mcu_dp_bool_mesh_update(DPID_ALL_DAY_MICRO_LIGHT,all_day_micro_light,groupaddr[i]);
+			}
+		}
+    }
+	
 	all_day_micro_light_enable = all_day_micro_light;
   
     //处理完DP数据后应有反馈
-    ret = mcu_dp_bool_update(DPID_ALL_DAY_MICRO_LIGHT,all_day_micro_light_enable);
+    ret = mcu_dp_bool_update(DPID_ALL_DAY_MICRO_LIGHT, all_day_micro_light_enable);
     if(ret == SUCCESS)
         return SUCCESS;
     else
         return ERROR;
+
 }
+/*****************************************************************************
+函数名称 : dp_download_clear_trigger_number_handle
+功能描述 : 针对DPID_CLEAR_TRIGGER_NUMBER的处理函数
+输入参数 : value:数据源数据
+        : length:数据长度
+返回参数 : 成功返回:SUCCESS/失败返回:ERROR
+使用说明 : 只下发类型,需要在处理完数据后上报处理结果至app
+*****************************************************************************/
+static unsigned char dp_download_clear_trigger_number_handle(const unsigned char value[], unsigned short length)
+{
+    //示例:当前DP类型为BOOL
+    //unsigned char ret;
+    //0:关/1:开
+    unsigned char clear_trigger_number;
+		unsigned char i;
+    
+    clear_trigger_number = mcu_get_dp_download_bool(value,length);
+    if(clear_trigger_number == 0) {
+        //开关关
+		return ERROR;
+    }else {
+        //开关开
+		radar_trig_times = 0;
+		for(i=0;i<8;i++)
+		{
+			if(groupaddr[i] != 0)
+			{
+				mcu_dp_value_mesh_update(DPID_RADAR_TRIGGER_TIMES,radar_trig_times,groupaddr[i]);
+			}
+		}		
+		mcu_dp_value_update(DPID_RADAR_TRIGGER_TIMES,radar_trig_times); //VALUE型数据上报;
+    }
+  
+  	return SUCCESS;
 
-
+}
 /******************************************************************************
                                 WARNING!!!                     
 此代码为SDK内部调用,请按照实际dp数据实现函数内部数据
@@ -935,7 +869,7 @@ unsigned char dp_download_handle(unsigned char dpid,const unsigned char value[],
             switchcnt = 0;
         break;
         case DPID_SWITCH_XBR:
-            //感应开关处理函数
+            //雷达开关处理函数
             ret = dp_download_switch_xbr_handle(value,length);
             switchcnt = 0;
         break;
@@ -955,7 +889,7 @@ unsigned char dp_download_handle(unsigned char dpid,const unsigned char value[],
             switchcnt = 0;
         break;
         case DPID_SWITCH_LINKAGE:
-            //联动 处理函数
+            //联动处理函数
             ret = dp_download_switch_linkage_handle(value,length);
             switchcnt = 0;
         break;
@@ -964,11 +898,18 @@ unsigned char dp_download_handle(unsigned char dpid,const unsigned char value[],
             ret = dp_download_all_day_micro_light_handle(value,length);
 			switchcnt = 0;
         break;
-  default:
-        switchcnt = 0;
-    break;
-  }
-  return ret;
+        case DPID_CLEAR_TRIGGER_NUMBER:
+            //计数清零处理函数
+            ret = dp_download_clear_trigger_number_handle(value,length);
+			switchcnt = 0;
+        break;
+
+        
+        default:
+        	switchcnt = 0;
+        break;
+    }
+    return ret;
 }
 /*****************************************************************************
 函数名称 : get_download_cmd_total
@@ -981,54 +922,3 @@ unsigned char get_download_cmd_total(void)
 {
   return(sizeof(download_cmd) / sizeof(download_cmd[0]));
 }
-
-void savevar(void)
-{
-	unsigned char i;
-	Flash_EraseBlock(0x2F00);
-	Delay_us_1(10000);
-
-	i=(TH/1000)>>8;
-	FLASH_WriteData(i,0x2F00+0);
-	Delay_us_1(100);
-	
-    i=(TH/1000)&0xff;
-	FLASH_WriteData(i,0x2F00+1);
-	Delay_us_1(100);
-	
-    i=LIGHT_TH;
-	FLASH_WriteData(i,0x2F00+2);
-	Delay_us_1(100);
-	
-	i=DELAY_NUM>>8;
-	FLASH_WriteData(i,0x2F00+3);
-	Delay_us_1(100);
-	i=DELAY_NUM&0xff;//&0xff;
-	FLASH_WriteData(i,0x2F00+4);
-	Delay_us_1(100);
-	
-	i=lightvalue;
-	FLASH_WriteData(i,0x2F00+5);
-	Delay_us_1(100);
-	
-	i=lowlightDELAY_NUM;
-	FLASH_WriteData(i,0x2F00+6);
-	Delay_us_1(100);
-	
-	i=~SWITCHfXBR;//&0xff;
-	FLASH_WriteData(i,0x2F00+7);
-	Delay_us_1(100);
-	
-	i=temper_value;
-	FLASH_WriteData(i,0x2F00+8);
-	Delay_us_1(100);
-	
-	Flash_EraseBlock(0x2F80);
-	Delay_us_1(10000);
-	FLASH_WriteData(0,0x2F80+0);
-	
-	EA=1;				//-20200927
-
-}
-
-
