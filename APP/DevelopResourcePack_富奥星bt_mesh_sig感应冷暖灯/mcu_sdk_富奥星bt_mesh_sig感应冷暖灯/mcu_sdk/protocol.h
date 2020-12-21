@@ -122,18 +122,39 @@ mcu在bt模块正确联网后可调用mcu_get_system_time()函数发起校时功
 //雷达触发计数(只上报)
 //备注:
 #define DPID_RADAR_TRIGGER_TIMES 116
-//雷达IF平均值(只上报)
+//计数清零(只下发)
 //备注:
-#define DPID_AVERAGE 117
-//光敏AD值(只上报)
+#define DPID_CLEAR_TRIGGER_NUMBER 117
+//灯状态(只上报)
 //备注:
-#define DPID_LIGHT_ADC_VALUE 118
-//雷达IF SUM0(只上报)
+#define DPID_LIGHT_STATUS 118
+//人状态(只上报)
 //备注:
-#define DPID_SUM0_VALUE 119
-//雷达IF SUM1(只上报)
+#define DPID_PERSON_IN_RANGE 119
+//群组地址0(只上报)
 //备注:
-#define DPID_SUM1_VALUE 120
+#define DPID_ADDR0 130
+//群组地址1(只上报)
+//备注:
+#define DPID_ADDR1 131
+//群组地址2(只上报)
+//备注:
+#define DPID_ADDR2 132
+//群组地址3(只上报)
+//备注:
+#define DPID_ADDR3 133
+//群组地址4(只上报)
+//备注:
+#define DPID_ADDR4 134
+//群组地址5(只上报)
+//备注:
+#define DPID_ADDR5 135
+//群组地址6(只上报)
+//备注:
+#define DPID_ADDR6 136
+//群组地址7(只上报)
+//备注:
+#define DPID_ADDR7 137
 
 
 

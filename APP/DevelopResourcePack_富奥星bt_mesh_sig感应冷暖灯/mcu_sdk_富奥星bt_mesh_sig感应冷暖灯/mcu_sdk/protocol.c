@@ -63,10 +63,17 @@ const DOWNLOAD_CMD_S download_cmd[] =
   {DPID_SWITCH_LINKAGE, DP_TYPE_BOOL},
   {DPID_ALL_DAY_MICRO_LIGHT, DP_TYPE_BOOL},
   {DPID_RADAR_TRIGGER_TIMES, DP_TYPE_VALUE},
-  {DPID_AVERAGE, DP_TYPE_VALUE},
-  {DPID_LIGHT_ADC_VALUE, DP_TYPE_VALUE},
-  {DPID_SUM0_VALUE, DP_TYPE_VALUE},
-  {DPID_SUM1_VALUE, DP_TYPE_VALUE},
+  {DPID_CLEAR_TRIGGER_NUMBER, DP_TYPE_BOOL},
+  {DPID_LIGHT_STATUS, DP_TYPE_ENUM},
+  {DPID_PERSON_IN_RANGE, DP_TYPE_ENUM},
+  {DPID_ADDR0, DP_TYPE_VALUE},
+  {DPID_ADDR1, DP_TYPE_VALUE},
+  {DPID_ADDR2, DP_TYPE_VALUE},
+  {DPID_ADDR3, DP_TYPE_VALUE},
+  {DPID_ADDR4, DP_TYPE_VALUE},
+  {DPID_ADDR5, DP_TYPE_VALUE},
+  {DPID_ADDR6, DP_TYPE_VALUE},
+  {DPID_ADDR7, DP_TYPE_VALUE},
 };
 
 
@@ -135,10 +142,16 @@ void all_data_update(void)
     mcu_dp_bool_update(DPID_SWITCH_LINKAGE,当前联动); //BOOL型数据上报;
     mcu_dp_bool_update(DPID_ALL_DAY_MICRO_LIGHT,当前全天伴亮); //BOOL型数据上报;
     mcu_dp_value_update(DPID_RADAR_TRIGGER_TIMES,当前雷达触发计数); //VALUE型数据上报;
-    mcu_dp_value_update(DPID_AVERAGE,当前雷达IF平均值); //VALUE型数据上报;
-    mcu_dp_value_update(DPID_LIGHT_ADC_VALUE,当前光敏AD值); //VALUE型数据上报;
-    mcu_dp_value_update(DPID_SUM0_VALUE,当前雷达IF SUM0); //VALUE型数据上报;
-    mcu_dp_value_update(DPID_SUM1_VALUE,当前雷达IF SUM1); //VALUE型数据上报;
+    mcu_dp_enum_update(DPID_LIGHT_STATUS,当前灯状态); //枚举型数据上报;
+    mcu_dp_enum_update(DPID_PERSON_IN_RANGE,当前人状态); //枚举型数据上报;
+    mcu_dp_value_update(DPID_ADDR0,当前群组地址0); //VALUE型数据上报;
+    mcu_dp_value_update(DPID_ADDR1,当前群组地址1); //VALUE型数据上报;
+    mcu_dp_value_update(DPID_ADDR2,当前群组地址2); //VALUE型数据上报;
+    mcu_dp_value_update(DPID_ADDR3,当前群组地址3); //VALUE型数据上报;
+    mcu_dp_value_update(DPID_ADDR4,当前群组地址4); //VALUE型数据上报;
+    mcu_dp_value_update(DPID_ADDR5,当前群组地址5); //VALUE型数据上报;
+    mcu_dp_value_update(DPID_ADDR6,当前群组地址6); //VALUE型数据上报;
+    mcu_dp_value_update(DPID_ADDR7,当前群组地址7); //VALUE型数据上报;
 
 
 
@@ -477,6 +490,35 @@ static unsigned char dp_download_all_day_micro_light_handle(const unsigned char 
     else
         return ERROR;
 }
+/*****************************************************************************
+函数名称 : dp_download_clear_trigger_number_handle
+功能描述 : 针对DPID_CLEAR_TRIGGER_NUMBER的处理函数
+输入参数 : value:数据源数据
+        : length:数据长度
+返回参数 : 成功返回:SUCCESS/失败返回:ERROR
+使用说明 : 只下发类型,需要在处理完数据后上报处理结果至app
+*****************************************************************************/
+static unsigned char dp_download_clear_trigger_number_handle(const unsigned char value[], unsigned short length)
+{
+    //示例:当前DP类型为BOOL
+    unsigned char ret;
+    //0:关/1:开
+    unsigned char clear_trigger_number;
+    
+    clear_trigger_number = mcu_get_dp_download_bool(value,length);
+    if(clear_trigger_number == 0) {
+        //开关关
+    }else {
+        //开关开
+    }
+  
+    //处理完DP数据后应有反馈
+    ret = mcu_dp_bool_update(DPID_CLEAR_TRIGGER_NUMBER,clear_trigger_number);
+    if(ret == SUCCESS)
+        return SUCCESS;
+    else
+        return ERROR;
+}
 
 
 /******************************************************************************
@@ -599,6 +641,10 @@ unsigned char dp_download_handle(unsigned char dpid,const unsigned char value[],
         case DPID_ALL_DAY_MICRO_LIGHT:
             //全天伴亮处理函数
             ret = dp_download_all_day_micro_light_handle(value,length);
+        break;
+        case DPID_CLEAR_TRIGGER_NUMBER:
+            //计数清零处理函数
+            ret = dp_download_clear_trigger_number_handle(value,length);
         break;
 
 
