@@ -807,6 +807,8 @@ void XBRHandle(void)
 //			send_data(SUM0 >> 8);
 //			send_data(SUM1 >> 16);
 //			send_data(SUM1 >> 8); //20200927	²âÊÔÓÃ
+//			send_data(TH >> 16);
+//			send_data(TH >> 8);
 ////////////////////////////////////////////////////
 			SUM = 0;
 			SUM1 = 0;
