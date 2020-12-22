@@ -74,8 +74,6 @@ volatile u16 idata light1scount = 0;	  //timer的计数器1ms自加
 volatile u16 idata light1sflag = 0;		  //timer的秒标志
 
 u16 idata groupaddr[8] = {0};
-u8 idata check_group_flag = 0;	//检查群组标志
-u8 idata check_group_count = 0; //检查群组计数器
 u8 idata Linkage_flag = 0;		//联动标志
 u8 idata Light_on_flag = 0;
 u8 idata Light_on_flagpre = 0;
@@ -1253,15 +1251,6 @@ void main()
 			}
 		}		
 
-		if (check_group_count <= 0) //
-		{
-			if (check_group_flag == 1)
-			{
-				check_group_flag = 0;
-				check_group_count++;
-				bt_uart_write_frame(BT_MESH_GET_MY_GROUP_ADDRESS, 0);
-			}
-		}
 		WDTC |= 0x10; //清看门狗
 
 		if (while_1flag == 0)//侦测状态
@@ -1397,7 +1386,6 @@ void TIMER1_Rpt(void) interrupt TIMER1_VECTOR
 	light1scount++;
 	if (light1scount >= 1000)
 	{
-		check_group_flag = 1;
 		light1scount = 0;
 		light1sflag = 1;
 	}

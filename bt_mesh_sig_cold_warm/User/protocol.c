@@ -225,6 +225,8 @@ void all_data_update(void)
 
     mcu_dp_enum_update(DPID_LIGHT_STATUS,light_status_xxx); //枚举型数据上报;
     mcu_dp_enum_update(DPID_PERSON_IN_RANGE,person_in_range_flag); //枚举型数据上报;
+		
+		bt_uart_write_frame(BT_MESH_GET_MY_GROUP_ADDRESS, 0);
 
 }
 
@@ -678,6 +680,11 @@ static unsigned char dp_download_switch_linkage_handle(const unsigned char value
 	Linkage_flag = switch_Linkage;
 	
 	bt_sigmesh_enable(Linkage_flag);
+	
+	if (Linkage_flag)
+	{
+		bt_uart_write_frame(BT_MESH_GET_MY_GROUP_ADDRESS, 0);
+	}
   	
     //处理完DP数据后应有反馈
     ret = mcu_dp_bool_update(DPID_SWITCH_LINKAGE,Linkage_flag);
