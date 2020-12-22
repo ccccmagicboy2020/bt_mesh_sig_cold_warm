@@ -313,15 +313,29 @@ void data_handle(unsigned short offset)
   unsigned char ret;
   unsigned short i,total_len;
   unsigned char cmd_type = bt_uart_rx_buf[offset + FRAME_TYPE];
+	
+	unsigned char rsp_status;
+	
+	unsigned char adr_num;
   
   switch(cmd_type)
   {
+		case BT_MESH_ENABLE:
+			rsp_status = bt_uart_rx_buf[offset + DATA_START];
+			if (0 == rsp_status)
+			{
+				mcu_dp_bool_update(DPID_SWITCH_LINKAGE, 1);
+				bt_uart_write_frame(BT_MESH_GET_MY_GROUP_ADDRESS, 0);
+			}
+			else
+			{
+				mcu_dp_bool_update(DPID_SWITCH_LINKAGE, 0);
+			}
+			break;
 		case USER_DEFINE_CMD0:
-			//unsigned char rsp_status = bt_uart_rx_buf[offset + DATA_START];
 			cmd0();
 			break;
 		case USER_DEFINE_CMD1:
-			//unsigned char rsp_status = bt_uart_rx_buf[offset + DATA_START];
 			cmd1();
 			break;
   
@@ -378,36 +392,44 @@ void data_handle(unsigned short offset)
     }
     
     break;
-  case BT_Check_meshgroup:                                  //查询群组
+  case BT_MESH_GET_MY_GROUP_ADDRESS:                                  //查询群组
     total_len = bt_uart_rx_buf[offset + LENGTH_HIGH] * 0x100;
     total_len += bt_uart_rx_buf[offset + LENGTH_LOW];
 
-
-	groupaddr[0] = bt_uart_rx_buf[offset + 7] * 0x100;
-	groupaddr[0] += bt_uart_rx_buf[offset + 8] ;
-
-	groupaddr[1] = bt_uart_rx_buf[offset + 9] * 0x100;
-	groupaddr[1] += bt_uart_rx_buf[offset + 10] ;
-
-	groupaddr[2] = bt_uart_rx_buf[offset + 11] * 0x100;
-	groupaddr[2] += bt_uart_rx_buf[offset + 12] ;
-
-	groupaddr[3] = bt_uart_rx_buf[offset + 13] * 0x100;
-	groupaddr[3] += bt_uart_rx_buf[offset + 14] ;
-
-	groupaddr[4] = bt_uart_rx_buf[offset + 15] * 0x100;
-	groupaddr[4] += bt_uart_rx_buf[offset + 16] ;
-
-	groupaddr[5] = bt_uart_rx_buf[offset + 17] * 0x100;
-	groupaddr[5] += bt_uart_rx_buf[offset + 18] ;
-
-	groupaddr[6] = bt_uart_rx_buf[offset + 19] * 0x100;
-	groupaddr[6] += bt_uart_rx_buf[offset + 20] ;
-
-	groupaddr[7] = bt_uart_rx_buf[offset + 21] * 0x100;
-	groupaddr[7] += bt_uart_rx_buf[offset + 22] ;
-
+	adr_num = bt_uart_rx_buf[offset + DATA_START];
 	
+	groupaddr[0] = bt_uart_rx_buf[offset + DATA_START + 1] * 0x100;
+	groupaddr[0] += bt_uart_rx_buf[offset + DATA_START + 2] ;
+
+	groupaddr[1] = bt_uart_rx_buf[offset + DATA_START + 3] * 0x100;
+	groupaddr[1] += bt_uart_rx_buf[offset + DATA_START + 4] ;
+
+	groupaddr[2] = bt_uart_rx_buf[offset + DATA_START + 5] * 0x100;
+	groupaddr[2] += bt_uart_rx_buf[offset + DATA_START + 6] ;
+
+	groupaddr[3] = bt_uart_rx_buf[offset + DATA_START + 7] * 0x100;
+	groupaddr[3] += bt_uart_rx_buf[offset + DATA_START + 8] ;
+
+	groupaddr[4] = bt_uart_rx_buf[offset + DATA_START + 9] * 0x100;
+	groupaddr[4] += bt_uart_rx_buf[offset + DATA_START + 10] ;
+
+	groupaddr[5] = bt_uart_rx_buf[offset + DATA_START + 11] * 0x100;
+	groupaddr[5] += bt_uart_rx_buf[offset + DATA_START + 12] ;
+
+	groupaddr[6] = bt_uart_rx_buf[offset + DATA_START + 13] * 0x100;
+	groupaddr[6] += bt_uart_rx_buf[offset + DATA_START + 14] ;
+
+	groupaddr[7] = bt_uart_rx_buf[offset + DATA_START + 15] * 0x100;
+	groupaddr[7] += bt_uart_rx_buf[offset + DATA_START + 16] ;
+
+    mcu_dp_value_update(DPID_ADDR0, groupaddr[0]); //VALUE型数据上报;
+    mcu_dp_value_update(DPID_ADDR1, groupaddr[1]); //VALUE型数据上报;
+    mcu_dp_value_update(DPID_ADDR2, groupaddr[2]); //VALUE型数据上报;
+    mcu_dp_value_update(DPID_ADDR3, groupaddr[3]); //VALUE型数据上报;
+    mcu_dp_value_update(DPID_ADDR4, groupaddr[4]); //VALUE型数据上报;
+    mcu_dp_value_update(DPID_ADDR5, groupaddr[5]); //VALUE型数据上报;
+    mcu_dp_value_update(DPID_ADDR6, groupaddr[6]); //VALUE型数据上报;
+    mcu_dp_value_update(DPID_ADDR7, groupaddr[7]); //VALUE型数据上报;	
 
     break;
   case STATE_QUERY_CMD:                                 //状态查询

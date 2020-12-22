@@ -49,11 +49,14 @@
 #define         STATE_QUERY_CMD                 8                               //状态查询   
 //#define         UPDATE_START_CMD                0x0a                            //升级开始
 //#define         UPDATE_TRANS_CMD                0x0b                            //升级传输
-#define         BT_MESH_CMD                0xB2                            //MESH传输
-#define         BT_Check_meshgroup         0xB4                            //查询群组地址
+#define			BT_MESH_ENABLE			   		0xB1
+#define         BT_MESH_CMD                		0xB2                            //MESH传输
+#define			BT_MESH_GET_PUB_ADDRESS	   		0xB3
+#define         BT_MESH_GET_MY_GROUP_ADDRESS	0xB4                            //查询群组地址
+
 //=============================================================================
-#define			USER_DEFINE_CMD0				0xB0
-#define			USER_DEFINE_CMD1				0xB1
+#define			USER_DEFINE_CMD0				0xC0
+#define			USER_DEFINE_CMD1				0xC1
 //=============================================================================
 #define         VERSION                 0x00                                            //协议版本号
 #define         PROTOCOL_HEAD           0x07                                            //固定协议头长度

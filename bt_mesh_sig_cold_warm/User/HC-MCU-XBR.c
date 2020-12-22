@@ -1253,13 +1253,13 @@ void main()
 			}
 		}		
 
-		if (check_group_count <= 2) //一上电间隔一秒获取3次群组地址
+		if (check_group_count <= 0) //
 		{
 			if (check_group_flag == 1)
 			{
 				check_group_flag = 0;
 				check_group_count++;
-				bt_uart_write_frame(BT_Check_meshgroup, 0);
+				bt_uart_write_frame(BT_MESH_GET_MY_GROUP_ADDRESS, 0);
 			}
 		}
 		WDTC |= 0x10; //清看门狗

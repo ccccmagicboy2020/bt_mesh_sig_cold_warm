@@ -69,6 +69,21 @@ void reset_bt_module(void)
 	Exit_network_controlflag = 1;
 }
 
+void bt_sigmesh_enable(u8 en)
+{
+	unsigned char length = 0;	
+	
+	if (0 == en)
+	{
+		length = set_bt_uart_byte(length, 0);
+	}
+	else
+	{
+		length = set_bt_uart_byte(length, 1);
+	}
+	bt_uart_write_frame(BT_MESH_ENABLE, length);
+}
+
 /******************************************************************************
                                 移植须知:
 1:MCU必须在while中直接调用mcu_api.c内的bt_uart_service()函数
@@ -210,16 +225,6 @@ void all_data_update(void)
 
     mcu_dp_enum_update(DPID_LIGHT_STATUS,light_status_xxx); //枚举型数据上报;
     mcu_dp_enum_update(DPID_PERSON_IN_RANGE,person_in_range_flag); //枚举型数据上报;
-    mcu_dp_value_update(DPID_ADDR0, groupaddr[0]); //VALUE型数据上报;
-    mcu_dp_value_update(DPID_ADDR1, groupaddr[1]); //VALUE型数据上报;
-    mcu_dp_value_update(DPID_ADDR2, groupaddr[2]); //VALUE型数据上报;
-    mcu_dp_value_update(DPID_ADDR3, groupaddr[3]); //VALUE型数据上报;
-    mcu_dp_value_update(DPID_ADDR4, groupaddr[4]); //VALUE型数据上报;
-    mcu_dp_value_update(DPID_ADDR5, groupaddr[5]); //VALUE型数据上报;
-    mcu_dp_value_update(DPID_ADDR6, groupaddr[6]); //VALUE型数据上报;
-    mcu_dp_value_update(DPID_ADDR7, groupaddr[7]); //VALUE型数据上报;
-
-
 
 }
 
@@ -671,6 +676,8 @@ static unsigned char dp_download_switch_linkage_handle(const unsigned char value
 	}
 	
 	Linkage_flag = switch_Linkage;
+	
+	bt_sigmesh_enable(Linkage_flag);
   	
     //处理完DP数据后应有反馈
     ret = mcu_dp_bool_update(DPID_SWITCH_LINKAGE,Linkage_flag);

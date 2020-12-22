@@ -51,7 +51,7 @@ MCU可调用mcu_api.c文件内的mcu_firm_update_query()函数获取当前MCU固
 ******************************************************************************/
 #ifndef SUPPORT_MCU_FIRM_UPDATE
 #define BT_UART_QUEUE_LMT             24              //数据接收队列大小,如MCU的RAM不够,可缩小
-#define BT_UART_RECV_BUF_LMT          24              //根据用户DP数据大小量定,必须大于24
+#define BT_UART_RECV_BUF_LMT          28              //根据用户DP数据大小量定,必须大于24
 #else
 #define BT_UART_QUEUE_LMT             128             //数据接收队列大小,如MCU的RAM不够,可缩小
 #define BT_UART_RECV_BUF_LMT          300             //固件升级缓冲区,需大缓存,必须大于260
