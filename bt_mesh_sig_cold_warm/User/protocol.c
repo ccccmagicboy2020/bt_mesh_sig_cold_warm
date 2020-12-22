@@ -613,7 +613,7 @@ static unsigned char dp_download_switch_led2_handle(const unsigned char value[],
 
     if(switch_led2==SWITCHflag2)
     {
-		return ERROR;
+		//return ERROR;
     }
     else
     {
