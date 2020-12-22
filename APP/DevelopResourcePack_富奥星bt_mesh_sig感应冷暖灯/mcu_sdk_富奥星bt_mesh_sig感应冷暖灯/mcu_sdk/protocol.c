@@ -66,14 +66,14 @@ const DOWNLOAD_CMD_S download_cmd[] =
   {DPID_CLEAR_TRIGGER_NUMBER, DP_TYPE_BOOL},
   {DPID_LIGHT_STATUS, DP_TYPE_ENUM},
   {DPID_PERSON_IN_RANGE, DP_TYPE_ENUM},
-  {DPID_ADDR0, DP_TYPE_VALUE},
-  {DPID_ADDR1, DP_TYPE_VALUE},
-  {DPID_ADDR2, DP_TYPE_VALUE},
-  {DPID_ADDR3, DP_TYPE_VALUE},
-  {DPID_ADDR4, DP_TYPE_VALUE},
-  {DPID_ADDR5, DP_TYPE_VALUE},
-  {DPID_ADDR6, DP_TYPE_VALUE},
-  {DPID_ADDR7, DP_TYPE_VALUE},
+  {DPID_ADDR0, DP_TYPE_ENUM},
+  {DPID_ADDR1, DP_TYPE_ENUM},
+  {DPID_ADDR2, DP_TYPE_ENUM},
+  {DPID_ADDR3, DP_TYPE_ENUM},
+  {DPID_ADDR4, DP_TYPE_ENUM},
+  {DPID_ADDR5, DP_TYPE_ENUM},
+  {DPID_ADDR6, DP_TYPE_ENUM},
+  {DPID_ADDR7, DP_TYPE_ENUM},
 };
 
 
@@ -144,14 +144,14 @@ void all_data_update(void)
     mcu_dp_value_update(DPID_RADAR_TRIGGER_TIMES,当前雷达触发计数); //VALUE型数据上报;
     mcu_dp_enum_update(DPID_LIGHT_STATUS,当前灯状态); //枚举型数据上报;
     mcu_dp_enum_update(DPID_PERSON_IN_RANGE,当前人状态); //枚举型数据上报;
-    mcu_dp_value_update(DPID_ADDR0,当前群组地址0); //VALUE型数据上报;
-    mcu_dp_value_update(DPID_ADDR1,当前群组地址1); //VALUE型数据上报;
-    mcu_dp_value_update(DPID_ADDR2,当前群组地址2); //VALUE型数据上报;
-    mcu_dp_value_update(DPID_ADDR3,当前群组地址3); //VALUE型数据上报;
-    mcu_dp_value_update(DPID_ADDR4,当前群组地址4); //VALUE型数据上报;
-    mcu_dp_value_update(DPID_ADDR5,当前群组地址5); //VALUE型数据上报;
-    mcu_dp_value_update(DPID_ADDR6,当前群组地址6); //VALUE型数据上报;
-    mcu_dp_value_update(DPID_ADDR7,当前群组地址7); //VALUE型数据上报;
+    mcu_dp_enum_update(DPID_ADDR0,当前公共群组地址0); //枚举型数据上报;
+    mcu_dp_enum_update(DPID_ADDR1,当前公共群组地址1); //枚举型数据上报;
+    mcu_dp_enum_update(DPID_ADDR2,当前公共群组地址2); //枚举型数据上报;
+    mcu_dp_enum_update(DPID_ADDR3,当前公共群组地址3); //枚举型数据上报;
+    mcu_dp_enum_update(DPID_ADDR4,当前公共群组地址4); //枚举型数据上报;
+    mcu_dp_enum_update(DPID_ADDR5,当前公共群组地址5); //枚举型数据上报;
+    mcu_dp_enum_update(DPID_ADDR6,当前公共群组地址6); //枚举型数据上报;
+    mcu_dp_enum_update(DPID_ADDR7,当前公共群组地址7); //枚举型数据上报;
 
 
 
