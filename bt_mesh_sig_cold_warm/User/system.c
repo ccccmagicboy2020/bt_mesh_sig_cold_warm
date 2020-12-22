@@ -17,9 +17,16 @@
 **-----------------------------------------------------------------------------
 ******************************************************************************/
 #define SYSTEM_GLOBAL
-
+#include "HC89S003F4.h"
 #include "bluetooth.h"
 //
+
+extern ulong xdata SUM0;	   //
+extern ulong xdata SUM2;		//
+extern uint xdata average;	//
+extern u8 xdata light_ad;		//
+extern ulong xdata TH;		//
+
 
 extern u16 idata groupaddr[8];
 extern u8 idata Exit_network_controlflag;
@@ -28,6 +35,30 @@ void reset_bt_module(void);
 void savevar(void);
 extern const DOWNLOAD_CMD_S xdata download_cmd[];
 
+static void cmd0(void)
+{
+    unsigned char length = 0;
+
+		length = set_bt_uart_byte(length, average >> 4);
+		length = set_bt_uart_byte(length, light_ad);
+		length = set_bt_uart_byte(length, SUM0 >> 16);
+		length = set_bt_uart_byte(length, SUM0 >> 8);
+		length = set_bt_uart_byte(length, SUM2 >> 16);
+		length = set_bt_uart_byte(length, SUM2 >> 8);
+		length = set_bt_uart_byte(length, TH >> 16);
+		length = set_bt_uart_byte(length, TH >> 8);
+		
+    bt_uart_write_frame(USER_DEFINE_CMD0, length);
+}
+
+static void cmd1(void)
+{
+    unsigned char length = 0;
+
+    //length = set_zigbee_uart_buffer(length,(unsigned char *)"{\"p\":\"",my_strlen((unsigned char *)"{\"p\":\""));
+
+    bt_uart_write_frame(USER_DEFINE_CMD1, length);
+}
 /*****************************************************************************
 函数名称 : set_bt_uart_byte
 功能描述 : 写bt_uart字节
@@ -285,6 +316,15 @@ void data_handle(unsigned short offset)
   
   switch(cmd_type)
   {
+		case USER_DEFINE_CMD0:
+			//unsigned char rsp_status = bt_uart_rx_buf[offset + DATA_START];
+			cmd0();
+			break;
+		case USER_DEFINE_CMD1:
+			//unsigned char rsp_status = bt_uart_rx_buf[offset + DATA_START];
+			cmd1();
+			break;
+  
   case HEAT_BEAT_CMD:                                   //心跳包
     heat_beat_check();
     break;

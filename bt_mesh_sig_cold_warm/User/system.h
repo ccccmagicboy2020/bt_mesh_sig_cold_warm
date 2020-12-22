@@ -52,6 +52,9 @@
 #define         BT_MESH_CMD                0xB2                            //MESH传输
 #define         BT_Check_meshgroup         0xB4                            //查询群组地址
 //=============================================================================
+#define			USER_DEFINE_CMD0				0xB0
+#define			USER_DEFINE_CMD1				0xB1
+//=============================================================================
 #define         VERSION                 0x00                                            //协议版本号
 #define         PROTOCOL_HEAD           0x07                                            //固定协议头长度
 //#define         FIRM_UPDATA_SIZE        256                                            //升级包大小
