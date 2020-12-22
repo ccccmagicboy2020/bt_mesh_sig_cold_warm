@@ -422,14 +422,77 @@ void data_handle(unsigned short offset)
 	groupaddr[7] = bt_uart_rx_buf[offset + DATA_START + 15] * 0x100;
 	groupaddr[7] += bt_uart_rx_buf[offset + DATA_START + 16] ;
 
-    mcu_dp_value_update(DPID_ADDR0, groupaddr[0]); //VALUE型数据上报;
-    mcu_dp_value_update(DPID_ADDR1, groupaddr[1]); //VALUE型数据上报;
-    mcu_dp_value_update(DPID_ADDR2, groupaddr[2]); //VALUE型数据上报;
-    mcu_dp_value_update(DPID_ADDR3, groupaddr[3]); //VALUE型数据上报;
-    mcu_dp_value_update(DPID_ADDR4, groupaddr[4]); //VALUE型数据上报;
-    mcu_dp_value_update(DPID_ADDR5, groupaddr[5]); //VALUE型数据上报;
-    mcu_dp_value_update(DPID_ADDR6, groupaddr[6]); //VALUE型数据上报;
-    mcu_dp_value_update(DPID_ADDR7, groupaddr[7]); //VALUE型数据上报;	
+	if (groupaddr[0])
+	{
+		mcu_dp_enum_update(DPID_ADDR0, 1); //VALUE型数据上报;		
+	}
+	else
+	{
+		mcu_dp_enum_update(DPID_ADDR0, 0); //VALUE型数据上报;		
+	}
+
+	if (groupaddr[1])
+	{
+		mcu_dp_enum_update(DPID_ADDR1, 1); //VALUE型数据上报;		
+	}
+	else
+	{
+		mcu_dp_enum_update(DPID_ADDR1, 0); //VALUE型数据上报;		
+	}	
+	
+	if (groupaddr[2])
+	{
+		mcu_dp_enum_update(DPID_ADDR2, 1); //VALUE型数据上报;		
+	}
+	else
+	{
+		mcu_dp_enum_update(DPID_ADDR2, 0); //VALUE型数据上报;		
+	}
+
+	if (groupaddr[3])
+	{
+		mcu_dp_enum_update(DPID_ADDR3, 1); //VALUE型数据上报;		
+	}
+	else
+	{
+		mcu_dp_enum_update(DPID_ADDR3, 0); //VALUE型数据上报;		
+	}		
+	
+	if (groupaddr[4])
+	{
+		mcu_dp_enum_update(DPID_ADDR4, 1); //VALUE型数据上报;		
+	}
+	else
+	{
+		mcu_dp_enum_update(DPID_ADDR4, 0); //VALUE型数据上报;		
+	}
+
+	if (groupaddr[5])
+	{
+		mcu_dp_enum_update(DPID_ADDR5, 1); //VALUE型数据上报;		
+	}
+	else
+	{
+		mcu_dp_enum_update(DPID_ADDR5, 0); //VALUE型数据上报;		
+	}
+	
+	if (groupaddr[6])
+	{
+		mcu_dp_enum_update(DPID_ADDR6, 1); //VALUE型数据上报;		
+	}
+	else
+	{
+		mcu_dp_enum_update(DPID_ADDR6, 0); //VALUE型数据上报;		
+	}
+
+	if (groupaddr[7])
+	{
+		mcu_dp_enum_update(DPID_ADDR7, 1); //VALUE型数据上报;		
+	}
+	else
+	{
+		mcu_dp_enum_update(DPID_ADDR7, 0); //VALUE型数据上报;		
+	}		
 
     break;
   case STATE_QUERY_CMD:                                 //状态查询
