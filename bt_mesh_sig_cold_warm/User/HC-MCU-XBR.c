@@ -1329,7 +1329,8 @@ void main()
 					{
 						if (groupaddr[i] != 0)
 						{	//µÆ¿ª¹Ø
-							mcu_dp_bool_mesh_update(DPID_SWITCH_LED2, SWITCHflag2, groupaddr[i]);
+							//mcu_dp_bool_mesh_update(DPID_SWITCH_LED2, SWITCHflag2, groupaddr[i]);
+							mcu_dp_bool_mesh_update2(DPID_SWITCH_LED2, SWITCHflag2, groupaddr[i]);
 						}
 					}
 				}

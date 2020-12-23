@@ -268,6 +268,59 @@ unsigned char mcu_dp_bool_update(unsigned char dpid,unsigned char value)
   
   return SUCCESS;
 }
+unsigned char mcu_dp_bool_mesh_update2(unsigned char dpid,unsigned char value,unsigned int groupa)
+{
+  //unsigned short length = 0;
+    unsigned char check_sum = 0;
+	unsigned short len = 0;
+	unsigned char buf[15];
+	  unsigned short i;
+  //unsigned char check_sum = 0;
+  
+ 
+  //55 AA 00 07 00 05 01 01 00 01 01 0F
+  if(stop_update_flag == ENABLE)
+    return SUCCESS;
+  
+  buf[0] = 0x55;
+  buf[1] = 0xaa;
+  buf[2] = 0x00;
+  buf[3] = 0xb2;
+  
+  buf[4] = 0x0;
+  buf[5] = 0x7;
+  buf[6] = groupa >> 8;;
+  buf[7] = groupa;
+  buf[8] = dpid;
+  buf[9] = 0x01;
+  buf[10] = 0x00;
+  buf[11] = 0x01;
+  if(value == 0)
+  {
+	buf[12] = 0;
+  }
+  else
+  {
+	buf[12] = 1;
+  }
+  
+  for(i = 0; i < 13; i ++)
+  {
+    check_sum += buf[i];
+  }
+  buf[13] = check_sum;
+  len = 14;
+  i = 0;
+   while(len --)
+  {
+    uart_transmit_output(buf[i]);
+    i ++;
+  }
+
+  
+  return SUCCESS;
+}
+
 unsigned char mcu_dp_bool_mesh_update(unsigned char dpid,unsigned char value,unsigned int groupa)
 {
 	unsigned short length = 0;

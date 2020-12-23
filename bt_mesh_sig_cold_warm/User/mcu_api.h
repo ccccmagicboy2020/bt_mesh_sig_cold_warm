@@ -128,6 +128,7 @@ unsigned char mcu_dp_raw_update(unsigned char dpid,const unsigned char value[],u
 *****************************************************************************/
 unsigned char mcu_dp_bool_update(unsigned char dpid,unsigned char value);
 unsigned char mcu_dp_bool_mesh_update(unsigned char dpid,unsigned char value,unsigned int groupa);
+unsigned char mcu_dp_bool_mesh_update2(unsigned char dpid,unsigned char value,unsigned int groupa);
 unsigned char mcu_dp_enum_mesh_update(unsigned char dpid,unsigned char value,unsigned int groupa);
 /*****************************************************************************
 函数名称 : mcu_dp_value_update
