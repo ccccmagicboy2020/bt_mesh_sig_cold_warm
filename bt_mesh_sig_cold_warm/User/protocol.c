@@ -62,6 +62,7 @@ void Flash_EraseBlock(unsigned int fui_Address);//flash扇区擦除
 void FLASH_WriteData(unsigned char fuc_SaveData, unsigned int fui_Address);//flash写入
 void Delay_us_1(uint q1);
 extern unsigned char PWM0init(unsigned char ab);
+extern void Delay_ms(uint t);
 
 void reset_bt_module(void)
 {
@@ -192,8 +193,11 @@ void all_data_update(void)
   //此代码为平台自动生成，请按照实际数据修改每个可下发可上报函数和只上报函数
 	
     mcu_dp_bool_update(DPID_SWITCH_LED, reset_bt_bn); //复位模块
+		Delay_ms(100);
     mcu_dp_bool_update(DPID_SWITCH_LED2, SWITCHflag2); //灯的开关
+		Delay_ms(100);
     mcu_dp_value_update(DPID_BRIGHT_VALUE, lightvalue); //VALUE型数据上报;
+		Delay_ms(100);
 
 	if(LIGHT_TH==255)
 		light=0;
@@ -207,25 +211,35 @@ void all_data_update(void)
 		light=5;
 
     mcu_dp_enum_update(DPID_CDS, light); //枚举型数据上报;
+		Delay_ms(100);
     mcu_dp_value_update(DPID_PIR_DELAY, DELAY_NUM); //VALUE型数据上报;
+	Delay_ms(100);
     mcu_dp_bool_update(DPID_SWITCH_XBR, SWITCHfXBR); //BOOL型数据上报;
+	Delay_ms(100);
     mcu_dp_value_update(DPID_STANDBY_TIME, lowlightDELAY_NUM); //VALUE型数据上报;
+	Delay_ms(100);
 
 	radius=TH/10000;
 	radius=50-radius;
 
   mcu_dp_value_update(DPID_SENSE_STRESS, radius); //VALUE型数据上报;
+	Delay_ms(100);
 	
 	mcu_dp_bool_update(DPID_SWITCH_LINKAGE,Linkage_flag); //BOOL型数据上报;
+	Delay_ms(100);
 
 	mcu_dp_value_update(DPID_TEMP_VALUE,temper_value); //VALUE型数据上报;
+	Delay_ms(100);
 	
     mcu_dp_bool_update(DPID_ALL_DAY_MICRO_LIGHT,all_day_micro_light_enable); //BOOL型数据上报;
+		Delay_ms(100);
     mcu_dp_value_update(DPID_RADAR_TRIGGER_TIMES,radar_trig_times); //VALUE型数据上报;
+		Delay_ms(100);
 
     mcu_dp_enum_update(DPID_LIGHT_STATUS,light_status_xxx); //枚举型数据上报;
+		Delay_ms(100);
     mcu_dp_enum_update(DPID_PERSON_IN_RANGE,person_in_range_flag); //枚举型数据上报;
-		
+		Delay_ms(100);		
 		bt_uart_write_frame(BT_MESH_GET_MY_GROUP_ADDRESS, 0);
 
 }
@@ -283,7 +297,7 @@ static unsigned char dp_download_bright_value_handle(const unsigned char value[]
 	
 	if(bright_value==lightvalue)
 	{
-		return SUCCESS;
+		//return SUCCESS;
 	}
 	else
 	{
@@ -326,7 +340,7 @@ static unsigned char dp_download_temp_value_handle(const unsigned char value[], 
 	
 		if(temper_value_xxx==temper_value)
 		{
-			return SUCCESS;
+			//return SUCCESS;
 		}
 		else
 		{
@@ -370,7 +384,7 @@ static unsigned char dp_download_cds_handle(const unsigned char value[], unsigne
 	
 	if(cds==cdsvalue)
 	{
-		return SUCCESS;
+		//return SUCCESS;
 	}
 	else
 	{
@@ -444,7 +458,7 @@ static unsigned char dp_download_pir_delay_handle(const unsigned char value[], u
 	
 	if(pir_delay==DELAY_NUM)
 	{
-		return SUCCESS;
+		//return SUCCESS;
 	}
 	else
 	{
@@ -486,7 +500,7 @@ static unsigned char dp_download_switch_xbr_handle(const unsigned char value[], 
 	
 	if(switch_xbr==SWITCHfXBR)
 	{
-		return SUCCESS;
+		//return SUCCESS;
 	}
 	else
 	{
@@ -528,7 +542,7 @@ static unsigned char dp_download_standby_time_handle(const unsigned char value[]
 
 	if(standby_time==lowlightDELAY_NUM)
 	{
-		return SUCCESS;
+		//return SUCCESS;
 	}
 	else
 	{
@@ -570,7 +584,7 @@ static unsigned char dp_download_sense_stress_handle(const unsigned char value[]
 
 	if(sense_stress==sensing_th)
 	{
-		return SUCCESS;
+		//return SUCCESS;
 	}
 	else
 	{
