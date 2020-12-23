@@ -107,7 +107,6 @@ unsigned short set_bt_uart_buffer(unsigned short dest, unsigned char *src, unsig
 返回参数 : 无
 *****************************************************************************/
 void bt_uart_write_frame(unsigned char fr_type, unsigned short len);
-void bt_uart_mesh_write_frame(unsigned char fr_type, unsigned short len);
 
 /*****************************************************************************
 函数名称 : get_check_sum

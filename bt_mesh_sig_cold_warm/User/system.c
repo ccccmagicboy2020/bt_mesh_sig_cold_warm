@@ -156,33 +156,6 @@ void bt_uart_write_frame(unsigned char fr_type, unsigned short len)
   bt_uart_write_data((unsigned char *)bt_uart_tx_buf, len);
 }
 
-
-void bt_uart_mesh_write_frame(unsigned char fr_type, unsigned short len)
-{
-  unsigned char check_sum = 0;
-
-len = len+2;
-
-bt_uart_tx_buf[0] = 0x55;
-bt_uart_tx_buf[1] = 0xaa;
-bt_uart_tx_buf[2] = 0x00;
-bt_uart_tx_buf[3] = fr_type;
-
-bt_uart_tx_buf[4] = len >> 8;
-bt_uart_tx_buf[5] = len & 0xff;
-bt_uart_tx_buf[6] = 0XFF;
-bt_uart_tx_buf[7] = 0xff;
-
-
-len += PROTOCOL_HEAD;
-check_sum = get_check_sum((unsigned char *)bt_uart_tx_buf, len - 1);
-bt_uart_tx_buf[len - 1] = check_sum;
-//
-bt_uart_write_data((unsigned char *)bt_uart_tx_buf, len);
-
-
-}
-
 /*****************************************************************************
 函数名称 : heat_beat_check
 功能描述 : 心跳包检测
@@ -324,12 +297,12 @@ void data_handle(unsigned short offset)
 			rsp_status = bt_uart_rx_buf[offset + DATA_START];
 			if (0 == rsp_status)
 			{
-				mcu_dp_bool_update(DPID_SWITCH_LINKAGE, 1);
+				//mcu_dp_bool_update(DPID_SWITCH_LINKAGE, 1);
 				bt_uart_write_frame(BT_MESH_GET_MY_GROUP_ADDRESS, 0);
 			}
 			else
 			{
-				mcu_dp_bool_update(DPID_SWITCH_LINKAGE, 0);
+				//mcu_dp_bool_update(DPID_SWITCH_LINKAGE, 0);
 			}
 			break;
 		case USER_DEFINE_CMD0:

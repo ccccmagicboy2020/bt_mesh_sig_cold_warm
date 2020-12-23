@@ -283,7 +283,7 @@ static unsigned char dp_download_bright_value_handle(const unsigned char value[]
 	
 	if(bright_value==lightvalue)
 	{
-		return ERROR;
+		return SUCCESS;
 	}
 	else
 	{
@@ -326,7 +326,7 @@ static unsigned char dp_download_temp_value_handle(const unsigned char value[], 
 	
 		if(temper_value_xxx==temper_value)
 		{
-			return ERROR;
+			return SUCCESS;
 		}
 		else
 		{
@@ -370,7 +370,7 @@ static unsigned char dp_download_cds_handle(const unsigned char value[], unsigne
 	
 	if(cds==cdsvalue)
 	{
-		return ERROR;
+		return SUCCESS;
 	}
 	else
 	{
@@ -444,7 +444,7 @@ static unsigned char dp_download_pir_delay_handle(const unsigned char value[], u
 	
 	if(pir_delay==DELAY_NUM)
 	{
-		return ERROR;
+		return SUCCESS;
 	}
 	else
 	{
@@ -486,7 +486,7 @@ static unsigned char dp_download_switch_xbr_handle(const unsigned char value[], 
 	
 	if(switch_xbr==SWITCHfXBR)
 	{
-		return ERROR;
+		return SUCCESS;
 	}
 	else
 	{
@@ -528,7 +528,7 @@ static unsigned char dp_download_standby_time_handle(const unsigned char value[]
 
 	if(standby_time==lowlightDELAY_NUM)
 	{
-		return ERROR;
+		return SUCCESS;
 	}
 	else
 	{
@@ -570,7 +570,7 @@ static unsigned char dp_download_sense_stress_handle(const unsigned char value[]
 
 	if(sense_stress==sensing_th)
 	{
-		return ERROR;
+		return SUCCESS;
 	}
 	else
 	{
@@ -613,7 +613,7 @@ static unsigned char dp_download_switch_led2_handle(const unsigned char value[],
 
     if(switch_led2==SWITCHflag2)
     {
-		//return ERROR;
+		//return SUCCESS;
     }
     else
     {
@@ -664,7 +664,7 @@ static unsigned char dp_download_switch_linkage_handle(const unsigned char value
 		
 	if(switch_Linkage==Linkage_flag)
 	{
-		return ERROR;
+		//return SUCCESS;
 	}
 	else
 	{
@@ -713,7 +713,7 @@ static unsigned char dp_download_all_day_micro_light_handle(const unsigned char 
 	
     if(all_day_micro_light_enable == all_day_micro_light)
     {
-		return ERROR;
+			//return SUCCESS;
     }
     else
     {
@@ -755,7 +755,7 @@ static unsigned char dp_download_clear_trigger_number_handle(const unsigned char
     clear_trigger_number = mcu_get_dp_download_bool(value,length);
     if(clear_trigger_number == 0) {
         //开关关
-		return ERROR;
+		return SUCCESS;
     }else {
         //开关开
 		radar_trig_times = 0;

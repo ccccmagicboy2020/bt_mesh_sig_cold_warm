@@ -270,125 +270,71 @@ unsigned char mcu_dp_bool_update(unsigned char dpid,unsigned char value)
 }
 unsigned char mcu_dp_bool_mesh_update(unsigned char dpid,unsigned char value,unsigned int groupa)
 {
-  //unsigned short length = 0;
-    unsigned char check_sum = 0;
-	unsigned short len = 0;
-	unsigned char buf[15];
-	  unsigned short i;
-  //unsigned char check_sum = 0;
-  
+	unsigned short length = 0;
+	unsigned char check_sum = 0;
+	unsigned short i;
  
-  //55 AA 00 07 00 05 01 01 00 01 01 0F
+  //55 AA 00 B2 /00 08/ /C3 40/ 71 01 /00 01/ 01 :74 :A4
   if(stop_update_flag == ENABLE)
     return SUCCESS;
-  
-  buf[0] = 0x55;
-  buf[1] = 0xaa;
-  buf[2] = 0x00;
-  buf[3] = 0xb2;
-  
-  buf[4] = 0x0;
-  buf[5] = 0x7;
-  buf[6] = groupa >> 8;;
-  buf[7] = groupa;
-  buf[8] = dpid;
-  buf[9] = 0x01;
-  buf[10] = 0x00;
-  buf[11] = 0x01;
-  if(value == 0)
+
+  length = set_bt_uart_byte(length, groupa >> 8);
+  length = set_bt_uart_byte(length, groupa);
+  //id
+  length = set_bt_uart_byte(length, dpid);
+  //type
+  length = set_bt_uart_byte(length, DP_TYPE_BOOL);
+  //length
+  length = set_bt_uart_byte(length,0);
+  length = set_bt_uart_byte(length,1);
+  //value
+  if(value == FALSE)
   {
-	buf[12] = 0;
+    length = set_bt_uart_byte(length,FALSE);
   }
   else
   {
-	buf[12] = 1;
+    length = set_bt_uart_byte(length,1);
   }
-  
-  for(i = 0; i < 13; i ++)
+  //crc of dp
+  for(i = DATA_START + 2; i < DATA_START + 7; i++)
   {
-    check_sum += buf[i];
+    check_sum += bt_uart_tx_buf[i];
   }
-  buf[13] = check_sum;
-  len = 14;
-  i = 0;
-   while(len --)
-  {
-    uart_transmit_output(buf[i]);
-    i ++;
-  }
-
+  length = set_bt_uart_byte(length, check_sum);
+	
+  bt_uart_write_frame(BT_MESH_CMD, length);
   
   return SUCCESS;
 }
 
 unsigned char mcu_dp_enum_mesh_update(unsigned char dpid,unsigned char value,unsigned int groupa)
 {
-  //unsigned short length = 0;
-    unsigned char check_sum = 0;
-	unsigned short len = 0;
-	unsigned char buf[15];
-	  unsigned short i;
-  //unsigned char check_sum = 0;
-  
+	unsigned short length = 0;
+	unsigned char check_sum = 0;
+	unsigned short i;  
  
-  //55 AA 00 07 00 05 01 01 00 01 01 0F
   if(stop_update_flag == ENABLE)
     return SUCCESS;
-  
-  buf[0] = 0x55;
-  buf[1] = 0xaa;
-  buf[2] = 0x00;
-  buf[3] = 0xb2;
-  
-  buf[4] = 0x0;
-  buf[5] = 0x7;
-  buf[6] = groupa >> 8;
-  buf[7] = groupa;
-  buf[8] = dpid;
-  buf[9] = 0x01;
-  buf[10] = 0x00;
-  buf[11] = 0x01;
-  if(value == 0)
+
+  length = set_bt_uart_byte(length, groupa >> 8);
+  length = set_bt_uart_byte(length, groupa);
+	//id
+	length = set_bt_uart_byte(length, dpid);
+	//type
+	length = set_bt_uart_byte(length,DP_TYPE_ENUM);
+	//length
+	length = set_bt_uart_byte(length,0);
+	length = set_bt_uart_byte(length,1);
+	//value
+	length = set_bt_uart_byte(length, value);
+  //crc of dp
+  for(i = DATA_START + 2; i < DATA_START + 7; i++)
   {
-	buf[12] = 0;
+    check_sum += bt_uart_tx_buf[i];
   }
-  else if(value == 1)
-  {
-	buf[12] = 1;
-  }
-  else if(value == 2)
-  {
-	buf[12] = 2;
-  }
-  else if(value == 3)
-  {
-	buf[12] = 3;
-  }
-  else if(value == 4)
-  {
-	buf[12] = 4;
-  }
-  else if(value == 5)
-  {
-	buf[12] = 5;
-  }
-  else if(value == 6)
-  {
-	buf[12] = 6;
-  }
-  
-  for(i = 0; i < 13; i ++)
-  {
-    check_sum += buf[i];
-  }
-  buf[13] = check_sum;
-  len = 14;
-  i = 0;
-   while(len --)
-  {
-    uart_transmit_output(buf[i]);
-    i ++;
-  }
+	length = set_bt_uart_byte(length, check_sum);
+	bt_uart_write_frame(BT_MESH_CMD, length);
 
   
   return SUCCESS;
@@ -430,51 +376,35 @@ unsigned char mcu_dp_value_update(unsigned char dpid,unsigned long value)
 
 unsigned char mcu_dp_value_mesh_update(unsigned char dpid,unsigned long value,unsigned int groupa)
 {
-  //unsigned short length = 0;
-    unsigned char check_sum = 0;
-	unsigned short len = 0;
-	unsigned char idata buf[17];
-	  unsigned short i;
-  //unsigned char check_sum = 0;
-  
- 
+	unsigned short length = 0;
+	unsigned char check_sum = 0;
+	unsigned short i;  
+	
   //55 AA 00 07 00 05 01 01 00 01 01 0F
   if(stop_update_flag == ENABLE)
     return SUCCESS;
   
-  buf[0] = 0x55;
-  buf[1] = 0xaa;
-  buf[2] = 0x00;
-  buf[3] = 0xb2;
-  
-  buf[4] = 0x0;
-  buf[5] = 0xA;
-  buf[6] = groupa >> 8;
-  buf[7] = groupa;
-  buf[8] = dpid;
-  buf[9] = 0x02;
-  buf[10] = 0x00;
-  buf[11] = 0x04;
-  buf[12] = value >> 24;
-  buf[13] = value >> 16;
-  buf[14] = value >> 8;
-  buf[15] = value & 0xff;
-  
-
-  
-  for(i = 0; i < 16; i ++)
+  length = set_bt_uart_byte(length, groupa >> 8);
+  length = set_bt_uart_byte(length, groupa);  
+  //id
+  length = set_bt_uart_byte(length,dpid);
+  //type
+  length = set_bt_uart_byte(length,DP_TYPE_VALUE);
+  //length
+  length = set_bt_uart_byte(length,0);
+  length = set_bt_uart_byte(length,4);
+  //value
+  length = set_bt_uart_byte(length,value >> 24);
+  length = set_bt_uart_byte(length,value >> 16);
+  length = set_bt_uart_byte(length,value >> 8);
+  length = set_bt_uart_byte(length,value & 0xff);
+  //crc of dp
+  for(i = DATA_START + 2; i < DATA_START + 10; i++)
   {
-    check_sum += buf[i];
+    check_sum += bt_uart_tx_buf[i];
   }
-  buf[16] = check_sum;
-  len = 17;
-  i = 0;
-   while(len --)
-  {
-    uart_transmit_output(buf[i]);
-    i ++;
-  }
-
+	length = set_bt_uart_byte(length, check_sum);
+	bt_uart_write_frame(BT_MESH_CMD, length);
   
   return SUCCESS;
 }

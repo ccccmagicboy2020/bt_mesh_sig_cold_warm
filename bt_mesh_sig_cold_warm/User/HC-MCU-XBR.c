@@ -57,7 +57,6 @@ u8 xdata calc_average_times = 0; //用于计算平均值的计数器
 u8 xdata LIGHT_TH;
 u16 xdata DELAY_NUM;
 u8 xdata lowlightDELAY_NUM;
-u8 xdata RXnum = 0;
 u8 while_1flag = 0;		  //伴亮标志 1==伴亮状态 0==侦测状态
 u8 while_2flag = 0;		  //???
 
@@ -88,15 +87,15 @@ u16 xdata radar_trig_times_last = 0;
 u8 xdata light_status_xxx = 0;
 u8 xdata light_status_xxx_last = 0;
 
-u16 xdata radar_number_count = 0;
-u8 xdata radar_number_send_flag = 0;
+volatile u16 xdata radar_number_count = 0;
+volatile u8 xdata radar_number_send_flag = 0;
 u8 xdata radar_number_send_flag2 = 0;
 
 u8 xdata person_in_range_flag = 0;
 u8 xdata person_in_range_flag_last = 0;
 
 u8 idata ab_last = 0;
-volatile u8 idata Exit_network_controlflag = 0;
+u8 idata Exit_network_controlflag = 0;
 u16 xdata Exit_network_controlflag_toggle_counter = 0;
 
 unsigned char PWM0init(unsigned char ab);
@@ -1374,7 +1373,6 @@ void main()
 ***************************************************************************************/
 void TIMER1_Rpt(void) interrupt TIMER1_VECTOR
 {
-	//Timer1_FLAG = 1;		//1mS
 	Timer_Counter++;
 
 	lowlight1mincount++;
