@@ -795,7 +795,7 @@ void XBRHandle(void)
 				}
 			}
 
-			//SUM2 = SUM1;
+			SUM2 = SUM1;
 			
 ///////////////////////////////////////////////////
 //			send_data(average >> 4);
