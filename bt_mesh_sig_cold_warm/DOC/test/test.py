@@ -1,13 +1,14 @@
 import serial
 import asyncio
 from struct import *
+import csv
 
 async def main():
     task1 = asyncio.create_task(
         send_command0(0.5))
 
     task2 = asyncio.create_task(
-        rev_command0(0.1))
+        rev_command0(0.01))
 
     await task1
     await task2
@@ -48,8 +49,13 @@ async def rev_command0(delay):
                                     "SUM0": SUM0*256,
                                     "SUM2": SUM2*256,
                                     "TH": TH*256,
+                                    "diff": SUM2*256 - SUM0*256,
                                     }
-                            print("平均值：{avg}，光敏值：{light_ad}，SUM0值：{SUM0}，SUM1值：{SUM2}, TH值：{TH}".format(**site))
+                            with open('result.csv', 'a', newline='') as csvfile:
+                                fieldnames = ['avg', 'light_ad', 'SUM0', 'SUM2', 'TH', 'diff']
+                                writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+                                writer.writerow(site)
+                            print("平均值：{avg}，光敏值：{light_ad}，SUM0值：{SUM0}，SUM1值：{SUM2}，TH值：{TH}，差值：{diff}".format(**site))
         await asyncio.sleep(delay)
         
 ser=serial.Serial("com6", 9600, timeout=0.5)
