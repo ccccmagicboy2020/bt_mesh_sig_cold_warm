@@ -7,7 +7,7 @@ async def main():
         send_command0(0.5))
 
     task2 = asyncio.create_task(
-        rev_command0(0.3))
+        rev_command0(0.1))
 
     await task1
     await task2
