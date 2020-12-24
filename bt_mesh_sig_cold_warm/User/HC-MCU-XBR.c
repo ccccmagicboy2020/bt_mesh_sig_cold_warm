@@ -1232,6 +1232,7 @@ void main()
 		
 		if (person_in_range_flag != person_in_range_flag_last)
 		{
+			Delay_ms(10);
 			mcu_dp_enum_update(DPID_PERSON_IN_RANGE,person_in_range_flag);
 			person_in_range_flag_last = person_in_range_flag;
 		}
@@ -1389,7 +1390,7 @@ void TIMER1_Rpt(void) interrupt TIMER1_VECTOR
 		light1sflag = 1;
 	}
 	radar_number_count++;
-	if (radar_number_count >= 1000)
+	if (radar_number_count >= 3000)
 	{
 		radar_number_count = 0;
 		radar_number_send_flag = 1;

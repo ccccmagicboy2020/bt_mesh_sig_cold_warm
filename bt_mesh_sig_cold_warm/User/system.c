@@ -34,7 +34,16 @@ extern u8 idata Exit_network_controlflag;
 void reset_bt_module(void);
 void savevar(void);
 extern const DOWNLOAD_CMD_S xdata download_cmd[];
-
+////////////////////////////////////////////////////////
+// pc send: 55 AA 00 C0 00 00 BF
+// mcu send:
+// HEADER  version   com0    length  avg  light  SUM0    SUM2    TH     CRC
+// 55 AA   00        C0      00 08   4E   FF     03 ED   07 69   00 9C  10
+// 55 AA   00        C0      00 08   4E   FF     05 B9   07 75   00 9C  EA
+// 55 AA   00        C0      00 08   4E   FF     06 9F   07 8B   00 9C  E7
+// 55 AA   00        C0      00 08   4E   FF     07 68   07 BA   00 9C  E0
+// 55 AA   00        C0      00 08   4E   FF     07 85   07 88   00 9C  CB
+////////////////////////////////////////////////////////
 static void cmd0(void)
 {
     unsigned char length = 0;
