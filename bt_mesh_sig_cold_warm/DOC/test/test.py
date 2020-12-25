@@ -2,8 +2,13 @@ import serial
 import asyncio
 from struct import *
 import csv
+import time
 
-async def main():
+async def main_co():
+    global packet1
+    global ser
+    ser.write(packet1)
+    
     task1 = asyncio.create_task(
         send_command0(0.5))
 
@@ -57,27 +62,51 @@ async def rev_command0(delay):
                                 writer.writerow(site)
                             print("平均值：{avg}，光敏值：{light_ad}，SUM0值：{SUM0}，SUM1值：{SUM2}，TH值：{TH}，差值：{diff}".format(**site))
         await asyncio.sleep(delay)
-        
-ser=serial.Serial("com6", 9600, timeout=0.5)
-print(ser.port)
 
-ser.close()
-ser.open()
-# 55 AA 00 C0 00 00 BF
+def main():
+    print('this message is from main function')
+    global ser
+    global packet
+    global packet1
+    global packet2
+    
+    ser=serial.Serial("com6", 9600, timeout=0.5)
+    print(ser.port)
 
-packet = bytearray()
-packet.append(0x55)
-packet.append(0xAA)
-packet.append(0x00)
-packet.append(0xC0)
-packet.append(0x00)
-packet.append(0x00)
-packet.append(0xBF)
-
-try:
-    asyncio.run(main())
-except KeyboardInterrupt:
     ser.close()
-    print('Bye-Bye!!!')
+    ser.open()
+    # 55 AA 00 C0 00 00 BF      //trigger the command0
+    packet = bytearray()
+    packet.append(0x55)
+    packet.append(0xAA)
+    packet.append(0x00)
+    packet.append(0xC0)
+    packet.append(0x00)
+    packet.append(0x00)
+    packet.append(0xBF)
 
+    # 31 80 25 00 00            //open the usb-uart function of the hclink
+    packet1 = bytearray()
+    packet1.append(0x31)
+    packet1.append(0x80)
+    packet1.append(0x25)
+    packet1.append(0x00)
+    packet1.append(0x00)
 
+    # 32 53 54 4F 50            //close the usb-uart function of the hclink
+    packet2 = bytearray()
+    packet2.append(0x32)
+    packet2.append(0x53)
+    packet2.append(0x54)
+    packet2.append(0x4F)
+    packet2.append(0x50)
+
+    try:
+        asyncio.run(main_co())
+    except KeyboardInterrupt:
+        ser.write(packet2)
+        ser.close()
+        print('Bye-Bye!!!')
+
+if __name__ == '__main__':
+    main()
