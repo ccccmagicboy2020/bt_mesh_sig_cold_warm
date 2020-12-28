@@ -1203,13 +1203,20 @@ void main()
 	wait2();
 
 	SUM = 0;
+	
+	if (resetbtcnt > 3)
+	{
+		resetbtcnt = 0;
+		reset_bt_module();
+	}
+	else
+	{
+		savevar();
+	}
+		
 	while (1)
 	{
-		if (resetbtcnt > 3)
-		{
-			resetbtcnt = 0;
-			reset_bt_module();
-		}
+
 		
 		if (Exit_network_controlflag)
 		{
