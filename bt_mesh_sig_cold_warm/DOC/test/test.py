@@ -7,7 +7,6 @@ import time
 async def main_co():
     global packet1
     global ser
-    ser.write(packet1)
     
     task1 = asyncio.create_task(
         send_command0(0.5))
@@ -100,6 +99,10 @@ def main():
     packet2.append(0x54)
     packet2.append(0x4F)
     packet2.append(0x50)
+    
+    ser.set_buffer_size(rx_size = 1024, tx_size = 1024)
+    ser.write(packet1)
+    ser.flush()    
 
     try:
         asyncio.run(main_co())
