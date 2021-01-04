@@ -80,7 +80,7 @@ MCU自处理:
 mcu_write_rtctime内部有#err提示,完成函数后请删除该#err
 mcu在bt模块正确联网后可调用mcu_get_system_time()函数发起校时功能
 ******************************************************************************/
-#define         SUPPORT_MCU_RTC_CHECK                //开启校时功能
+//#define         SUPPORT_MCU_RTC_CHECK                //开启校时功能
 
 /******************************************************************************
                         1:dp数据点序列号重新定义
@@ -131,6 +131,7 @@ mcu在bt模块正确联网后可调用mcu_get_system_time()函数发起校时功
 //人状态(只上报)
 //备注:
 #define DPID_PERSON_IN_RANGE 119
+#define DPID_PERSON_IN_RANGE_EX 120
 //公共群组地址0(只上报)
 //备注:
 #define DPID_ADDR0 130

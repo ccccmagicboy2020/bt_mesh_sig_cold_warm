@@ -44,7 +44,7 @@ ulong idata sensing_th = 0;     //雷达感应阈值，数值越大越灵敏
 extern  u8 idata Linkage_flag;	//联动的开关的全局
 extern  u8 idata Light_on_flag;	//
 extern u8 xdata temper_value;		//冷暖值
-
+extern uint xdata LIGHT;
 
 extern u8 xdata all_day_micro_light_enable;
 extern u16 xdata radar_trig_times;
@@ -52,6 +52,8 @@ extern u8 xdata light_status_xxx;
 extern u8 xdata person_in_range_flag;
 extern u8 idata Exit_network_controlflag;
 extern u16 idata groupaddr[8];
+
+extern u8 idata iam_myself_flag;
 
 //extern TYPE_BUFFER_S FlashBuffer;
 void send_data(u8 d);
@@ -123,6 +125,7 @@ const DOWNLOAD_CMD_S xdata download_cmd[] =
   {DPID_CLEAR_TRIGGER_NUMBER, DP_TYPE_BOOL},
   {DPID_LIGHT_STATUS, DP_TYPE_ENUM},
   {DPID_PERSON_IN_RANGE, DP_TYPE_ENUM},
+  {DPID_PERSON_IN_RANGE_EX, DP_TYPE_ENUM},
   {DPID_ADDR0, DP_TYPE_ENUM},
   {DPID_ADDR1, DP_TYPE_ENUM},
   {DPID_ADDR2, DP_TYPE_ENUM},
@@ -239,8 +242,12 @@ void all_data_update(void)
     mcu_dp_enum_update(DPID_LIGHT_STATUS,light_status_xxx); //枚举型数据上报;
 		Delay_ms(100);
     mcu_dp_enum_update(DPID_PERSON_IN_RANGE,person_in_range_flag); //枚举型数据上报;
+Delay_ms(100);
+	mcu_dp_enum_update(DPID_PERSON_IN_RANGE_EX, 1); //枚举型数据上报;
 		Delay_ms(100);		
 		bt_uart_write_frame(BT_MESH_GET_MY_GROUP_ADDRESS, 0);
+		
+		
 
 }
 
@@ -786,6 +793,53 @@ static unsigned char dp_download_clear_trigger_number_handle(const unsigned char
   	return SUCCESS;
 
 }
+/*****************************************************************************
+函数名称 : dp_download_person_in_range_ex_handle
+功能描述 : 针对DPID_PERSON_IN_RANGE_EX的处理函数
+输入参数 : value:数据源数据
+        : length:数据长度
+返回参数 : 成功返回:SUCCESS/失败返回:ERROR
+使用说明 : 可下发可上报类型,需要在处理完数据后上报处理结果至app
+*****************************************************************************/
+static unsigned char dp_download_person_in_range_ex_handle(const unsigned char value[], unsigned short length)
+{
+    //示例:当前DP类型为ENUM
+    unsigned char ret;
+    unsigned char person_in_range_ex;
+    
+    person_in_range_ex = mcu_get_dp_download_enum(value,length);
+    switch(person_in_range_ex) {
+        case 0:
+					if (iam_myself_flag == 1)
+					{
+						iam_myself_flag = 0;
+						//do nothing
+					}
+					else
+					{
+						LIGHT = 1;
+						mcu_dp_enum_update(DPID_PERSON_IN_RANGE, 2);						
+					}
+        break;
+        
+        case 1:
+        break;
+        
+        case 2:
+        break;
+        
+        default:
+    
+        break;
+    }
+    
+	Delay_ms(100);
+    ret = mcu_dp_enum_update(DPID_PERSON_IN_RANGE_EX, person_in_range_ex);
+    if(ret == SUCCESS)
+				return SUCCESS;
+    else
+        return ERROR;
+}
 /******************************************************************************
                                 WARNING!!!                     
 此代码为SDK内部调用,请按照实际dp数据实现函数内部数据
@@ -929,6 +983,11 @@ unsigned char dp_download_handle(unsigned char dpid,const unsigned char value[],
         case DPID_CLEAR_TRIGGER_NUMBER:
             //计数清零处理函数
             ret = dp_download_clear_trigger_number_handle(value,length);
+			switchcnt = 0;
+        break;
+        case DPID_PERSON_IN_RANGE_EX:
+            //人状态群处理函数
+            ret = dp_download_person_in_range_ex_handle(value,length);
 			switchcnt = 0;
         break;
 

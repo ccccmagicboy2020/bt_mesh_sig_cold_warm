@@ -96,7 +96,9 @@ u8 xdata person_in_range_flag_last = 0;
 
 u8 idata ab_last = 0;
 u8 idata Exit_network_controlflag = 0;
-u16 xdata Exit_network_controlflag_toggle_counter = 0;
+u16 idata Exit_network_controlflag_toggle_counter = 0;
+
+u8 idata iam_myself_flag = 0;
 
 unsigned char PWM0init(unsigned char ab);
 unsigned char PWM3init_xxx(unsigned char ab);
@@ -1235,8 +1237,21 @@ void main()
 			light_status_xxx_last = light_status_xxx;
 			if (person_in_range_flag != person_in_range_flag_last)
 			{
+				Delay_ms(100);
 				mcu_dp_enum_update(DPID_PERSON_IN_RANGE,person_in_range_flag);
 				person_in_range_flag_last = person_in_range_flag;
+				if (person_in_range_flag == 1)
+				{
+					if (Linkage_flag == 1)
+					{
+						if (groupaddr[i] != 0)
+						{	//灯开关
+							Delay_ms(100);
+							iam_myself_flag = 1;
+							mcu_dp_enum_mesh_update(DPID_PERSON_IN_RANGE_EX, 0, groupaddr[i]);
+						}
+					}
+				}
 			}
 		}
 		
@@ -1250,6 +1265,15 @@ void main()
 				{
 					mcu_dp_value_update(DPID_RADAR_TRIGGER_TIMES,radar_trig_times);
 					radar_trig_times_last = radar_trig_times;
+					if (Linkage_flag == 1)
+					{
+						if (groupaddr[i] != 0)
+						{	//灯开关
+							Delay_ms(100);
+							iam_myself_flag = 1;
+							mcu_dp_enum_mesh_update(DPID_PERSON_IN_RANGE_EX, 0, groupaddr[i]);
+						}
+					}					
 				}
 			}
 		}		
@@ -1322,13 +1346,6 @@ void main()
 				{
 					Light_on_flagpre = Light_on_flag;
 					LIGHT = 1;
-					for (i = 0; i < 8; i++)
-					{
-						if (groupaddr[i] != 0)
-						{	//灯开关
-							//mcu_dp_bool_mesh_update(DPID_SWITCH_LED2, SWITCHflag2, groupaddr[i]);
-						}
-					}
 				}
 			}
 		}
@@ -1385,7 +1402,7 @@ void TIMER1_Rpt(void) interrupt TIMER1_VECTOR
 		light1sflag = 1;
 	}
 	radar_number_count++;
-	if (radar_number_count >= 1200)
+	if (radar_number_count >= 3000)
 	{
 		radar_number_count = 0;
 		radar_number_send_flag = 1;
