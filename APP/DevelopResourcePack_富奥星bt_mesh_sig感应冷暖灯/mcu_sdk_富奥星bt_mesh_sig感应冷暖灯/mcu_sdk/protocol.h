@@ -131,6 +131,9 @@ mcu在bt模块正确联网后可调用mcu_get_system_time()函数发起校时功
 //人状态(只上报)
 //备注:
 #define DPID_PERSON_IN_RANGE 119
+//人状态群(可下发可上报)
+//备注:
+#define DPID_PERSON_IN_RANGE_EX 120
 //公共群组地址0(只上报)
 //备注:
 #define DPID_ADDR0 130
