@@ -1216,8 +1216,6 @@ void main()
 		
 	while (1)
 	{
-
-		
 		if (Exit_network_controlflag)
 		{
 			PWM3init(100);
@@ -1235,13 +1233,11 @@ void main()
 		{
 			mcu_dp_enum_update(DPID_LIGHT_STATUS,light_status_xxx);
 			light_status_xxx_last = light_status_xxx;
-		}
-		
-		if (person_in_range_flag != person_in_range_flag_last)
-		{
-			Delay_ms(10);
-			mcu_dp_enum_update(DPID_PERSON_IN_RANGE,person_in_range_flag);
-			person_in_range_flag_last = person_in_range_flag;
+			if (person_in_range_flag != person_in_range_flag_last)
+			{
+				mcu_dp_enum_update(DPID_PERSON_IN_RANGE,person_in_range_flag);
+				person_in_range_flag_last = person_in_range_flag;
+			}
 		}
 		
 		if (1 == radar_number_send_flag)
@@ -1316,12 +1312,6 @@ void main()
 				{
 					light1sflag = 0;
 					LIGHT++;
-					//slowchcnt = slowchcnt+20;//
-					//					if(slowchcnt>100)
-					//					{
-					//						slowchcnt = 100;
-					//					}
-					//					PWM3init(slowchcnt);
 				}
 			}
 
@@ -1332,20 +1322,18 @@ void main()
 				{
 					Light_on_flagpre = Light_on_flag;
 					LIGHT = 1;
-					//PWM3init(100);
 					for (i = 0; i < 8; i++)
 					{
 						if (groupaddr[i] != 0)
 						{	//灯开关
-							mcu_dp_bool_mesh_update(DPID_SWITCH_LED2, SWITCHflag2, groupaddr[i]);
-							//mcu_dp_bool_mesh_update2(DPID_SWITCH_LED2, SWITCHflag2, groupaddr[i]);
+							//mcu_dp_bool_mesh_update(DPID_SWITCH_LED2, SWITCHflag2, groupaddr[i]);
 						}
 					}
 				}
 			}
 		}
 		else
-		{ //雷达天关关控制
+		{ //雷达开关控制
 			while_2flag = 0;
 			if (SWITCHflag2 == 0) //关灯
 			{
@@ -1397,7 +1385,7 @@ void TIMER1_Rpt(void) interrupt TIMER1_VECTOR
 		light1sflag = 1;
 	}
 	radar_number_count++;
-	if (radar_number_count >= 3000)
+	if (radar_number_count >= 1200)
 	{
 		radar_number_count = 0;
 		radar_number_send_flag = 1;
