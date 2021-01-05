@@ -1244,11 +1244,14 @@ void main()
 				{
 					if (Linkage_flag == 1)
 					{
-						if (groupaddr[i] != 0)
-						{	//灯开关
-							Delay_ms(100);
-							iam_myself_flag = 1;
-							mcu_dp_enum_mesh_update(DPID_PERSON_IN_RANGE_EX, 0, groupaddr[i]);
+						for (i=0;i<8;i++)
+						{
+							if (groupaddr[i] != 0)
+							{	//灯开关
+								Delay_ms(100);
+								iam_myself_flag = 1;
+								mcu_dp_enum_mesh_update(DPID_PERSON_IN_RANGE_EX, 0, groupaddr[i]);
+							}							
 						}
 					}
 				}
@@ -1267,11 +1270,14 @@ void main()
 					radar_trig_times_last = radar_trig_times;
 					if (Linkage_flag == 1)
 					{
-						if (groupaddr[i] != 0)
-						{	//灯开关
-							Delay_ms(100);
-							iam_myself_flag = 1;
-							mcu_dp_enum_mesh_update(DPID_PERSON_IN_RANGE_EX, 0, groupaddr[i]);
+						for (i=0;i<8;i++)
+						{
+							if (groupaddr[i] != 0)
+							{	//灯开关
+								Delay_ms(100);
+								iam_myself_flag = 1;
+								mcu_dp_enum_mesh_update(DPID_PERSON_IN_RANGE_EX, 0, groupaddr[i]);
+							}							
 						}
 					}					
 				}
