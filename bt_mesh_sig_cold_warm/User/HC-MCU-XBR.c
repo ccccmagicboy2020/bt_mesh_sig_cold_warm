@@ -1260,9 +1260,9 @@ void main()
 		
 		if (1 == radar_number_send_flag)
 		{
+			radar_number_send_flag = 0;
 			if (1 == radar_number_send_flag2)
 			{
-				radar_number_send_flag = 0;
 				radar_number_send_flag2 = 0;
 				if (radar_trig_times_last != radar_trig_times)
 				{
