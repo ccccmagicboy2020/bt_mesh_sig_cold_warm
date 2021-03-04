@@ -54,6 +54,7 @@ extern u8 idata Exit_network_controlflag;
 extern u16 idata groupaddr[8];
 
 extern u8 idata iam_myself_flag;
+extern u8 xdata stop_times;
 
 //extern TYPE_BUFFER_S FlashBuffer;
 void send_data(u8 d);
@@ -817,8 +818,8 @@ static unsigned char dp_download_person_in_range_ex_handle(const unsigned char v
 					}
 					else
 					{
-						LIGHT = 1;
-						mcu_dp_enum_update(DPID_PERSON_IN_RANGE, 2);						
+						LIGHT = 1;		
+						stop_times = 2;
 					}
         break;
         

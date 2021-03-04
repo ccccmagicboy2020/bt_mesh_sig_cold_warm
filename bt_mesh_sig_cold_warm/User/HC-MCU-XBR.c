@@ -43,7 +43,7 @@ u16 xdata times = 0;	   //主循环次数
 ulong xdata TH;			   //设置误差阈值，可由APP设置的感应强度转换
 ulong xdata MAX_DELTA; //最大偏差值
 u8 xdata alarm_times = 0;
-u8 xdata stop_times = 0; //???
+u8 xdata stop_times = 0; //跳过的节拍数
 
 uint xdata LIGHT = 0;	  //伴亮灯秒的计数器
 uint xdata LIGHT_off = 0; //无人灭灯的分钟计数器
@@ -1128,6 +1128,11 @@ unsigned char PWM3init(unsigned char ab)
 		person_in_range_flag = 0;
 	}
 	
+	if(iam_myself_flag == 0)
+	{
+		person_in_range_flag = 2;
+	}
+	
 	aa = (u8)(temper_value*ab/100 + 0.5);
 	
 	bb = ab - aa;
@@ -1240,21 +1245,6 @@ void main()
 				Delay_ms(100);
 				mcu_dp_enum_update(DPID_PERSON_IN_RANGE,person_in_range_flag);
 				person_in_range_flag_last = person_in_range_flag;
-				if (person_in_range_flag == 1)
-				{
-					if (Linkage_flag == 1)
-					{
-						for (i=0;i<8;i++)
-						{
-							if (groupaddr[i] != 0)
-							{	//灯开关
-								Delay_ms(100);
-								iam_myself_flag = 1;
-								mcu_dp_enum_mesh_update(DPID_PERSON_IN_RANGE_EX, 0, groupaddr[i]);
-							}							
-						}
-					}
-				}
 			}
 		}
 		
@@ -1274,9 +1264,9 @@ void main()
 						{
 							if (groupaddr[i] != 0)
 							{	//灯开关
-								Delay_ms(100);
 								iam_myself_flag = 1;
 								mcu_dp_enum_mesh_update(DPID_PERSON_IN_RANGE_EX, 0, groupaddr[i]);
+								Delay_ms(100);								
 							}							
 						}
 					}					
@@ -1408,7 +1398,7 @@ void TIMER1_Rpt(void) interrupt TIMER1_VECTOR
 		light1sflag = 1;
 	}
 	radar_number_count++;
-	if (radar_number_count >= 3000)
+	if (radar_number_count >= 3000)	//T=3s
 	{
 		radar_number_count = 0;
 		radar_number_send_flag = 1;
