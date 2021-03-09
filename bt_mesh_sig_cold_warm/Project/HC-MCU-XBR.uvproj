@@ -331,7 +331,7 @@
             <UserClasses></UserClasses>
             <CSection></CSection>
             <UserSection></UserSection>
-            <CodeBaseAddress>0X0000-0X3FFF</CodeBaseAddress>
+            <CodeBaseAddress>0X0000-0X2E80</CodeBaseAddress>
             <XDataBaseAddress>0X0000-0X07FF</XDataBaseAddress>
             <PDataBaseAddress></PDataBaseAddress>
             <BitBaseAddress></BitBaseAddress>

@@ -935,7 +935,7 @@ static unsigned char dp_download_mesh_duty_handle(const unsigned char value[], u
 {
     //示例:当前DP类型为VALUE
     unsigned char ret;
-    unsigned long mesh_duty;
+    u16 mesh_duty;
 	unsigned char i;
 	unsigned char not_save_flag = 0;
     
@@ -962,6 +962,7 @@ static unsigned char dp_download_mesh_duty_handle(const unsigned char value[], u
 	bt_and_sigmesh_duty = mesh_duty;
     
     //处理完DP数据后应有反馈
+	ret = mcu_dp_value_update(DPID_MESH_DUTY, bt_and_sigmesh_duty);
     if(ret == SUCCESS)
 	{
 		if(not_save_flag)

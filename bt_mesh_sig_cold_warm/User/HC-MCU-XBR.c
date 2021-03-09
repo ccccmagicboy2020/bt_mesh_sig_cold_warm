@@ -6,7 +6,7 @@
 
 #define USER_PARAMETER_START_SECTOR_ADDRESS0 0x2F00
 #define USER_PARAMETER_START_SECTOR_ADDRESS1 0x2F80
-#define USER_PARAMETER_START_SECTOR_SIZE	13
+#define USER_PARAMETER_START_SECTOR_SIZE	14
 
 #define TH_LOW 30000
 #define TH_HIGH 4000000
@@ -19,6 +19,7 @@
 
 #define MAX_DELAY 1800
 //最大延时秒数
+#define MAX_BT_DUTY 3000
 
 //感光门限-30对应8LUX左右的AD值,设置为255表示不检测感光
 #define LIGHT_TH0 255
@@ -73,7 +74,7 @@ u16 idata groupaddr[8] = {0};
 u8 idata Linkage_flag = 0;		//联动标志
 u8 xdata temper_value = 0;			//冷暖值
 
-u8 xdata bt_join_cnt = 0;
+u8 idata bt_join_cnt = 0;
 u8 xdata all_day_micro_light_enable = 0;
 
 u16 xdata radar_trig_times = 0;
@@ -443,6 +444,12 @@ void set_var(void)
 	all_day_micro_light_enable = (guc_Read_a[10]) & 0x01;
 	
 	temper_value = guc_Read_a[11];
+
+	bt_and_sigmesh_duty = guc_Read_a[12];
+	bt_and_sigmesh_duty <<= 8;
+	bt_and_sigmesh_duty += guc_Read_a[13];
+	if (bt_and_sigmesh_duty == 0 || bt_and_sigmesh_duty > MAX_BT_DUTY)
+		bt_and_sigmesh_duty = 1000;	
 	//
 	Flash_ReadArr(USER_PARAMETER_START_SECTOR_ADDRESS1, 2, guc_Read_a1); //
 	resetbtcnt = guc_Read_a1[0];
@@ -1147,7 +1154,7 @@ void main()
 				SUM1_num = 64;
 
 				stop_times = 2;
-				//if(start_times==0)TH=TH_LOW;
+				
 				check_light_times = 6;
 
 				SUM1_counter = 0;
@@ -1333,7 +1340,7 @@ void savevar(void)
 	i=DELAY_NUM>>8;
 	FLASH_WriteData(i,USER_PARAMETER_START_SECTOR_ADDRESS0+3);
 	Delay_us(100);
-	i=DELAY_NUM&0xff;//&0xff;
+	i=DELAY_NUM&0xff;
 	FLASH_WriteData(i,USER_PARAMETER_START_SECTOR_ADDRESS0+4);
 	Delay_us(100);
 	
@@ -1364,6 +1371,13 @@ void savevar(void)
 	i=temper_value;
 	FLASH_WriteData(i,USER_PARAMETER_START_SECTOR_ADDRESS0+11);
 	Delay_us(100);
+
+	i=bt_and_sigmesh_duty>>8;
+	FLASH_WriteData(i,USER_PARAMETER_START_SECTOR_ADDRESS0+12);
+	Delay_us(100);
+	i=bt_and_sigmesh_duty&0xff;
+	FLASH_WriteData(i,USER_PARAMETER_START_SECTOR_ADDRESS0+13);
+	Delay_us(100);	
 
 ////////////////////////////////////////////////////////
 	

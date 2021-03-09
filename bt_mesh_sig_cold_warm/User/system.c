@@ -340,12 +340,13 @@ void data_handle(unsigned short offset)
 	{
 		Exit_network_controlflag = 0;
 		savevar();
-		//bt_uart_write_frame(BT_MESH_GET_MY_GROUP_ADDRESS, 0);
 		all_data_update();
 	}
 	else if (BT_NOT_CONNECTED == bt_work_state)
 	{
-		//bt_uart_write_frame(BT_MESH_GET_MY_GROUP_ADDRESS, 0);
+		//
+		//
+		//
 	}
     bt_uart_write_frame(BT_STATE_CMD,0);
     break;
@@ -369,12 +370,12 @@ void data_handle(unsigned short offset)
       if(SUCCESS == ret)
       {
         //成功提示
-				savevar();
+		savevar();
       }
       else
       {
         //错误提示
-				//不保存参数
+		//不保存参数
       }
       
       i += (dp_len + 4);
