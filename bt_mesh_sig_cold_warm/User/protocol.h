@@ -131,7 +131,15 @@ mcu在bt模块正确联网后可调用mcu_get_system_time()函数发起校时功
 //人状态(只上报)
 //备注:
 #define DPID_PERSON_IN_RANGE 119
+//人状态群(可下发可上报)
+//备注:
 #define DPID_PERSON_IN_RANGE_EX 120
+//通信周期(可下发可上报)
+//备注:mesh触发最小周期
+#define DPID_MESH_DUTY 121
+//找灯(可下发可上报)
+//备注:这个是找灯的功能
+#define DPID_FIND_ME 122
 //公共群组地址0(只上报)
 //备注:
 #define DPID_ADDR0 130

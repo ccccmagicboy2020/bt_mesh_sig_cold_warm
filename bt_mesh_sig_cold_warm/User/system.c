@@ -369,11 +369,12 @@ void data_handle(unsigned short offset)
       if(SUCCESS == ret)
       {
         //成功提示
-		savevar();
+				savevar();
       }
       else
       {
         //错误提示
+				//不保存参数
       }
       
       i += (dp_len + 4);

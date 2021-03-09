@@ -35,6 +35,10 @@
 #define         NULL                ((void *) 0)
 #endif
 
+#ifndef NOT_SAVE
+#define         NOT_SAVE             2
+#endif
+
 #ifndef SUCCESS
 #define         SUCCESS             1
 #endif
@@ -98,7 +102,15 @@
 //=============================================================================
 #define         NORMAL_MODE             0x00                                    //正常工作状态
 #define         FACTORY_MODE            0x01                                    //工厂模式	
-#define         UPDATE_MODE             0X02                                    //升级模式	     
+#define         UPDATE_MODE             0X02                                    //升级模式	 
+
+#define PERSON_STATUS_NO_PERSON						0x00
+#define PERSON_STATUS_HAVE_PERSON					0x01
+#define PERSON_STATUS_HAVE_PERSON_FROM_GROUP		0x02
+
+#define	LIGHT_STATUS_FULL							0x00
+#define	LIGHT_STATUS_EMPTY							0x01
+#define	LIGHT_STATUS_MICRO							0x02    
 
 #include "protocol.h"
 #include "system.h"
