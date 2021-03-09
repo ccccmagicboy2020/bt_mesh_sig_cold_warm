@@ -387,10 +387,6 @@ static unsigned char dp_download_temp_value_handle(const unsigned char value[], 
     //处理完DP数据后应有反馈
     ret = mcu_dp_value_update(DPID_TEMP_VALUE,temper_value);
 	
-	//闪一下灯
-	PWM3init(0);
-	PWM3init(XRBoffbrightvalue);
-	
     if(ret == SUCCESS)
 	{
 		if(not_save_flag)
