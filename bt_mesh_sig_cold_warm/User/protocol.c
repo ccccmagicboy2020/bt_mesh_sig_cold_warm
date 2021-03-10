@@ -947,7 +947,7 @@ static unsigned char dp_download_mesh_duty_handle(const unsigned char value[], u
 			{
 				if(groupaddr[i] != 0)
 				{
-					mcu_dp_value_mesh_update(DPID_MESH_DUTY,bt_and_sigmesh_duty,groupaddr[i]);
+					mcu_dp_value_mesh_update(DPID_MESH_DUTY,mesh_duty,groupaddr[i]);
 				}
 			}
 		}	
