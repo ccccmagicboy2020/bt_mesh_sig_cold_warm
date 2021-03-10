@@ -67,6 +67,9 @@ const DOWNLOAD_CMD_S download_cmd[] =
   {DPID_LIGHT_STATUS, DP_TYPE_ENUM},
   {DPID_PERSON_IN_RANGE, DP_TYPE_ENUM},
   {DPID_PERSON_IN_RANGE_EX, DP_TYPE_ENUM},
+  {DPID_MESH_DUTY, DP_TYPE_VALUE},
+  {DPID_FIND_ME, DP_TYPE_BOOL},
+  {DPID_MESH_TEST, DP_TYPE_ENUM},
   {DPID_ADDR0, DP_TYPE_ENUM},
   {DPID_ADDR1, DP_TYPE_ENUM},
   {DPID_ADDR2, DP_TYPE_ENUM},
@@ -146,6 +149,9 @@ void all_data_update(void)
     mcu_dp_enum_update(DPID_LIGHT_STATUS,当前灯状态); //枚举型数据上报;
     mcu_dp_enum_update(DPID_PERSON_IN_RANGE,当前人状态); //枚举型数据上报;
     mcu_dp_enum_update(DPID_PERSON_IN_RANGE_EX,当前人状态群); //枚举型数据上报;
+    mcu_dp_value_update(DPID_MESH_DUTY,当前通信周期); //VALUE型数据上报;
+    mcu_dp_bool_update(DPID_FIND_ME,当前找灯); //BOOL型数据上报;
+    mcu_dp_enum_update(DPID_MESH_TEST,当前mesh测试用); //枚举型数据上报;
     mcu_dp_enum_update(DPID_ADDR0,当前公共群组地址0); //枚举型数据上报;
     mcu_dp_enum_update(DPID_ADDR1,当前公共群组地址1); //枚举型数据上报;
     mcu_dp_enum_update(DPID_ADDR2,当前公共群组地址2); //枚举型数据上报;
@@ -558,6 +564,99 @@ static unsigned char dp_download_person_in_range_ex_handle(const unsigned char v
     else
         return ERROR;
 }
+/*****************************************************************************
+函数名称 : dp_download_mesh_duty_handle
+功能描述 : 针对DPID_MESH_DUTY的处理函数
+输入参数 : value:数据源数据
+        : length:数据长度
+返回参数 : 成功返回:SUCCESS/失败返回:ERROR
+使用说明 : 可下发可上报类型,需要在处理完数据后上报处理结果至app
+*****************************************************************************/
+static unsigned char dp_download_mesh_duty_handle(const unsigned char value[], unsigned short length)
+{
+    //示例:当前DP类型为VALUE
+    unsigned char ret;
+    unsigned long mesh_duty;
+    
+    mesh_duty = mcu_get_dp_download_value(value,length);
+    /*
+    //VALUE类型数据处理
+    
+    */
+    
+    //处理完DP数据后应有反馈
+    ret = mcu_dp_value_update(DPID_MESH_DUTY,mesh_duty);
+    if(ret == SUCCESS)
+        return SUCCESS;
+    else
+        return ERROR;
+}
+/*****************************************************************************
+函数名称 : dp_download_find_me_handle
+功能描述 : 针对DPID_FIND_ME的处理函数
+输入参数 : value:数据源数据
+        : length:数据长度
+返回参数 : 成功返回:SUCCESS/失败返回:ERROR
+使用说明 : 可下发可上报类型,需要在处理完数据后上报处理结果至app
+*****************************************************************************/
+static unsigned char dp_download_find_me_handle(const unsigned char value[], unsigned short length)
+{
+    //示例:当前DP类型为BOOL
+    unsigned char ret;
+    //0:关/1:开
+    unsigned char find_me;
+    
+    find_me = mcu_get_dp_download_bool(value,length);
+    if(find_me == 0) {
+        //开关关
+    }else {
+        //开关开
+    }
+  
+    //处理完DP数据后应有反馈
+    ret = mcu_dp_bool_update(DPID_FIND_ME,find_me);
+    if(ret == SUCCESS)
+        return SUCCESS;
+    else
+        return ERROR;
+}
+/*****************************************************************************
+函数名称 : dp_download_mesh_test_handle
+功能描述 : 针对DPID_MESH_TEST的处理函数
+输入参数 : value:数据源数据
+        : length:数据长度
+返回参数 : 成功返回:SUCCESS/失败返回:ERROR
+使用说明 : 可下发可上报类型,需要在处理完数据后上报处理结果至app
+*****************************************************************************/
+static unsigned char dp_download_mesh_test_handle(const unsigned char value[], unsigned short length)
+{
+    //示例:当前DP类型为ENUM
+    unsigned char ret;
+    unsigned char mesh_test;
+    
+    mesh_test = mcu_get_dp_download_enum(value,length);
+    switch(mesh_test) {
+        case 0:
+        break;
+        
+        case 1:
+        break;
+        
+        case 2:
+        break;
+        
+        default:
+    
+        break;
+    }
+    
+    //处理完DP数据后应有反馈
+    ret = mcu_dp_enum_update(DPID_MESH_TEST, mesh_test);
+    if(ret == SUCCESS)
+        return SUCCESS;
+    else
+        return ERROR;
+}
 
 
 /******************************************************************************
@@ -688,6 +787,18 @@ unsigned char dp_download_handle(unsigned char dpid,const unsigned char value[],
         case DPID_PERSON_IN_RANGE_EX:
             //人状态群处理函数
             ret = dp_download_person_in_range_ex_handle(value,length);
+        break;
+        case DPID_MESH_DUTY:
+            //通信周期处理函数
+            ret = dp_download_mesh_duty_handle(value,length);
+        break;
+        case DPID_FIND_ME:
+            //找灯处理函数
+            ret = dp_download_find_me_handle(value,length);
+        break;
+        case DPID_MESH_TEST:
+            //mesh测试用处理函数
+            ret = dp_download_mesh_test_handle(value,length);
         break;
 
 
