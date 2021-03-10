@@ -49,7 +49,6 @@ extern u8 xdata person_in_range_flag;
 extern u8 idata Exit_network_controlflag;
 extern u16 idata groupaddr[8];
 
-extern u8 idata iam_myself_flag;
 extern u8 xdata stop_times;
 
 extern u16 idata bt_and_sigmesh_duty;
@@ -127,6 +126,7 @@ const DOWNLOAD_CMD_S xdata download_cmd[] =
   {DPID_PERSON_IN_RANGE_EX, DP_TYPE_ENUM},
   {DPID_MESH_DUTY, DP_TYPE_VALUE},
   {DPID_FIND_ME, DP_TYPE_BOOL},
+  {DPID_MESH_TEST, DP_TYPE_ENUM},
   {DPID_ADDR0, DP_TYPE_ENUM},
   {DPID_ADDR1, DP_TYPE_ENUM},
   {DPID_ADDR2, DP_TYPE_ENUM},
@@ -896,23 +896,17 @@ static unsigned char dp_download_person_in_range_ex_handle(const unsigned char v
     person_in_range_ex = mcu_get_dp_download_enum(value,length);
     switch(person_in_range_ex) {
         case 0:
-			if (iam_myself_flag == 1)
-			{
-				iam_myself_flag = 0;
-				//do nothing
-			}
-			else
-			{
-				LIGHT = 1;		
-				stop_times = 2;
-				person_in_range_flag = PERSON_STATUS_HAVE_PERSON_FROM_GROUP;
-			}
+			LIGHT = 1;		
+			stop_times = 2;
+			person_in_range_flag = PERSON_STATUS_HAVE_PERSON_FROM_GROUP;
         break;
         
         case 1:
+			find_me_flag = 1;
         break;
         
         case 2:
+			//
         break;
         
         default:
@@ -1000,6 +994,56 @@ static unsigned char dp_download_find_me_handle(const unsigned char value[], uns
     //处理完DP数据后应有反馈
     ret = mcu_dp_bool_update(DPID_FIND_ME,0);
     return NOT_SAVE;
+}
+/*****************************************************************************
+函数名称 : dp_download_mesh_test_handle
+功能描述 : 针对DPID_MESH_TEST的处理函数
+输入参数 : value:数据源数据
+        : length:数据长度
+返回参数 : 成功返回:SUCCESS/失败返回:ERROR
+使用说明 : 可下发可上报类型,需要在处理完数据后上报处理结果至app
+*****************************************************************************/
+static unsigned char dp_download_mesh_test_handle(const unsigned char value[], unsigned short length)
+{
+    //示例:当前DP类型为ENUM
+    unsigned char ret;
+    unsigned char mesh_test;
+		unsigned char i;
+    
+    mesh_test = mcu_get_dp_download_enum(value,length);
+    switch(mesh_test) {
+        case 0:
+			//find us
+			//联动开启的话
+			if (Linkage_flag == 1)
+			{
+				for (i=0;i<8;i++)
+				{
+					//公共群组具有群号
+					if (groupaddr[i] != 0)
+					{	
+						mcu_dp_enum_mesh_update(DPID_PERSON_IN_RANGE_EX, 1, groupaddr[i]);
+					}							
+				}
+			}
+        break;
+        
+        case 1:
+			bt_uart_write_frame(BT_MESH_GET_MY_GROUP_ADDRESS, 0);
+        break;
+        
+        case 2:
+        break;
+        
+        default:
+    
+        break;
+    }
+    
+    //处理完DP数据后应有反馈
+    ret = mcu_dp_enum_update(DPID_MESH_TEST, mesh_test);
+	return NOT_SAVE;
+
 }
 
 
@@ -1139,6 +1183,10 @@ unsigned char dp_download_handle(unsigned char dpid,const unsigned char value[],
         case DPID_FIND_ME:
             //找灯处理函数
             ret = dp_download_find_me_handle(value,length);
+        break;
+        case DPID_MESH_TEST:
+            //mesh测试用处理函数
+            ret = dp_download_mesh_test_handle(value,length);
         break;
 
 

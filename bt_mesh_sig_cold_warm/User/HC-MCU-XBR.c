@@ -94,7 +94,6 @@ u8 idata ab_last = 0;
 u8 idata Exit_network_controlflag = 0;
 u16 idata Exit_network_controlflag_toggle_counter = 0;
 
-u8 idata iam_myself_flag = 0;
 u16 idata bt_and_sigmesh_duty = 1000;	// unit:ms
 u8 xdata find_me_flag = 0;
 u8 xdata find_me_counter = 0;
@@ -1122,10 +1121,8 @@ void main()
 					{
 						//公共群组具有群号
 						if (groupaddr[i] != 0)
-						{	//我是mesh发起者
-							iam_myself_flag = 1;
+						{
 							mcu_dp_enum_mesh_update(DPID_PERSON_IN_RANGE_EX, 0, groupaddr[i]);
-							Delay_ms(100);								
 						}							
 					}
 				}				

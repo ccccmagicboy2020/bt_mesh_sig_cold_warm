@@ -306,12 +306,11 @@ void data_handle(unsigned short offset)
 			rsp_status = bt_uart_rx_buf[offset + DATA_START];
 			if (0 == rsp_status)
 			{
-				//mcu_dp_bool_update(DPID_SWITCH_LINKAGE, 1);
 				bt_uart_write_frame(BT_MESH_GET_MY_GROUP_ADDRESS, 0);
 			}
 			else
 			{
-				//mcu_dp_bool_update(DPID_SWITCH_LINKAGE, 0);
+				//
 			}
 			break;
 		case USER_DEFINE_CMD0:
