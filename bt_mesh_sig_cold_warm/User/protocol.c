@@ -1009,6 +1009,7 @@ static unsigned char dp_download_mesh_test_handle(const unsigned char value[], u
     unsigned char ret;
     unsigned char mesh_test;
 		unsigned char i;
+		unsigned char group_flag = 0;
     
     mesh_test = mcu_get_dp_download_enum(value,length);
     switch(mesh_test) {
@@ -1023,7 +1024,12 @@ static unsigned char dp_download_mesh_test_handle(const unsigned char value[], u
 					if (groupaddr[i] != 0)
 					{	
 						mcu_dp_enum_mesh_update(DPID_PERSON_IN_RANGE_EX, 1, groupaddr[i]);
+						group_flag = 1;
 					}							
+				}
+				if(group_flag)
+				{
+					find_me_flag = 1;
 				}
 			}
         break;
