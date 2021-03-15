@@ -98,6 +98,9 @@ u16 idata bt_and_sigmesh_duty = 1000;	// unit:ms
 u8 xdata find_me_flag = 0;
 u8 xdata find_me_counter = 0;
 
+u16 idata person_meter = 0;
+u16 idata person_meter_last = 0;
+
 unsigned char PWM0init(unsigned char ab);
 unsigned char PWM3init_xxx(unsigned char ab);
 unsigned char PWM3init(unsigned char ab);
@@ -1098,6 +1101,14 @@ void main()
 		{
 			mcu_dp_enum_update(DPID_PERSON_IN_RANGE,person_in_range_flag);
 			person_in_range_flag_last = person_in_range_flag;
+			person_meter++;
+		}
+		
+		//人表状态更新
+		if (person_meter != person_meter_last)
+		{
+			mcu_dp_value_update(DPID_PERSON_METER,person_meter);
+			person_meter_last = person_meter;
 		}		
 		
 		//周期控制
@@ -1108,11 +1119,14 @@ void main()
 			if (1 == radar_number_send_flag2)
 			{
 				radar_number_send_flag2 = 0;
-				//雷达计数更新
+				//雷达计数更新及if_sum更新
 				if (radar_trig_times_last != radar_trig_times)
 				{
+					//雷达计数更新
 					mcu_dp_value_update(DPID_RADAR_TRIGGER_TIMES,radar_trig_times);
-					radar_trig_times_last = radar_trig_times;					
+					radar_trig_times_last = radar_trig_times;
+					//中频更新
+					mcu_dp_value_update(DPID_IF_SUM, SUM2);
 				}
 				//联动开启的话
 				if (Linkage_flag == 1)
