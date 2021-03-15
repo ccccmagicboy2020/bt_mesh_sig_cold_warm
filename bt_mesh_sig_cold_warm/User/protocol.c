@@ -386,6 +386,10 @@ static unsigned char dp_download_temp_value_handle(const unsigned char value[], 
 	}		
 	
 	temper_value = temper_value_xxx;
+	
+	//设置完冷暖后，闪一下输出
+	PWM3init(0);
+	PWM3init(XRBoffbrightvalue);
     
     //处理完DP数据后应有反馈
     ret = mcu_dp_value_update(DPID_TEMP_VALUE,temper_value);
