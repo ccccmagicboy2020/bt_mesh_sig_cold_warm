@@ -143,6 +143,12 @@ mcu在bt模块正确联网后可调用mcu_get_system_time()函数发起校时功
 //mesh测试用(可下发可上报)
 //备注:测试用
 #define DPID_MESH_TEST 123
+//人次计数(只上报)
+//备注:记录一次上电后有人的次数
+#define DPID_PERSON_METER 124
+//雷达回波统计值(只上报)
+//备注:雷达中频回波累加值
+#define DPID_IF_SUM 125
 //公共群组地址0(只上报)
 //备注:
 #define DPID_ADDR0 130
@@ -167,6 +173,10 @@ mcu在bt模块正确联网后可调用mcu_get_system_time()函数发起校时功
 //公共群组地址7(只上报)
 //备注:
 #define DPID_ADDR7 137
+//工厂操作(可下发可上报)
+//备注:枚举范围：aa,bb,cc,dd,ee,ff,gg,hh
+//
+#define DPID_FACTORY_OP 150
 
 
 

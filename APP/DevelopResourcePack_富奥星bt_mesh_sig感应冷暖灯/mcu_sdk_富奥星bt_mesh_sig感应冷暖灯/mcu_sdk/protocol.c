@@ -70,6 +70,8 @@ const DOWNLOAD_CMD_S download_cmd[] =
   {DPID_MESH_DUTY, DP_TYPE_VALUE},
   {DPID_FIND_ME, DP_TYPE_BOOL},
   {DPID_MESH_TEST, DP_TYPE_ENUM},
+  {DPID_PERSON_METER, DP_TYPE_VALUE},
+  {DPID_IF_SUM, DP_TYPE_VALUE},
   {DPID_ADDR0, DP_TYPE_ENUM},
   {DPID_ADDR1, DP_TYPE_ENUM},
   {DPID_ADDR2, DP_TYPE_ENUM},
@@ -78,6 +80,7 @@ const DOWNLOAD_CMD_S download_cmd[] =
   {DPID_ADDR5, DP_TYPE_ENUM},
   {DPID_ADDR6, DP_TYPE_ENUM},
   {DPID_ADDR7, DP_TYPE_ENUM},
+  {DPID_FACTORY_OP, DP_TYPE_ENUM},
 };
 
 
@@ -152,6 +155,8 @@ void all_data_update(void)
     mcu_dp_value_update(DPID_MESH_DUTY,当前通信周期); //VALUE型数据上报;
     mcu_dp_bool_update(DPID_FIND_ME,当前找灯); //BOOL型数据上报;
     mcu_dp_enum_update(DPID_MESH_TEST,当前mesh测试用); //枚举型数据上报;
+    mcu_dp_value_update(DPID_PERSON_METER,当前人次计数); //VALUE型数据上报;
+    mcu_dp_value_update(DPID_IF_SUM,当前雷达回波统计值); //VALUE型数据上报;
     mcu_dp_enum_update(DPID_ADDR0,当前公共群组地址0); //枚举型数据上报;
     mcu_dp_enum_update(DPID_ADDR1,当前公共群组地址1); //枚举型数据上报;
     mcu_dp_enum_update(DPID_ADDR2,当前公共群组地址2); //枚举型数据上报;
@@ -160,6 +165,7 @@ void all_data_update(void)
     mcu_dp_enum_update(DPID_ADDR5,当前公共群组地址5); //枚举型数据上报;
     mcu_dp_enum_update(DPID_ADDR6,当前公共群组地址6); //枚举型数据上报;
     mcu_dp_enum_update(DPID_ADDR7,当前公共群组地址7); //枚举型数据上报;
+    mcu_dp_enum_update(DPID_FACTORY_OP,当前工厂操作); //枚举型数据上报;
 
 
 
@@ -657,6 +663,58 @@ static unsigned char dp_download_mesh_test_handle(const unsigned char value[], u
     else
         return ERROR;
 }
+/*****************************************************************************
+函数名称 : dp_download_factory_op_handle
+功能描述 : 针对DPID_FACTORY_OP的处理函数
+输入参数 : value:数据源数据
+        : length:数据长度
+返回参数 : 成功返回:SUCCESS/失败返回:ERROR
+使用说明 : 可下发可上报类型,需要在处理完数据后上报处理结果至app
+*****************************************************************************/
+static unsigned char dp_download_factory_op_handle(const unsigned char value[], unsigned short length)
+{
+    //示例:当前DP类型为ENUM
+    unsigned char ret;
+    unsigned char factory_op;
+    
+    factory_op = mcu_get_dp_download_enum(value,length);
+    switch(factory_op) {
+        case 0:
+        break;
+        
+        case 1:
+        break;
+        
+        case 2:
+        break;
+        
+        case 3:
+        break;
+        
+        case 4:
+        break;
+        
+        case 5:
+        break;
+        
+        case 6:
+        break;
+        
+        case 7:
+        break;
+        
+        default:
+    
+        break;
+    }
+    
+    //处理完DP数据后应有反馈
+    ret = mcu_dp_enum_update(DPID_FACTORY_OP, factory_op);
+    if(ret == SUCCESS)
+        return SUCCESS;
+    else
+        return ERROR;
+}
 
 
 /******************************************************************************
@@ -799,6 +857,10 @@ unsigned char dp_download_handle(unsigned char dpid,const unsigned char value[],
         case DPID_MESH_TEST:
             //mesh测试用处理函数
             ret = dp_download_mesh_test_handle(value,length);
+        break;
+        case DPID_FACTORY_OP:
+            //工厂操作处理函数
+            ret = dp_download_factory_op_handle(value,length);
         break;
 
 
