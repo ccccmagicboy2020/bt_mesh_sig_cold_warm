@@ -20,13 +20,12 @@
 #include "HC89S003F4.h"
 #include "bluetooth.h"
 //
-
 extern ulong xdata SUM0;	   //
 extern ulong xdata SUM2;		//
 extern uint xdata average;	//
 extern u8 xdata light_ad;		//
 extern ulong xdata TH;		//
-
+extern unsigned char upload_disable;
 
 extern u16 idata groupaddr[8];
 extern u8 idata Exit_network_controlflag;
@@ -335,17 +334,27 @@ void data_handle(unsigned short offset)
 #ifndef BT_CONTROL_SELF_MODE
   case BT_STATE_CMD:                                  //bt工作状态	
     bt_work_state = bt_uart_rx_buf[offset + DATA_START];
-	if (BT_CONNECTED == bt_work_state)
+	if (BT_CONNECTED == bt_work_state)//绑定并连接
 	{
-		Exit_network_controlflag = 0;
 		savevar();
 		all_data_update();
+		upload_disable = 0;
+  		Exit_network_controlflag = 0;
 	}
-	else if (BT_NOT_CONNECTED == bt_work_state)
+	else if (BT_NOT_CONNECTED == bt_work_state)//绑定未连接
 	{
-		//
-		//
-		//
+		upload_disable = 1;
+		Exit_network_controlflag = 0;
+	}
+	else if (BT_UN_BIND == bt_work_state)//蓝牙未绑定
+	{
+		upload_disable = 1;
+		Exit_network_controlflag = 1;
+	}
+	else		//未知状态
+	{
+		upload_disable = 1;
+		Exit_network_controlflag = 1;		
 	}
     bt_uart_write_frame(BT_STATE_CMD,0);
     break;

@@ -95,11 +95,13 @@ u8 idata Exit_network_controlflag = 0;
 volatile u16 idata Exit_network_controlflag_toggle_counter = 0;
 
 u16 idata bt_and_sigmesh_duty = 1000;	// unit:ms
-u8 xdata find_me_flag = 0;
+u8 find_me_flag = 0;
 volatile u8 xdata find_me_counter = 0;
 
 volatile u16 idata person_meter = 0;
 u16 idata person_meter_last = 0;
+
+unsigned char upload_disable = 0;
 
 unsigned char PWM0init(unsigned char ab);
 unsigned char PWM3init_xxx(unsigned char ab);
@@ -226,11 +228,12 @@ void UART1_Init()
 	//0xFFEF->57600
 
 	TH4 = 0xFF;
-	TL4 = 0x98;	  //波特率9600		//0xEE;				//波特率56000
+	TL4 = 0x98;	  //波特率9600
+	
 	SCON2 = 0x02; //8位UART，波特率可变
 	SCON = 0x10;  //允许串行接收
 	IE |= 0X10;	  //使能串口中断
-				  //EA = 1;							              	 //使能总中断
+	//EA = 1;							              	 //使能总中断
 }
 
 /***************************************************************************************
@@ -1051,6 +1054,8 @@ void main()
 
 	SUM = 0;
 	
+	upload_disable = 0;	
+	
 	if (resetbtcnt > 3)
 	{
 		resetbtcnt = 0;
@@ -1071,7 +1076,7 @@ void main()
 			PWM3init(0);
 			Delay_ms(100);
 			find_me_counter++;
-			if (3 <= find_me_counter)	//1 min toggle led
+			if (3 <= find_me_counter)
 			{
 				find_me_flag = 0;
 				find_me_counter = 0;
@@ -1090,70 +1095,69 @@ void main()
 				Exit_network_controlflag = 0;
 			}
 		}
-		//灯状态更新
-		if (light_status_xxx != light_status_xxx_last)
+		//上报通信
+		if (upload_disable == 0)
 		{
-			mcu_dp_enum_update(DPID_LIGHT_STATUS,light_status_xxx);
-			light_status_xxx_last = light_status_xxx;
-		}
-		//人状态更新
-		if (person_in_range_flag != person_in_range_flag_last)
-		{
-			mcu_dp_enum_update(DPID_PERSON_IN_RANGE,person_in_range_flag);
-			person_in_range_flag_last = person_in_range_flag;
-			
-			if (person_in_range_flag == PERSON_STATUS_HAVE_PERSON)
+			//灯状态更新
+			if (light_status_xxx != light_status_xxx_last)
 			{
-				person_meter++;				
+				mcu_dp_enum_update(DPID_LIGHT_STATUS,light_status_xxx);
+				light_status_xxx_last = light_status_xxx;
 			}
-		}
-		
-		//人表状态更新
-		if (person_meter != person_meter_last)
-		{
-			mcu_dp_value_update(DPID_PERSON_METER,person_meter);
-			person_meter_last = person_meter;
-		}		
-		
-		//周期控制
-		if (1 == radar_number_send_flag)
-		{
-			radar_number_send_flag = 0;
-			//雷达有触发
-			if (1 == radar_number_send_flag2)
+			//人状态更新
+			if (person_in_range_flag != person_in_range_flag_last)
 			{
-				radar_number_send_flag2 = 0;
-				//雷达计数更新及if_sum更新
-				if (radar_trig_times_last != radar_trig_times)
+				mcu_dp_enum_update(DPID_PERSON_IN_RANGE,person_in_range_flag);
+				person_in_range_flag_last = person_in_range_flag;
+				
+				if (person_in_range_flag == PERSON_STATUS_HAVE_PERSON)
 				{
-					//雷达计数更新
-					mcu_dp_value_update(DPID_RADAR_TRIGGER_TIMES,radar_trig_times);
-					radar_trig_times_last = radar_trig_times;
-					//中频更新
-					mcu_dp_value_update(DPID_IF_SUM, SUM2);
+					person_meter++;				
 				}
-				//联动开启的话
-				if (Linkage_flag == 1)
+			}
+			//人表状态更新
+			if (person_meter != person_meter_last)
+			{
+				mcu_dp_value_update(DPID_PERSON_METER,person_meter);
+				person_meter_last = person_meter;
+			}		
+			
+			//周期控制
+			if (1 == radar_number_send_flag)
+			{
+				radar_number_send_flag = 0;
+				//雷达有触发
+				if (1 == radar_number_send_flag2)
 				{
-					for (i=0;i<8;i++)
+					radar_number_send_flag2 = 0;
+					//雷达计数更新及if_sum更新
+					if (radar_trig_times_last != radar_trig_times)
 					{
-						//公共群组具有群号
-						if (groupaddr[i] != 0)
-						{
-							mcu_dp_enum_mesh_update(DPID_PERSON_IN_RANGE_EX, 0, groupaddr[i]);
-						}							
+						//雷达计数更新
+						mcu_dp_value_update(DPID_RADAR_TRIGGER_TIMES,radar_trig_times);
+						radar_trig_times_last = radar_trig_times;
+						//中频更新
+						mcu_dp_value_update(DPID_IF_SUM, SUM2);
 					}
-				}				
+					//联动开启的话
+					if (Linkage_flag == 1)
+					{
+						for (i=0;i<8;i++)
+						{
+							//公共群组具有群号
+							if (groupaddr[i] != 0)
+							{
+								mcu_dp_enum_mesh_update(DPID_PERSON_IN_RANGE_EX, 0, groupaddr[i]);
+							}							
+						}
+					}				
+				}
 			}
 		}		
 
 		WDTC |= 0x10; //清看门狗
 
-		if (while_1flag == 0)//侦测状态
-		{
-			if ((times & 0x1f) == 0)
-				bt_uart_service();	//串口解包异步处理
-		}
+		bt_uart_service();	//串口解包异步处理
 
 		if (SWITCHfXBR == 1) //雷达开控制
 		{

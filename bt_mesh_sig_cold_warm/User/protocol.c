@@ -52,7 +52,7 @@ extern u16 idata groupaddr[8];
 extern u8 xdata stop_times;
 
 extern u16 idata bt_and_sigmesh_duty;
-extern u8 xdata find_me_flag;
+extern u8 find_me_flag;
 
 void send_data(u8 d);
 void reset_bt_module(void);
@@ -386,10 +386,6 @@ static unsigned char dp_download_temp_value_handle(const unsigned char value[], 
 	}		
 	
 	temper_value = temper_value_xxx;
-	
-	//设置完冷暖后，闪一下输出
-	PWM3init(0);
-	PWM3init(XRBoffbrightvalue);
     
     //处理完DP数据后应有反馈
     ret = mcu_dp_value_update(DPID_TEMP_VALUE,temper_value);
@@ -755,24 +751,17 @@ static unsigned char dp_download_switch_linkage_handle(const unsigned char value
     //0:关/1:开
     unsigned char switch_Linkage;
     unsigned char i;
+	unsigned char not_save_flag = 0;
+	
     switch_Linkage = mcu_get_dp_download_bool(value,length);
 		
 	if(switch_Linkage==Linkage_flag)
 	{
-		//
+		not_save_flag = 1;
 	}
 	else
 	{
-		if (Linkage_flag)
-		{				
-			for(i=0;i<8;i++)
-			{
-				if(groupaddr[i] != 0)
-				{
-					mcu_dp_bool_mesh_update(DPID_SWITCH_LINKAGE,switch_Linkage,groupaddr[i]);
-				}
-			}
-		}
+		// no mesh config
 	}
 	
 	Linkage_flag = switch_Linkage;
@@ -787,7 +776,12 @@ static unsigned char dp_download_switch_linkage_handle(const unsigned char value
     //处理完DP数据后应有反馈
     ret = mcu_dp_bool_update(DPID_SWITCH_LINKAGE,Linkage_flag);
     if(ret == SUCCESS)
-        return SUCCESS;
+	{
+		if(not_save_flag)
+		    return NOT_SAVE;
+		else
+			return SUCCESS;
+	}
     else
         return ERROR;
 }
