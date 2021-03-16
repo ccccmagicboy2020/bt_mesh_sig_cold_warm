@@ -92,13 +92,13 @@ u8 xdata person_in_range_flag_last = PERSON_STATUS_NO_PERSON;
 
 u8 idata ab_last = 0;
 u8 idata Exit_network_controlflag = 0;
-u16 idata Exit_network_controlflag_toggle_counter = 0;
+volatile u16 idata Exit_network_controlflag_toggle_counter = 0;
 
 u16 idata bt_and_sigmesh_duty = 1000;	// unit:ms
 u8 xdata find_me_flag = 0;
-u8 xdata find_me_counter = 0;
+volatile u8 xdata find_me_counter = 0;
 
-u16 idata person_meter = 0;
+volatile u16 idata person_meter = 0;
 u16 idata person_meter_last = 0;
 
 unsigned char PWM0init(unsigned char ab);
@@ -1101,7 +1101,11 @@ void main()
 		{
 			mcu_dp_enum_update(DPID_PERSON_IN_RANGE,person_in_range_flag);
 			person_in_range_flag_last = person_in_range_flag;
-			person_meter++;
+			
+			if (person_in_range_flag == PERSON_STATUS_HAVE_PERSON)
+			{
+				person_meter++;				
+			}
 		}
 		
 		//人表状态更新
