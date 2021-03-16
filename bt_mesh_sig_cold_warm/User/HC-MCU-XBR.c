@@ -86,6 +86,7 @@ u8 xdata light_status_xxx_last = LIGHT_STATUS_EMPTY;
 volatile u16 xdata radar_number_count = 0;
 volatile u8 xdata radar_number_send_flag = 0;
 u8 idata radar_number_send_flag2 = 0;
+u8 radar_number_send_flag3 = 0;
 
 u8 xdata person_in_range_flag = PERSON_STATUS_NO_PERSON;
 u8 xdata person_in_range_flag_last = PERSON_STATUS_NO_PERSON;
@@ -727,7 +728,8 @@ void XBRHandle(void)
 							/////////////////////////////////////////////
 							radar_trig_times++;
 							person_in_range_flag = PERSON_STATUS_HAVE_PERSON;
-							radar_number_send_flag2 = 1;
+							radar_number_send_flag2 = 1; //for bt upload
+							radar_number_send_flag3 = 1; //for mesh upload
 							/////////////////////////////////////////////
 							SUM1_num = 8;
 							LIGHT_off = 0;
@@ -772,8 +774,10 @@ void XBRHandle(void)
 		lowlight1mincount = 0;
 		lowlight1minflag = 0;
 
-		Delay_ms(250);
-
+		//////////////////////////
+		//Delay_ms(250);//防干扰
+		//////////////////////////
+		
 		SUM16 = 0;
 		calc_average_times = 0;
 		SUM1_num = 64;
@@ -1138,22 +1142,27 @@ void main()
 						radar_trig_times_last = radar_trig_times;
 						//中频更新
 						mcu_dp_value_update(DPID_IF_SUM, SUM2);
-					}
-					//联动开启的话
-					if (Linkage_flag == 1)
-					{
-						for (i=0;i<8;i++)
-						{
-							//公共群组具有群号
-							if (groupaddr[i] != 0)
-							{
-								mcu_dp_enum_mesh_update(DPID_PERSON_IN_RANGE_EX, 0, groupaddr[i]);
-							}							
-						}
-					}				
+					}			
 				}
 			}
-		}		
+		}
+
+		if (1 == radar_number_send_flag3)
+		{
+			radar_number_send_flag3 = 0;
+			//联动开启的话
+			if (Linkage_flag == 1)
+			{
+				for (i=0;i<8;i++)
+				{
+					//公共群组具有群号
+					if (groupaddr[i] != 0)
+					{
+						mcu_dp_enum_mesh_update(DPID_PERSON_IN_RANGE_EX, 0, groupaddr[i]);
+					}							
+				}
+			}				
+		}
 
 		WDTC |= 0x10; //清看门狗
 

@@ -750,7 +750,6 @@ static unsigned char dp_download_switch_linkage_handle(const unsigned char value
     unsigned char ret;
     //0:关/1:开
     unsigned char switch_Linkage;
-    unsigned char i;
 	unsigned char not_save_flag = 0;
 	
     switch_Linkage = mcu_get_dp_download_bool(value,length);
