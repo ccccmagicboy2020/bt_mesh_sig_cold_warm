@@ -38,7 +38,7 @@ del *.saved_uv4 /s
 del hclink_pwd.log /s
 
 del *.SBR /s
-del *.m51 /s
+::del *.m51 /s
 
 
 exit
