@@ -647,7 +647,7 @@ void XBRHandle(void)
 					{
 						SUM = SUM10 - SUM0;
 
-						if ((SUM10 < 8000000) && (SUM < 400000))
+						if ((SUM10 < 8000000) && (SUM < 1200000))
 						{
 							if (SUM1_num > 16)
 							{
