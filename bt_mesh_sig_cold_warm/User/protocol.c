@@ -310,7 +310,7 @@ static unsigned char dp_download_bright_value_handle(const unsigned char value[]
     //示例:当前DP类型为VALUE
     unsigned char ret;
     unsigned long bright_value;
-    unsigned char i;
+//    unsigned char i;
 	unsigned char not_save_flag = 0;
     
     bright_value = mcu_get_dp_download_value(value,length);
@@ -321,16 +321,17 @@ static unsigned char dp_download_bright_value_handle(const unsigned char value[]
 	}
 	else
 	{
-		if (Linkage_flag)
-		{
-			for(i=0;i<8;i++)
-			{
-				if(groupaddr[i] != 0)
-				{
-					mcu_dp_value_mesh_update(DPID_BRIGHT_VALUE,bright_value,groupaddr[i]);
-				}
-			}
-		}
+//		if (0)
+		//if (Linkage_flag)
+//		{
+//			for(i=0;i<8;i++)
+//			{
+//				if(groupaddr[i] != 0)
+//				{
+//					mcu_dp_value_mesh_update(DPID_BRIGHT_VALUE,bright_value,groupaddr[i]);
+//				}
+//			}
+//		}
 	}	
 	
 	lightvalue = bright_value;
@@ -362,7 +363,7 @@ static unsigned char dp_download_temp_value_handle(const unsigned char value[], 
     //示例:当前DP类型为VALUE
     unsigned char ret;
     u8 temper_value_xxx;
-    unsigned char i;
+//    unsigned char i;
 	unsigned char not_save_flag = 0;
     
     temper_value_xxx = mcu_get_dp_download_value(value,length);
@@ -373,16 +374,17 @@ static unsigned char dp_download_temp_value_handle(const unsigned char value[], 
 	}
 	else
 	{
-		if (Linkage_flag)
-		{			
-			for(i=0;i<8;i++)
-			{
-				if(groupaddr[i] != 0)
-				{
-					mcu_dp_value_mesh_update(DPID_TEMP_VALUE,temper_value_xxx,groupaddr[i]);
-				}
-			}
-		}
+//		if (0)
+		//if (Linkage_flag)
+//		{			
+//			for(i=0;i<8;i++)
+//			{
+//				if(groupaddr[i] != 0)
+//				{
+//					mcu_dp_value_mesh_update(DPID_TEMP_VALUE,temper_value_xxx,groupaddr[i]);
+//				}
+//			}
+//		}
 	}		
 	
 	temper_value = temper_value_xxx;
@@ -699,7 +701,7 @@ static unsigned char dp_download_switch_led2_handle(const unsigned char value[],
     unsigned char ret;
     //0:关/1:开
     unsigned char switch_led2;
-    unsigned char i;
+//    unsigned char i;
 	unsigned char not_save_flag = 0;	
     
     switch_led2 = mcu_get_dp_download_bool(value,length);
@@ -710,16 +712,17 @@ static unsigned char dp_download_switch_led2_handle(const unsigned char value[],
     }
     else
     {
-		if (Linkage_flag)
-		{					
-			for(i=0;i<8;i++)
-			{
-				if(groupaddr[i] != 0)
-				{
-					mcu_dp_bool_mesh_update(DPID_SWITCH_LED2,switch_led2,groupaddr[i]);
-				}
-			}
-		}
+//		if (0)
+		//if (Linkage_flag)
+//		{					
+//			for(i=0;i<8;i++)
+//			{
+//				if(groupaddr[i] != 0)
+//				{
+//					mcu_dp_bool_mesh_update(DPID_SWITCH_LED2,switch_led2,groupaddr[i]);
+//				}
+//			}
+//		}
     }
 		
 	SWITCHflag2 = switch_led2;
