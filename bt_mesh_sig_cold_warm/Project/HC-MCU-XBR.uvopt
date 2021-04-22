@@ -190,7 +190,7 @@
       <FileType>2</FileType>
       <tvExp>0</tvExp>
       <Focus>1</Focus>
-      <ColumnNumber>7280716</ColumnNumber>
+      <ColumnNumber>51777716</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
       <TopLine>0</TopLine>
       <CurrentLine>5</CurrentLine>
@@ -206,7 +206,7 @@
       <FileType>1</FileType>
       <tvExp>1</tvExp>
       <Focus>1</Focus>
-      <ColumnNumber>7280716</ColumnNumber>
+      <ColumnNumber>51777716</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
       <TopLine>0</TopLine>
       <CurrentLine>5</CurrentLine>
@@ -222,7 +222,7 @@
       <FileType>1</FileType>
       <tvExp>1</tvExp>
       <Focus>1</Focus>
-      <ColumnNumber>7280716</ColumnNumber>
+      <ColumnNumber>51777716</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
       <TopLine>0</TopLine>
       <CurrentLine>5</CurrentLine>
@@ -238,10 +238,10 @@
       <FileType>1</FileType>
       <tvExp>1</tvExp>
       <Focus>1</Focus>
-      <ColumnNumber>8</ColumnNumber>
+      <ColumnNumber>51777716</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>703</TopLine>
-      <CurrentLine>713</CurrentLine>
+      <TopLine>0</TopLine>
+      <CurrentLine>5</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>..\User\protocol.c</PathWithFileName>
       <FilenameWithoutPath>protocol.c</FilenameWithoutPath>
@@ -254,7 +254,7 @@
       <FileType>1</FileType>
       <tvExp>1</tvExp>
       <Focus>1</Focus>
-      <ColumnNumber>7280716</ColumnNumber>
+      <ColumnNumber>51777716</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
       <TopLine>0</TopLine>
       <CurrentLine>5</CurrentLine>

@@ -471,6 +471,9 @@ void set_var(void)
 	if (0 == bt_join_cnt)
 	{
 		reset_bt_module();
+		temper_value = 100;
+		lightvalue = 10;
+		XRBoffbrightvalue = lightvalue;		
 	}
 	else if (1 == bt_join_cnt)
 	{
@@ -1060,7 +1063,7 @@ void main()
 	
 	upload_disable = 0;	
 	
-	if (resetbtcnt > 3)
+	if (resetbtcnt > 10)
 	{
 		resetbtcnt = 0;
 		reset_bt_module();
