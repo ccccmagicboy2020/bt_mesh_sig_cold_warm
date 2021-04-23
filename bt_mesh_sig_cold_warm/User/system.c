@@ -344,7 +344,7 @@ void data_handle(unsigned short offset)
 	else if (BT_NOT_CONNECTED == bt_work_state)//绑定未连接
 	{
 		upload_disable = 1;
-		Exit_network_controlflag = 0;
+		//Exit_network_controlflag = 0;
 	}
 	else if (BT_UN_BIND == bt_work_state)//蓝牙未绑定
 	{
