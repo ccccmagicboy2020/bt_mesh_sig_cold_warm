@@ -39,7 +39,7 @@ extern u8 xdata light_ad;               //采到的光感的瞬时值
 u8 idata cdsvalue = 0;              //感光选择值
 ulong idata sensing_th = 0;     //雷达感应阈值，数值越大越灵敏
 extern  u8 idata Linkage_flag;	//联动的开关的全局
-extern u8 xdata temper_value;		//冷暖值
+extern u8 xdata temper_value_or_lightvalue_have_person;		//冷暖值或者为有人时的亮度
 extern uint xdata LIGHT;
 
 extern u8 xdata all_day_micro_light_enable;
@@ -240,7 +240,7 @@ void all_data_update(void)
 	mcu_dp_bool_update(DPID_SWITCH_LINKAGE,Linkage_flag); //BOOL型数据上报;
 	Delay_ms(100);
 
-	mcu_dp_value_update(DPID_TEMP_VALUE,temper_value); //VALUE型数据上报;
+	mcu_dp_value_update(DPID_TEMP_VALUE,temper_value_or_lightvalue_have_person); //VALUE型数据上报;
 	Delay_ms(100);
 	
     mcu_dp_bool_update(DPID_ALL_DAY_MICRO_LIGHT,all_day_micro_light_enable); //BOOL型数据上报;
@@ -368,7 +368,7 @@ static unsigned char dp_download_temp_value_handle(const unsigned char value[], 
     
     temper_value_xxx = mcu_get_dp_download_value(value,length);
 	
-	if(temper_value_xxx==temper_value)
+	if(temper_value_xxx==temper_value_or_lightvalue_have_person)
 	{
 		not_save_flag = 1;
 	}
@@ -387,10 +387,10 @@ static unsigned char dp_download_temp_value_handle(const unsigned char value[], 
 //		}
 	}		
 	
-	temper_value = temper_value_xxx;
+	temper_value_or_lightvalue_have_person = temper_value_xxx;
     
     //处理完DP数据后应有反馈
-    ret = mcu_dp_value_update(DPID_TEMP_VALUE,temper_value);
+    ret = mcu_dp_value_update(DPID_TEMP_VALUE,temper_value_or_lightvalue_have_person);
 	
     if(ret == SUCCESS)
 	{
@@ -415,7 +415,7 @@ static unsigned char dp_download_cds_handle(const unsigned char value[], unsigne
     //示例:当前DP类型为ENUM
     unsigned char ret;
     unsigned char cds;
-    unsigned char i;
+//    unsigned char i;
 	unsigned char not_save_flag = 0;
     
     cds = mcu_get_dp_download_enum(value,length);
@@ -426,16 +426,16 @@ static unsigned char dp_download_cds_handle(const unsigned char value[], unsigne
 	}
 	else
 	{
-		if (Linkage_flag)
-		{			
-			for(i=0;i<8;i++)
-			{
-				if(groupaddr[i] != 0)
-				{
-					mcu_dp_enum_mesh_update(DPID_CDS,cds,groupaddr[i]);
-				}
-			}
-		}
+		// if (Linkage_flag)
+		// {			
+			// for(i=0;i<8;i++)
+			// {
+				// if(groupaddr[i] != 0)
+				// {
+					// mcu_dp_enum_mesh_update(DPID_CDS,cds,groupaddr[i]);
+				// }
+			// }
+		// }
 	}	
 	
     switch(cds) {
@@ -495,7 +495,7 @@ static unsigned char dp_download_pir_delay_handle(const unsigned char value[], u
     //示例:当前DP类型为VALUE
     unsigned char ret;
     unsigned long pir_delay;
-    unsigned char i;
+//    unsigned char i;
 	unsigned char not_save_flag = 0;
     
     pir_delay = mcu_get_dp_download_value(value,length);
@@ -509,16 +509,16 @@ static unsigned char dp_download_pir_delay_handle(const unsigned char value[], u
 	}
 	else
 	{
-		if (Linkage_flag)
-		{			
-			for(i=0;i<8;i++)
-			{
-				if(groupaddr[i] != 0)
-				{
-					mcu_dp_value_mesh_update(DPID_PIR_DELAY,pir_delay,groupaddr[i]);
-				}
-			}
-		}
+		// if (Linkage_flag)
+		// {			
+			// for(i=0;i<8;i++)
+			// {
+				// if(groupaddr[i] != 0)
+				// {
+					// mcu_dp_value_mesh_update(DPID_PIR_DELAY,pir_delay,groupaddr[i]);
+				// }
+			// }
+		// }
 	}
 	
     DELAY_NUM = pir_delay;
@@ -549,7 +549,7 @@ static unsigned char dp_download_switch_xbr_handle(const unsigned char value[], 
     unsigned char ret;
     //0:关/1:开
     unsigned char switch_xbr;
-    unsigned char i;
+//    unsigned char i;
 	unsigned char not_save_flag = 0;	
     
     switch_xbr = mcu_get_dp_download_bool(value,length);
@@ -560,16 +560,16 @@ static unsigned char dp_download_switch_xbr_handle(const unsigned char value[], 
 	}
 	else
 	{
-		if (Linkage_flag)
-		{					
-			for(i=0;i<8;i++)
-			{
-				if(groupaddr[i] != 0)
-				{
-					mcu_dp_bool_mesh_update(DPID_SWITCH_XBR,switch_xbr,groupaddr[i]);
-				}
-			}
-		}
+		// if (Linkage_flag)
+		// {					
+			// for(i=0;i<8;i++)
+			// {
+				// if(groupaddr[i] != 0)
+				// {
+					// mcu_dp_bool_mesh_update(DPID_SWITCH_XBR,switch_xbr,groupaddr[i]);
+				// }
+			// }
+		// }
 	}
 	
 	SWITCHfXBR = switch_xbr;
@@ -599,7 +599,7 @@ static unsigned char dp_download_standby_time_handle(const unsigned char value[]
     //示例:当前DP类型为VALUE
     unsigned char ret;
     unsigned long standby_time;
-    unsigned char i;
+//    unsigned char i;
 	unsigned char not_save_flag = 0;	
     
     standby_time = mcu_get_dp_download_value(value,length);
@@ -610,16 +610,16 @@ static unsigned char dp_download_standby_time_handle(const unsigned char value[]
 	}
 	else
 	{
-		if (Linkage_flag)
-		{				
-			for(i=0;i<8;i++)
-			{
-				if(groupaddr[i] != 0)
-				{
-					mcu_dp_value_mesh_update(DPID_STANDBY_TIME,standby_time,groupaddr[i]);
-				}
-			}
-		}
+		// if (Linkage_flag)
+		// {				
+			// for(i=0;i<8;i++)
+			// {
+				// if(groupaddr[i] != 0)
+				// {
+					// mcu_dp_value_mesh_update(DPID_STANDBY_TIME,standby_time,groupaddr[i]);
+				// }
+			// }
+		// }
 	}
 	
     lowlightDELAY_NUM=standby_time;
@@ -649,7 +649,7 @@ static unsigned char dp_download_sense_stress_handle(const unsigned char value[]
     //示例:当前DP类型为VALUE
     unsigned char ret;
     unsigned long sense_stress;
-    unsigned char i;
+//    unsigned char i;
 	unsigned char not_save_flag = 0;	
     
     sense_stress = mcu_get_dp_download_value(value,length);
@@ -660,16 +660,16 @@ static unsigned char dp_download_sense_stress_handle(const unsigned char value[]
 	}
 	else
 	{
-		if (Linkage_flag)
-		{				
-			for(i=0;i<8;i++)
-			{
-				if(groupaddr[i] != 0)
-				{
-					mcu_dp_value_mesh_update(DPID_SENSE_STRESS,sense_stress,groupaddr[i]);
-				}
-			}
-		}
+		// if (Linkage_flag)
+		// {				
+			// for(i=0;i<8;i++)
+			// {
+				// if(groupaddr[i] != 0)
+				// {
+					// mcu_dp_value_mesh_update(DPID_SENSE_STRESS,sense_stress,groupaddr[i]);
+				// }
+			// }
+		// }
 	}	
 	
 	sensing_th = sense_stress;
@@ -801,7 +801,7 @@ static unsigned char dp_download_all_day_micro_light_handle(const unsigned char 
     unsigned char ret;
     //0:关/1:开
     unsigned char all_day_micro_light;
-    unsigned char i;
+//    unsigned char i;
 	unsigned char not_save_flag = 0;	
     
     all_day_micro_light = mcu_get_dp_download_bool(value,length);
@@ -812,16 +812,16 @@ static unsigned char dp_download_all_day_micro_light_handle(const unsigned char 
     }
     else
     {
-		if (Linkage_flag)
-		{				
-			for(i=0;i<8;i++)
-			{
-				if(groupaddr[i] != 0)
-				{
-					mcu_dp_bool_mesh_update(DPID_ALL_DAY_MICRO_LIGHT,all_day_micro_light,groupaddr[i]);
-				}
-			}
-		}
+		// if (Linkage_flag)
+		// {				
+			// for(i=0;i<8;i++)
+			// {
+				// if(groupaddr[i] != 0)
+				// {
+					// mcu_dp_bool_mesh_update(DPID_ALL_DAY_MICRO_LIGHT,all_day_micro_light,groupaddr[i]);
+				// }
+			// }
+		// }
     }
 	
 	all_day_micro_light_enable = all_day_micro_light;
@@ -852,7 +852,7 @@ static unsigned char dp_download_clear_trigger_number_handle(const unsigned char
     //unsigned char ret;
     //0:关/1:开
     unsigned char clear_trigger_number;
-	unsigned char i;
+//	unsigned char i;
     
     clear_trigger_number = mcu_get_dp_download_bool(value,length);
 	
@@ -865,16 +865,16 @@ static unsigned char dp_download_clear_trigger_number_handle(const unsigned char
         //开关开
 		radar_trig_times = 0;
 			
-		if (Linkage_flag)
-		{						
-			for(i=0;i<8;i++)
-			{
-				if(groupaddr[i] != 0)
-				{
-					mcu_dp_value_mesh_update(DPID_RADAR_TRIGGER_TIMES,radar_trig_times,groupaddr[i]);
-				}
-			}
-		}
+		// if (Linkage_flag)
+		// {						
+			// for(i=0;i<8;i++)
+			// {
+				// if(groupaddr[i] != 0)
+				// {
+					// mcu_dp_value_mesh_update(DPID_RADAR_TRIGGER_TIMES,radar_trig_times,groupaddr[i]);
+				// }
+			// }
+		// }
 		
 		mcu_dp_value_update(DPID_RADAR_TRIGGER_TIMES,radar_trig_times); //VALUE型数据上报;
     }
@@ -933,7 +933,7 @@ static unsigned char dp_download_mesh_duty_handle(const unsigned char value[], u
     //示例:当前DP类型为VALUE
     unsigned char ret;
     u16 mesh_duty;
-	unsigned char i;
+//	unsigned char i;
 	unsigned char not_save_flag = 0;
     
     mesh_duty = mcu_get_dp_download_value(value,length);
@@ -944,16 +944,16 @@ static unsigned char dp_download_mesh_duty_handle(const unsigned char value[], u
     }	
 	else
 	{
-		if (Linkage_flag)
-		{						
-			for(i=0;i<8;i++)
-			{
-				if(groupaddr[i] != 0)
-				{
-					mcu_dp_value_mesh_update(DPID_MESH_DUTY,mesh_duty,groupaddr[i]);
-				}
-			}
-		}	
+		// if (Linkage_flag)
+		// {						
+			// for(i=0;i<8;i++)
+			// {
+				// if(groupaddr[i] != 0)
+				// {
+					// mcu_dp_value_mesh_update(DPID_MESH_DUTY,mesh_duty,groupaddr[i]);
+				// }
+			// }
+		// }	
 	}
 	
 	bt_and_sigmesh_duty = mesh_duty;
@@ -1289,11 +1289,14 @@ void go_bootloader_ota(void)
 void tuya_re_config_network(void)
 {
 	//
+	reset_default_parameter();	
+	reset_bt_module();
 }
 			
 void tuya_reset_module(void)
 {
 	//
+	bt_uart_write_frame(BT_RESET_CMD, 1);
 }
 				
 void tuya_retry_ota(void)
@@ -1304,6 +1307,18 @@ void tuya_retry_ota(void)
 void reset_default_parameter(void)
 {
 	//
+		TH = 40000;
+    LIGHT_TH = 255;
+    DELAY_NUM = 5;
+    lightvalue = 10;
+    lowlightDELAY_NUM = 1;
+    SWITCHfXBR = 1;
+    Linkage_flag = 0;
+    SWITCHflag2 = 0;
+    all_day_micro_light_enable = 0;
+    temper_value_or_lightvalue_have_person = 100;
+    bt_and_sigmesh_duty = 1000;
+	savevar();
 }
 
 void IAR_Soft_Rst_No_Option(void)

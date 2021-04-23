@@ -61,7 +61,7 @@ u8 while_2flag = 0;		  //???
 
 u8 xdata SWITCHflag2 = 0; //灯开关的变量，可由APP设置
 u8 xdata SWITCHfXBR = 1;  //雷达感应开关的变量，可由APP设置
-u8 xdata lightvalue = 10; //亮度值，可由APP设置
+u8 xdata lightvalue = 10; //无人时亮度值，可由APP设置
 u8 xdata slowchcnt = 10;				  //亮度渐变目标值
 u8 xdata resetbtcnt = 0;				  //为重置蓝牙模块设置的计数器
 u8 xdata XRBoffbrightvalue = 0;			  //当关闭雷达时，APP设置的亮度值(微亮值)
@@ -72,7 +72,8 @@ volatile u16 idata light1sflag = 0;		  //timer的秒标志
 
 u16 idata groupaddr[8] = {0};
 u8 idata Linkage_flag = 0;		//联动标志
-u8 xdata temper_value = 0;			//冷暖值
+
+u8 xdata temper_value_or_lightvalue_have_person = 0;			//冷暖值或者为有人时的亮度值
 
 u8 idata bt_join_cnt = 0;
 u8 xdata all_day_micro_light_enable = 0;
@@ -449,7 +450,7 @@ void set_var(void)
 	
 	all_day_micro_light_enable = (guc_Read_a[10]) & 0x01;
 	
-	temper_value = guc_Read_a[11];
+	temper_value_or_lightvalue_have_person = guc_Read_a[11];
 
 	bt_and_sigmesh_duty = guc_Read_a[12];
 	bt_and_sigmesh_duty <<= 8;
@@ -471,7 +472,7 @@ void set_var(void)
 	if (0 == bt_join_cnt)
 	{
 		reset_bt_module();
-		temper_value = 100;
+		temper_value_or_lightvalue_have_person = 100;
 		lightvalue = 10;
 		XRBoffbrightvalue = lightvalue;		
 	}
@@ -513,12 +514,12 @@ void XBRHandle(void)
 		{
 			if (LIGHT > 0) //正在伴亮的过程中时变亮
 			{
-				if (slowchcnt < 100)
+				if (slowchcnt < temper_value_or_lightvalue_have_person)
 				{
 					slowchcnt = slowchcnt + 2;
-					if (slowchcnt > 100)
+					if (slowchcnt > temper_value_or_lightvalue_have_person)
 					{
-						slowchcnt = 100;
+						slowchcnt = temper_value_or_lightvalue_have_person;
 					}
 				}
 				PWM3init(slowchcnt);
@@ -967,8 +968,8 @@ unsigned char PWM3init_xxx(unsigned char ab)
 }
 unsigned char PWM3init(unsigned char ab)
 {
-	u8 aa;
-	u8 bb;
+	// u8 aa;
+	// u8 bb;
 	
 	if (ab_last == ab)
 	{
@@ -992,11 +993,12 @@ unsigned char PWM3init(unsigned char ab)
 		light_status_xxx = LIGHT_STATUS_MICRO;
 	}
 	
-	aa = (u8)(temper_value*ab/100 + 0.5);
+	// aa = (u8)(temper_value*ab/100 + 0.5);
 	
-	bb = ab - aa;
-	PWM0init(bb);//冷
-	PWM3init_xxx(aa);//暖
+	// bb = ab - aa;
+	// PWM0init(bb);//冷
+	//好美这里只有暖灯
+	PWM3init_xxx(ab);//暖
 	
 	return 0;
 }
@@ -1097,7 +1099,7 @@ void main()
 			PWM3init(0);
 			Delay_ms(100);
 			Exit_network_controlflag_toggle_counter++;
-			if (300 <= Exit_network_controlflag_toggle_counter)	//1 min toggle led
+			if (900 <= Exit_network_controlflag_toggle_counter)	//3 min toggle led
 			{
 				Exit_network_controlflag = 0;
 			}
@@ -1399,7 +1401,7 @@ void savevar(void)
 	FLASH_WriteData(i,USER_PARAMETER_START_SECTOR_ADDRESS0+10);
 	Delay_us(100);
 	
-	i=temper_value;
+	i=temper_value_or_lightvalue_have_person;
 	FLASH_WriteData(i,USER_PARAMETER_START_SECTOR_ADDRESS0+11);
 	Delay_us(100);
 
