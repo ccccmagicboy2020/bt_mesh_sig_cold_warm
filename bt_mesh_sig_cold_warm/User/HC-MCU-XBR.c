@@ -28,7 +28,7 @@ volatile ulong Timer_Counter = 0;
 
 u8 xdata SUM1_counter = 0; //偏差平均值的计算计数器
 u8 xdata SUM0_num = 12;	   //SUM0迭代次数
-u8 xdata SUM1_num = 64;	   //SUM1迭代次数
+u8 SUM1_num = 64;	   //SUM1迭代次数
 ulong xdata SUM01;		   //上一把的SUM0的值
 ulong xdata SUM2;		   //调试用snapshot of the SUM1 value
 ulong xdata SUM10 = 0;	   //SUM1值的几次平均值，时间上的滞后值
@@ -66,6 +66,7 @@ u8 xdata slowchcnt = 10;				  //亮度渐变目标值
 u8 xdata resetbtcnt = 0;				  //为重置蓝牙模块设置的计数器
 u8 xdata XRBoffbrightvalue = 0;			  //当关闭雷达时，APP设置的亮度值(微亮值)
 volatile u16 xdata lowlight1mincount = 0; //timer的计数器1ms自加
+volatile u16 xdata network_status_count = 0;//1ms add 1
 volatile u8 xdata lowlight1minflag = 0;	  //timer的分钟标志
 volatile u16 idata light1scount = 0;	  //timer的计数器1ms自加
 volatile u16 idata light1sflag = 0;		  //timer的秒标志
@@ -1065,7 +1066,7 @@ void main()
 	
 	upload_disable = 0;	
 	
-	if (resetbtcnt > 10)
+	if (resetbtcnt > 5)
 	{
 		resetbtcnt = 0;
 		reset_bt_module();
@@ -1077,6 +1078,15 @@ void main()
 		
 	while (1)
 	{
+		//check network status every min
+		if (network_status_count > 60000)
+		{
+			network_status_count = 0;
+			if (BT_UN_BIND == mcu_get_bt_work_state())	//unbind for app
+			{
+				reset_bt_module();
+			}
+		}
 		//find me
 		if (find_me_flag)
 		{
@@ -1283,7 +1293,8 @@ void TIMER1_Rpt(void) interrupt TIMER1_VECTOR
 	{
 		radar_number_count = 0;
 		radar_number_send_flag = 1;
-	}	
+	}
+	network_status_count++;
 }
 
 /***************************************************************************************
