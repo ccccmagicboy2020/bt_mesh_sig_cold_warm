@@ -1112,6 +1112,7 @@ void main()
 			if (900 <= Exit_network_controlflag_toggle_counter)	//3 min toggle led
 			{
 				Exit_network_controlflag = 0;
+				Exit_network_controlflag_toggle_counter = 0;
 			}
 		}
 		//上报通信
