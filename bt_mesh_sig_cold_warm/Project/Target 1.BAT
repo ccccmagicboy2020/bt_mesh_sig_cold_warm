@@ -10,4 +10,3 @@ SET CPU_XTAL=0x01E84800
 "d:\cccc2020\TOOL\Keil\C51\BIN\C51.EXE" @.\Objects\protocol.__i
 "d:\cccc2020\TOOL\Keil\C51\BIN\C51.EXE" @.\Objects\system.__i
 "d:\cccc2020\TOOL\Keil\C51\BIN\BL51.EXE" @.\Objects\HC-MCU-XBR.lnp
-"d:\cccc2020\TOOL\Keil\C51\BIN\OH51.EXE" ".\Objects\HC-MCU-XBR" 

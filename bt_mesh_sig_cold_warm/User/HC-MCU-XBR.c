@@ -24,6 +24,93 @@
 //感光门限-30对应8LUX左右的AD值,设置为255表示不检测感光
 #define LIGHT_TH0 255
 
+#define  Val_560us_L   1120
+#define  Val_560us_H   1860
+
+#define  Val_1690us_L  3380
+#define  Val_1690us_H  5630
+
+#define  Val_2250us_L  4500
+#define  Val_2250us_H  7500
+
+#define  Val_4500us_L  9000
+#define  Val_4500us_H  15000 
+
+#define LIGHT_SETON 0XA0
+//05
+#define LIGHT_SETOFF 0X20
+//04
+#define LIGHT_SETON_KEEP 0X0A
+//50
+
+#define RADAR_ON 0X8A
+//51
+#define RADAR_OFF 0XCA
+//53
+#define RADAR_ON_KEEP 0X98
+//19
+#define RADAR_OFF_KEEP 0X18
+//18
+
+#define BRT_MIN	0XB8
+//1D
+#define BRT_DEC	0XD8
+//1B
+#define BRT_INC	0X58
+//1A
+#define BRT_MAX	0X38
+//1C
+
+#define REM_BRT_OFF	0X34
+//2C
+#define REM_BRT_10	0XB4
+//2D
+#define REM_BRT_20	0XF4
+//2F
+#define REM_BRT_30	0X74
+//2E
+
+#define DELAY_30S	0X30
+//0C
+#define DELAY_3MIN	0XF8
+//1F
+#define DELAY_10MIN	0X70
+//0E
+
+#define LIGHT_CHECK_OFF	0XA8
+//15
+#define LIGHT_CHECK_50LUX	0X68
+//16
+#define LIGHT_CHECK_20LUX	0XE8
+//17
+
+#define DIST_NEAR	0X90
+//09
+#define DIST_MID	0X10
+//08
+#define DIST_FAR	0X50
+//0A
+#define CHECK_LIGHT_INTERVAL0 2500
+
+#define DELAY_NUM_30S 120
+
+#define DELAY_NUM_3MIN  740
+
+#define DELAY_NUM_10MIN  2480
+
+#define TH_FAR 0x10000
+//60000
+//感应距离最远
+
+#define TH_MID  0x1a000
+//100000
+//感应半径3.5~4.5米
+
+#define TH_NEAR 0x30000
+//0x30000
+//200000
+//感应半径2.5~3.5米
+
 volatile ulong Timer_Counter = 0;
 
 u8 xdata SUM1_counter = 0; //偏差平均值的计算计数器
@@ -106,6 +193,22 @@ u16 idata person_meter_last = 0;
 
 unsigned char upload_disable = 0;
 
+volatile u8 Rise_flag= 0;
+volatile u8 down_count = 0;
+volatile u16 Dval;
+volatile u8 Lead_flag = 0;
+volatile ulong RmtRec=0;
+volatile u8 Repeat_flag = 0;
+volatile u8 ir_data0=0;
+volatile u8 ir_data1;
+u8 pwm_change=0;
+u8 light_onoff=0;
+u8 radar_onoff=1;
+u8 pwm_val=0;
+u8 pwm_rem=0;
+u8 rec_command=0;
+u8 LIGHT_TH_20LUX;
+
 unsigned char PWM0init(unsigned char ab);
 unsigned char PWM3init_xxx(unsigned char ab);
 unsigned char PWM3init(unsigned char ab);
@@ -114,6 +217,10 @@ void FLASH_WriteData(unsigned char fuc_SaveData, unsigned int fui_Address);
 void Flash_ReadArr(unsigned int fui_Address, unsigned char fuc_Length, unsigned char *fucp_SaveArr); //读取任意长度数据
 void savevar(void);
 void reset_bt_module(void);
+void set_pwm_rem(u8 ir_data);
+void set_delay_times(u8 ir_data);
+void set_light_th(u8 ir_data);
+void set_TH(u8 i);
 
 unsigned char xdata guc_Read_a[USER_PARAMETER_START_SECTOR_SIZE] = {0x00}; //用于存放读取的数据
 unsigned char xdata guc_Read_a1[2] = {0x00}; //用于存放读取的数据
@@ -1435,3 +1542,336 @@ void savevar(void)
 
 }
 
+void set_pwm_rem(u8 ir_data)
+{
+    if(ir_data==REM_BRT_OFF)
+		{
+			pwm_rem=0;
+		}
+		else if(ir_data==REM_BRT_20)
+		{
+			pwm_rem=25;
+		}
+		else	if(ir_data==REM_BRT_30)
+		{
+			pwm_rem=37;
+		}
+		else
+		{
+			pwm_rem=12;
+		}		
+}
+
+void set_delay_times(u8 ir_data)
+{
+    if(ir_data==DELAY_3MIN)
+		{
+			DELAY_NUM=DELAY_NUM_3MIN;
+		}
+		else if(ir_data==DELAY_10MIN)
+		{
+			DELAY_NUM=DELAY_NUM_10MIN;
+		}
+		else
+		{
+				DELAY_NUM=DELAY_NUM_30S;
+		}
+}
+
+void set_light_th(u8 ir_data)
+{
+    if(ir_data==LIGHT_CHECK_50LUX)
+		{
+			LIGHT_TH=LIGHT_TH_20LUX;
+			LIGHT_TH*=5;
+			LIGHT_TH>>=1;
+		}
+		else if(ir_data==LIGHT_CHECK_20LUX)
+		{
+			LIGHT_TH=LIGHT_TH_20LUX;
+		}
+		else
+		{
+			LIGHT_TH=0xff;
+		}
+}
+
+void set_TH(u8 i)
+{
+	if(i==DIST_MID)
+	{
+		TH=TH_MID;
+	}
+	else if(i==DIST_NEAR)
+	{
+		TH=TH_NEAR;
+	}
+	else
+	{
+		TH=TH_FAR;
+	}
+}
+
+void INT2_7_Rpt() interrupt INT2_7_VECTOR 
+{
+	u8 i;
+	
+	EA=0;
+	
+	if(PINTF0&0x04)						//check the INT2 flag
+	{
+		PINTF0 &=~ 0x04;				//clear the INT2 flag
+		
+		if(P0_2 == 1)                     
+    {
+			Rise_flag = 1;	
+
+			TH0 = 0X0;  
+			TL0 = 0X0;
+			TF0=0;
+    }
+	  else if((down_count<33)&&(TF0==0))
+	  {
+			Dval = (TH0<<8) + TL0;	
+			down_count++;
+			if(Rise_flag == 1)							
+			{
+
+ 				if(Lead_flag == 1)
+				{
+					if((Dval>Val_560us_L)&&(Dval<Val_560us_H))			
+					{
+						RmtRec<<=1;		  
+					}
+					else if((Dval>Val_1690us_L)&&(Dval<Val_1690us_H))
+					{
+						RmtRec<<=1;					
+						RmtRec|=1;					
+					}
+					else
+					{
+						RmtRec=0;
+						down_count = 0;
+						Lead_flag = 0;
+						Repeat_flag=0;
+					}
+ 				}
+				else
+				{
+					if((Dval>Val_2250us_L)&&(Dval<Val_2250us_H))		
+					{
+						Lead_flag = 0;
+						down_count = 0;
+						
+						if(ir_data0==BRT_DEC||ir_data0==BRT_INC)
+						{
+							Repeat_flag++;
+							if(Repeat_flag>3)
+							{
+								if(ir_data0==BRT_INC)
+								{
+									pwm_change=1;
+								}
+								else if(ir_data0==BRT_DEC)
+								{
+									pwm_change=1;
+								}
+								rec_command=2;
+							}
+						}
+					}
+					
+					else if((Dval>Val_4500us_L)&&(Dval<Val_4500us_H))		
+					{
+						Lead_flag = 1;
+						Repeat_flag=0;
+					}
+					else                  
+					{
+						down_count = 0;
+						Lead_flag = 0;
+						Repeat_flag=0;
+					}
+				}								 
+			}
+			Rise_flag = 0;
+	
+			if(down_count>=33&&Repeat_flag==0)
+			{
+				down_count = 0;
+				Lead_flag = 0;
+				Rise_flag = 0;
+				
+				ir_data0=RmtRec>>24;
+				ir_data1=(RmtRec>>16)&0xff;
+				
+				if((ir_data0==0X7E)&&(ir_data1==0x7E))
+				{
+					ir_data0=(RmtRec>>8)&0xff;
+					ir_data1=~RmtRec;
+
+          if(ir_data0==ir_data1)
+					{
+						if(ir_data0==LIGHT_SETON||ir_data0==LIGHT_SETOFF)
+						{
+							if(light_onoff==0)
+							{
+								light_onoff=1;
+								//LIGHT_ON();
+							}
+							else
+							{
+								light_onoff=0;
+								//LIGHT_OFF();
+							}
+							rec_command=2;
+						}
+						else if(ir_data0==RADAR_ON_KEEP||ir_data0==RADAR_OFF_KEEP)
+						{
+							if(radar_onoff==0)
+							{
+								radar_onoff=1;
+								check_light_times=CHECK_LIGHT_INTERVAL0;
+							}
+							else
+							{
+								radar_onoff=0;
+							}
+							rec_command=1;
+						}
+						else if(ir_data0==BRT_MIN||ir_data0==BRT_DEC||ir_data0==BRT_INC||ir_data0==BRT_MAX)
+						{
+							if(ir_data0==BRT_MIN)
+							{
+								pwm_val=6;
+							}
+							else if(ir_data0==BRT_DEC)
+							{
+								if(pwm_val>=12)pwm_val-=6;
+								else pwm_val=6;
+							}
+							else if(ir_data0==BRT_INC)
+							{
+								if(pwm_val<=119)pwm_val+=6;
+								else pwm_val=125;
+							}
+							else
+							{
+								pwm_val=125;
+							}
+							
+							if(light_onoff==1||LIGHT>0)
+							{
+								//LIGHT_ON();
+							}
+							if((light_onoff==0)&&((radar_onoff==0)||(LIGHT==0)))
+								rec_command=1;
+							else
+								rec_command=2;
+						}
+						else if(ir_data0==REM_BRT_OFF||ir_data0==REM_BRT_10||ir_data0==REM_BRT_20||ir_data0==REM_BRT_30)
+						{
+							
+							set_pwm_rem(ir_data0);
+							
+							guc_Read_a[14]=ir_data0;
+							rec_command=2;
+							
+							if(light_onoff==0&&radar_onoff==1&&LIGHT==0)
+							{
+								//LIGHT_HALF();
+							}
+						}
+						else if(ir_data0==DELAY_30S||ir_data0==DELAY_3MIN||ir_data0==DELAY_10MIN)
+						{
+							set_delay_times(ir_data0);
+							guc_Read_a[15]=ir_data0;
+							rec_command=1;
+						}
+						else if(ir_data0==LIGHT_CHECK_OFF||ir_data0==LIGHT_CHECK_50LUX||ir_data0==LIGHT_CHECK_20LUX)
+						{
+							set_light_th(ir_data0);
+							guc_Read_a[16]=ir_data0;
+							rec_command=1;
+						}
+						else if(ir_data0==DIST_NEAR||ir_data0==DIST_MID||ir_data0==DIST_FAR)
+						{
+							set_TH(ir_data0);
+							guc_Read_a[17]=ir_data0;
+							rec_command=1;
+						}
+						
+						if(rec_command==1)
+						{
+              if(LIGHT>0||light_onoff==1||((radar_onoff==1)&&(pwm_rem>0)))
+							{
+								//LIGHT_OFF();
+							}
+							else
+							{
+								//LIGHT_ON();
+							}
+							
+							for(i=0;i<30;i++)	//延时0.3秒
+							{
+								Delay_us(10000);
+							}
+							WDTC |= 0x10;	//清看门狗
+
+							if(LIGHT>0||light_onoff==1)
+							{
+								//LIGHT_ON();
+							}
+							else if(light_onoff==0&&radar_onoff==0)
+							{
+								//LIGHT_OFF();
+							}
+							else 
+							{
+								//LIGHT_HALF();
+							}
+							
+							for(i=0;i<30;i++)	//延时0.3秒
+							{
+								Delay_us(10000);
+							}
+							WDTC |= 0x10;		//清看门狗
+						}
+						
+
+					}
+				}
+				RmtRec=0;
+
+			}
+     		
+	 	 }
+
+			if(rec_command>0)
+			{
+			//保存参数
+				guc_Read_a[11]=light_onoff;
+				
+				guc_Read_a[12]=~radar_onoff;
+				
+				guc_Read_a[13]=pwm_val;
+
+				Flash_EraseBlock(0X2F00);
+				Delay_us(10000);
+				
+				for(i=1;i<18;i++)
+				{
+					FLASH_WriteData(guc_Read_a[i],0X2F00+i);
+					Delay_us(100);
+				}
+
+				set_var();							
+				rec_command=0;
+			}
+	 }	   
+
+	WDTC |= 0x10;		//清看门狗
+	 
+	PINTF0 &=~ 0x04;				//清中断标志位
+	EA=1;
+}
