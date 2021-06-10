@@ -135,7 +135,8 @@ unsigned char mcu_dp_bool_mesh_update(unsigned char dpid,unsigned char value,uns
            value:当前dp值
 返回参数 : 无
 *****************************************************************************/
-unsigned char mcu_dp_value_update(unsigned char dpid,unsigned long value);
+//unsigned char mcu_dp_value_update(unsigned char dpid,unsigned long value);
+unsigned char mcu_dp_value_update(unsigned char dpid,unsigned long value, unsigned char len);
 unsigned char mcu_dp_value_mesh_update(unsigned char dpid,unsigned long value,unsigned int groupa);
 /*****************************************************************************
 函数名称 : mcu_dp_string_update

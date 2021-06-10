@@ -44,8 +44,8 @@
 #define         WORK_MODE_CMD                   2                               //查询MCU 设定的模块工作模式	
 #define         BT_STATE_CMD                    3                               //bluetooth工作状态	
 #define         BT_RESET_CMD                    4                               //重置bluetooth
-#define         DATA_QUERT_CMD                  6                               //命令下发
-#define         STATE_UPLOAD_CMD                7                               //状态上报	 
+#define         DATA_QUERT_CMD                  0x0D                            //命令下发
+#define         STATE_UPLOAD_CMD                0x0E                            //状态上报	 
 #define         STATE_QUERY_CMD                 8                               //状态查询   
 //#define         UPDATE_START_CMD                0x0a                            //升级开始
 //#define         UPDATE_TRANS_CMD                0x0b                            //升级传输

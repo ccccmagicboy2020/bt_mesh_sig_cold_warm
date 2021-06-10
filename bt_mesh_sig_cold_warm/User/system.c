@@ -250,27 +250,32 @@ static unsigned char get_dowmload_dpid_index(unsigned char dpid)
 *****************************************************************************/
 static unsigned char data_point_handle(const unsigned char value[])
 {
-  unsigned char dp_id,index;
-  unsigned char dp_type;
+//  unsigned char dp_id,index;
+//  unsigned char dp_type;
+	unsigned char dp_id;
   unsigned char ret;
   unsigned short dp_len;
   
   dp_id = value[0];
-  dp_type = value[1];
-  dp_len = value[2] * 0x100;
-  dp_len += value[3];
+//  dp_type = value[1];
+//  dp_len = value[1] * 0x100;
+//  dp_len += value[2];
+	
+	dp_len = value[1];
   
-  index = get_dowmload_dpid_index(dp_id);
+//  index = get_dowmload_dpid_index(dp_id);
 
-  if(dp_type != download_cmd[index].dp_type)
-  {
-    //错误提示
-    return FALSE;
-  }
-  else
-  {
-    ret = dp_download_handle(dp_id,value + 4,dp_len);
-  }
+//  if(dp_type != download_cmd[index].dp_type)
+//  {
+//    //错误提示
+//    return FALSE;
+//  }
+//  else
+//  {
+//    ret = dp_download_handle(dp_id,value + 4,dp_len);
+//  }
+
+	ret = dp_download_handle(dp_id,value + 2,dp_len);
   
   return ret;
 }
@@ -370,8 +375,9 @@ void data_handle(unsigned short offset)
     
     for(i = 0;i < total_len;)
     {
-      dp_len = bt_uart_rx_buf[offset + DATA_START + i + 2] * 0x100;
-      dp_len += bt_uart_rx_buf[offset + DATA_START + i + 3];
+//      dp_len = bt_uart_rx_buf[offset + DATA_START + i + 2] * 0x100;
+//      dp_len += bt_uart_rx_buf[offset + DATA_START + i + 3];
+			dp_len = bt_uart_rx_buf[offset + DATA_START + i + 1];
       //
       ret = data_point_handle((unsigned char *)bt_uart_rx_buf + offset + DATA_START + i);
       
@@ -386,7 +392,7 @@ void data_handle(unsigned short offset)
 		//不保存参数
       }
       
-      i += (dp_len + 4);
+      i += (dp_len + 2);	//i自增加
     }
     
     break;

@@ -165,6 +165,17 @@ unsigned long byte_to_int(const unsigned char value[4])
   
   return nubmer;
 }
+
+unsigned long byte_to_short(const unsigned char value[2])
+{
+  unsigned long nubmer = 0;
+
+  nubmer = (unsigned long)value[0];
+  nubmer <<= 8;
+  nubmer |= (unsigned long)value[1];
+  
+  return nubmer;
+}
 #ifndef BT_CONTROL_SELF_MODE
 /*****************************************************************************
 函数名称 : mcu_get_reset_bt_flag
@@ -250,7 +261,7 @@ unsigned char mcu_dp_bool_update(unsigned char dpid,unsigned char value)
     return SUCCESS;
   
   length = set_bt_uart_byte(length,dpid);
-  length = set_bt_uart_byte(length,DP_TYPE_BOOL);
+  //length = set_bt_uart_byte(length,DP_TYPE_BOOL);
   //
   length = set_bt_uart_byte(length,0);
   length = set_bt_uart_byte(length,1);
@@ -352,7 +363,7 @@ unsigned char mcu_dp_enum_mesh_update(unsigned char dpid,unsigned char value,uns
            value:当前dp值
 返回参数 : 无
 *****************************************************************************/
-unsigned char mcu_dp_value_update(unsigned char dpid,unsigned long value)
+unsigned char mcu_dp_value_update(unsigned char dpid,unsigned long value, unsigned char len)
 {
   unsigned short length = 0;
   
@@ -360,15 +371,20 @@ unsigned char mcu_dp_value_update(unsigned char dpid,unsigned long value)
     return SUCCESS;
   
   length = set_bt_uart_byte(length,dpid);
-  length = set_bt_uart_byte(length,DP_TYPE_VALUE);
+  //length = set_bt_uart_byte(length,DP_TYPE_VALUE);
   //
-  length = set_bt_uart_byte(length,0);
-  length = set_bt_uart_byte(length,4);
+  length = set_bt_uart_byte(length, len);
+  //length = set_bt_uart_byte(length,4);
   //
-  length = set_bt_uart_byte(length,value >> 24);
-  length = set_bt_uart_byte(length,value >> 16);
-  length = set_bt_uart_byte(length,value >> 8);
-  length = set_bt_uart_byte(length,value & 0xff);
+	if (1 == len)
+	{
+		length = set_bt_uart_byte(length,value & 0xff);
+	}
+	else if (2 == len)
+	{
+		length = set_bt_uart_byte(length,value >> 8);
+		length = set_bt_uart_byte(length,value & 0xff);
+	}
   
   bt_uart_write_frame(STATE_UPLOAD_CMD,length);
   
@@ -453,7 +469,7 @@ unsigned char mcu_dp_enum_update(unsigned char dpid,unsigned char value)
     return SUCCESS;
   
   length = set_bt_uart_byte(length,dpid);
-  length = set_bt_uart_byte(length,DP_TYPE_ENUM);
+  //length = set_bt_uart_byte(length,DP_TYPE_ENUM);
   //
   length = set_bt_uart_byte(length,0);
   length = set_bt_uart_byte(length,1);
@@ -543,8 +559,19 @@ unsigned char mcu_get_dp_download_enum(const unsigned char value[],unsigned shor
 unsigned long mcu_get_dp_download_value(const unsigned char value[],unsigned short len)
 {
 	int i;
+	unsigned short res = 0;
+	
 	i = len;
-  return(byte_to_int(value));
+	
+	if (1 == i)
+	{
+		res = value[0];
+	}
+	else if (2 == i)
+	{
+		res = byte_to_short(value);
+	}
+  return(res);
 }
 /*****************************************************************************
 函数名称 : uart_receive_input

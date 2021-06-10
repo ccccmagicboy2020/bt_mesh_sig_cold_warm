@@ -1138,7 +1138,7 @@ void main()
 			//人表状态更新
 			if (person_meter != person_meter_last)
 			{
-				mcu_dp_value_update(DPID_PERSON_METER,person_meter);
+				mcu_dp_value_update(DPID_PERSON_METER,person_meter, 2);
 				person_meter_last = person_meter;
 			}		
 			
@@ -1154,10 +1154,10 @@ void main()
 					if (radar_trig_times_last != radar_trig_times)
 					{
 						//雷达计数更新
-						mcu_dp_value_update(DPID_RADAR_TRIGGER_TIMES,radar_trig_times);
+						mcu_dp_value_update(DPID_RADAR_TRIGGER_TIMES,radar_trig_times, 2);
 						radar_trig_times_last = radar_trig_times;
 						//中频更新
-						mcu_dp_value_update(DPID_IF_SUM, SUM2);
+						mcu_dp_value_update(DPID_IF_SUM, SUM2, 2);
 					}			
 				}
 			}

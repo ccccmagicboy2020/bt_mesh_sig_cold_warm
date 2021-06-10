@@ -86,9 +86,6 @@ mcu在bt模块正确联网后可调用mcu_get_system_time()函数发起校时功
                         1:dp数据点序列号重新定义
           **此为自动生成代码,如在开发平台有相关修改请重新下载MCU_SDK**         
 ******************************************************************************/
-//开关(可下发可上报)
-//备注:
-#define DPID_SWITCH_LED 1
 //亮度值(可下发可上报)
 //备注:
 #define DPID_BRIGHT_VALUE 3
@@ -97,58 +94,58 @@ mcu在bt模块正确联网后可调用mcu_get_system_time()函数发起校时功
 #define DPID_TEMP_VALUE 4
 //光敏参数(可下发可上报)
 //备注:
-#define DPID_CDS 101
+#define DPID_CDS 0x0C
 //感应延时(可下发可上报)
 //备注:
-#define DPID_PIR_DELAY 102
+#define DPID_PIR_DELAY 0x09
 //雷达开关(可下发可上报)
 //备注:
-#define DPID_SWITCH_XBR 103
+#define DPID_SWITCH_XBR 0x07
 //伴亮延时(可下发可上报)
 //备注:
-#define DPID_STANDBY_TIME 104
+#define DPID_STANDBY_TIME 0x0A
 //感应强度(可下发可上报)
 //备注:
-#define DPID_SENSE_STRESS 105
+#define DPID_SENSE_STRESS 0x08
 //开关灯(可下发可上报)
 //备注:
-#define DPID_SWITCH_LED2 113
+#define DPID_SWITCH_LED2 0x00
 //联动(可下发可上报)
 //备注:
-#define DPID_SWITCH_LINKAGE 114
+#define DPID_SWITCH_LINKAGE 0x0D
 //全天伴亮(可下发可上报)
 //备注:
-#define DPID_ALL_DAY_MICRO_LIGHT 115
+#define DPID_ALL_DAY_MICRO_LIGHT 0x0B
 //雷达触发计数(只上报)
 //备注:
-#define DPID_RADAR_TRIGGER_TIMES 116
+#define DPID_RADAR_TRIGGER_TIMES 0x16
 //计数清零(只下发)
 //备注:
-#define DPID_CLEAR_TRIGGER_NUMBER 117
+#define DPID_CLEAR_TRIGGER_NUMBER 0x12
 //灯状态(只上报)
 //备注:
-#define DPID_LIGHT_STATUS 118
+#define DPID_LIGHT_STATUS 0x13
 //人状态(只上报)
 //备注:
-#define DPID_PERSON_IN_RANGE 119
+#define DPID_PERSON_IN_RANGE 0x14
 //人状态群(可下发可上报)
 //备注:
-#define DPID_PERSON_IN_RANGE_EX 120
+#define DPID_PERSON_IN_RANGE_EX 0x0E
 //通信周期(可下发可上报)
 //备注:mesh触发最小周期
-#define DPID_MESH_DUTY 121
+#define DPID_MESH_DUTY 0x11
 //找灯(可下发可上报)
 //备注:这个是找灯的功能
-#define DPID_FIND_ME 122
+#define DPID_FIND_ME 0x0F
 //mesh测试用(可下发可上报)
 //备注:测试用
-#define DPID_MESH_TEST 123
+#define DPID_MESH_TEST 0x10
 //人次计数(只上报)
 //备注:记录一次上电后有人的次数
-#define DPID_PERSON_METER 124
+#define DPID_PERSON_METER 0x15
 //雷达回波统计值(只上报)
 //备注:雷达中频回波累加值
-#define DPID_IF_SUM 125
+#define DPID_IF_SUM 0x17
 //公共群组地址0(只上报)
 //备注:
 #define DPID_ADDR0 130
@@ -176,7 +173,7 @@ mcu在bt模块正确联网后可调用mcu_get_system_time()函数发起校时功
 //工厂操作(可下发可上报)
 //备注:枚举范围：aa,bb,cc,dd,ee,ff,gg,hh
 //
-#define DPID_FACTORY_OP 150
+#define DPID_FACTORY_OP 0x19
 
 
 

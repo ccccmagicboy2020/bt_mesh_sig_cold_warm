@@ -108,7 +108,6 @@ void bt_sigmesh_enable(u8 en)
 ******************************************************************************/
 const DOWNLOAD_CMD_S xdata download_cmd[] =
 {
-  {DPID_SWITCH_LED, DP_TYPE_BOOL},
   {DPID_BRIGHT_VALUE, DP_TYPE_VALUE},
   {DPID_TEMP_VALUE, DP_TYPE_VALUE},
   {DPID_CDS, DP_TYPE_ENUM},
@@ -199,13 +198,10 @@ void all_data_update(void)
   //#error "请在此处理可下发可上报数据及只上报数据示例,处理完成后删除该行"
   //此代码为平台自动生成，请按照实际数据修改每个可下发可上报函数和只上报函数
 	
-    mcu_dp_bool_update(DPID_SWITCH_LED, 1); //复位模块
-	Delay_ms(100);
-	
     mcu_dp_bool_update(DPID_SWITCH_LED2, SWITCHflag2); //灯的开关
 	Delay_ms(100);
 	
-    mcu_dp_value_update(DPID_BRIGHT_VALUE, lightvalue); //VALUE型数据上报;
+    mcu_dp_value_update(DPID_BRIGHT_VALUE, lightvalue, 1); //VALUE型数据上报;
 	Delay_ms(100);
 
 	if(LIGHT_TH==255)
@@ -222,31 +218,31 @@ void all_data_update(void)
     mcu_dp_enum_update(DPID_CDS, light); //枚举型数据上报;
 	Delay_ms(100);
 		
-    mcu_dp_value_update(DPID_PIR_DELAY, DELAY_NUM); //VALUE型数据上报;
+    mcu_dp_value_update(DPID_PIR_DELAY, DELAY_NUM, 2); //VALUE型数据上报;
 	Delay_ms(100);
 	
     mcu_dp_bool_update(DPID_SWITCH_XBR, SWITCHfXBR); //BOOL型数据上报;
 	Delay_ms(100);
 	
-    mcu_dp_value_update(DPID_STANDBY_TIME, lowlightDELAY_NUM); //VALUE型数据上报;
+    mcu_dp_value_update(DPID_STANDBY_TIME, lowlightDELAY_NUM, 2); //VALUE型数据上报;
 	Delay_ms(100);
 
 	radius=TH/10000;
 	radius=50-radius;
 
-	mcu_dp_value_update(DPID_SENSE_STRESS, radius); //VALUE型数据上报;
+	mcu_dp_value_update(DPID_SENSE_STRESS, radius, 1); //VALUE型数据上报;
 	Delay_ms(100);
 	
 	mcu_dp_bool_update(DPID_SWITCH_LINKAGE,Linkage_flag); //BOOL型数据上报;
 	Delay_ms(100);
 
-	mcu_dp_value_update(DPID_TEMP_VALUE,temper_value_or_lightvalue_have_person); //VALUE型数据上报;
+	mcu_dp_value_update(DPID_TEMP_VALUE,temper_value_or_lightvalue_have_person, 1); //VALUE型数据上报;
 	Delay_ms(100);
 	
     mcu_dp_bool_update(DPID_ALL_DAY_MICRO_LIGHT,all_day_micro_light_enable); //BOOL型数据上报;
 	Delay_ms(100);
 	
-    mcu_dp_value_update(DPID_RADAR_TRIGGER_TIMES,radar_trig_times); //VALUE型数据上报;
+    mcu_dp_value_update(DPID_RADAR_TRIGGER_TIMES,radar_trig_times, 2); //VALUE型数据上报;
 	Delay_ms(100);
 
     mcu_dp_enum_update(DPID_LIGHT_STATUS,light_status_xxx); //枚举型数据上报;
@@ -258,13 +254,13 @@ void all_data_update(void)
 	mcu_dp_enum_update(DPID_PERSON_IN_RANGE_EX, 1); //枚举型数据上报;
 	Delay_ms(100);
 	
-    mcu_dp_value_update(DPID_MESH_DUTY, bt_and_sigmesh_duty); //VALUE型数据上报;
+    mcu_dp_value_update(DPID_MESH_DUTY, bt_and_sigmesh_duty, 2); //VALUE型数据上报;
 	Delay_ms(100);
 
     mcu_dp_bool_update(DPID_FIND_ME, find_me_flag); //BOOL型数据上报;
 	Delay_ms(100);		
 		
-	bt_uart_write_frame(BT_MESH_GET_MY_GROUP_ADDRESS, 0);
+	//bt_uart_write_frame(BT_MESH_GET_MY_GROUP_ADDRESS, 0);
 }
 
 
@@ -282,21 +278,7 @@ void all_data_update(void)
 返回参数 : 成功返回:SUCCESS/失败返回:ERROR
 使用说明 : 可下发可上报类型,需要在处理完数据后上报处理结果至app
 *****************************************************************************/
-//不用了
-static unsigned char dp_download_switch_led_handle(const unsigned char value[], unsigned short length)
-{
-    //示例:当前DP类型为BOOL
-    unsigned char ret;
-    //0:关/1:开
-    unsigned char switch_led;
-    
-    switch_led = mcu_get_dp_download_bool(value,length);
 
-    //处理完DP数据后应有反馈
-    ret = mcu_dp_bool_update(DPID_SWITCH_LED, 1);
-	
-    return NOT_SAVE;
-}
 /*****************************************************************************
 函数名称 : dp_download_bright_value_handle
 功能描述 : 针对DPID_BRIGHT_VALUE的处理函数
@@ -338,7 +320,7 @@ static unsigned char dp_download_bright_value_handle(const unsigned char value[]
 	XRBoffbrightvalue = bright_value;
 		
     //处理完DP数据后应有反馈
-    ret = mcu_dp_value_update(DPID_BRIGHT_VALUE, lightvalue);
+    ret = mcu_dp_value_update(DPID_BRIGHT_VALUE, lightvalue, 1);
 
     if(ret == SUCCESS)
 	{
@@ -390,7 +372,7 @@ static unsigned char dp_download_temp_value_handle(const unsigned char value[], 
 	temper_value_or_lightvalue_have_person = temper_value_xxx;
     
     //处理完DP数据后应有反馈
-    ret = mcu_dp_value_update(DPID_TEMP_VALUE,temper_value_or_lightvalue_have_person);
+    ret = mcu_dp_value_update(DPID_TEMP_VALUE,temper_value_or_lightvalue_have_person, 1);
 	
     if(ret == SUCCESS)
 	{
@@ -524,7 +506,7 @@ static unsigned char dp_download_pir_delay_handle(const unsigned char value[], u
     DELAY_NUM = pir_delay;
     
     //处理完DP数据后应有反馈
-    ret = mcu_dp_value_update(DPID_PIR_DELAY, DELAY_NUM);
+    ret = mcu_dp_value_update(DPID_PIR_DELAY, DELAY_NUM, 2);
     if(ret == SUCCESS)
 	{
 		if(not_save_flag)
@@ -625,7 +607,7 @@ static unsigned char dp_download_standby_time_handle(const unsigned char value[]
     lowlightDELAY_NUM=standby_time;
     
     //处理完DP数据后应有反馈
-    ret = mcu_dp_value_update(DPID_STANDBY_TIME, lowlightDELAY_NUM);
+    ret = mcu_dp_value_update(DPID_STANDBY_TIME, lowlightDELAY_NUM, 2);
     if(ret == SUCCESS)
 	{
 		if(not_save_flag)
@@ -676,7 +658,7 @@ static unsigned char dp_download_sense_stress_handle(const unsigned char value[]
 	TH=(50-sense_stress)*10000;
      
     //处理完DP数据后应有反馈
-    ret = mcu_dp_value_update(DPID_SENSE_STRESS, sensing_th);
+    ret = mcu_dp_value_update(DPID_SENSE_STRESS, sensing_th, 1);
     if(ret == SUCCESS)
 	{
 		if(not_save_flag)
@@ -876,7 +858,7 @@ static unsigned char dp_download_clear_trigger_number_handle(const unsigned char
 			// }
 		// }
 		
-		mcu_dp_value_update(DPID_RADAR_TRIGGER_TIMES,radar_trig_times); //VALUE型数据上报;
+		mcu_dp_value_update(DPID_RADAR_TRIGGER_TIMES,radar_trig_times, 2); //VALUE型数据上报;
     }
   
   	return NOT_SAVE;
@@ -959,7 +941,7 @@ static unsigned char dp_download_mesh_duty_handle(const unsigned char value[], u
 	bt_and_sigmesh_duty = mesh_duty;
     
     //处理完DP数据后应有反馈
-	ret = mcu_dp_value_update(DPID_MESH_DUTY, bt_and_sigmesh_duty);
+	ret = mcu_dp_value_update(DPID_MESH_DUTY, bt_and_sigmesh_duty, 2);
     if(ret == SUCCESS)
 	{
 		if(not_save_flag)
@@ -1188,10 +1170,6 @@ unsigned char dp_download_handle(unsigned char dpid,const unsigned char value[],
   unsigned char ret;
   switch(dpid)
   {
-        case DPID_SWITCH_LED:
-            //开关处理函数
-            ret = dp_download_switch_led_handle(value,length);
-        break;
         case DPID_BRIGHT_VALUE:
             //亮度值处理函数
             ret = dp_download_bright_value_handle(value,length);
