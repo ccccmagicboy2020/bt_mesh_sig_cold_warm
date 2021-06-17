@@ -263,7 +263,7 @@ unsigned char mcu_dp_bool_update(unsigned char dpid,unsigned char value)
   length = set_bt_uart_byte(length,dpid);
   //length = set_bt_uart_byte(length,DP_TYPE_BOOL);
   //
-  length = set_bt_uart_byte(length,0);
+  //length = set_bt_uart_byte(length,0);
   length = set_bt_uart_byte(length,1);
   //
   if(value == FALSE)
@@ -471,7 +471,7 @@ unsigned char mcu_dp_enum_update(unsigned char dpid,unsigned char value)
   length = set_bt_uart_byte(length,dpid);
   //length = set_bt_uart_byte(length,DP_TYPE_ENUM);
   //
-  length = set_bt_uart_byte(length,0);
+  //length = set_bt_uart_byte(length,0);
   length = set_bt_uart_byte(length,1);
   //
   length = set_bt_uart_byte(length,value);
